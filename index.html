@@ -641,7 +641,6 @@
     const GAY_MEN_FLAG_COLORS = ["#078D70", "#26CEAA", "#98E8C1", "#5EC8E5", "#7BADE2", "#5049CC", "#3D1A78"];
     const CSV_FIELDS = {
       id: "id",
-      slug: "slug",
       title: "title",
       city: "city",
       country: "country",
@@ -658,8 +657,10 @@
       accent: "accent"
     };
 
+    const DEFAULT_GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1sfp9a9TUgl44EYfsZ6k9YsQhF1oEY6fBFGO0GjiiMZQ/edit?usp=sharing";
+    const LOCAL_FALLBACK_CSV = "content.csv";
     const qs = new URLSearchParams(window.location.search);
-    const csvUrl = qs.get("csv") || "content.csv";
+    const csvUrl = qs.get("csv") || buildGoogleSheetCsvUrl(DEFAULT_GOOGLE_SHEET_URL);
     const feed = document.getElementById("feed");
     const feedInner = document.getElementById("feedInner");
     const prevVisitButton = document.getElementById("prevVisit");
@@ -781,6 +782,19 @@
       return countryPart ? `${cityPart}-${countryPart}` : cityPart;
     }
 
+    function buildGoogleSheetCsvUrl(sheetUrl) {
+      try {
+        const url = new URL(sheetUrl);
+        const match = url.pathname.match(/\/spreadsheets\/d\/([^/]+)/);
+        if (!match) return LOCAL_FALLBACK_CSV;
+        const spreadsheetId = match[1];
+        const gid = url.searchParams.get("gid") || "0";
+        return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
+      } catch (error) {
+        return LOCAL_FALLBACK_CSV;
+      }
+    }
+
     function parseCsvData(csvText) {
       const cleaned = String(csvText || "").replace(/^\uFEFF/, "");
       const parsed = Papa.parse(cleaned, {
@@ -838,7 +852,6 @@
 
         return {
           id: String(row[CSV_FIELDS.id] || `${cityKey}-${parsedDate.raw}-${rowIndex + 1}`).trim(),
-          slug: String(row[CSV_FIELDS.slug] || `${cityKey}-${parsedDate.raw}`).trim(),
           cityKey,
           city: String(row[CSV_FIELDS.city] || meta.city || cityKey).trim(),
           country: String(row[CSV_FIELDS.country] || meta.country || "").trim(),
@@ -888,9 +901,32 @@
     }
 
     async function loadTrips() {
-      const response = await fetch(csvUrl, { cache: "no-store" });
-      if (!response.ok) throw new Error(`Failed to load CSV: ${response.status}`);
-      const parsed = parseCsvData(await response.text());
+      let csvText = null;
+      let lastError = null;
+
+      try {
+        const response = await fetch(csvUrl, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Failed to load remote CSV: ${response.status}`);
+        csvText = await response.text();
+      } catch (error) {
+        lastError = error;
+      }
+
+      if (!csvText && csvUrl !== LOCAL_FALLBACK_CSV) {
+        try {
+          const fallbackResponse = await fetch(LOCAL_FALLBACK_CSV, { cache: "no-store" });
+          if (!fallbackResponse.ok) throw new Error(`Failed to load fallback CSV: ${fallbackResponse.status}`);
+          csvText = await fallbackResponse.text();
+        } catch (fallbackError) {
+          lastError = fallbackError;
+        }
+      }
+
+      if (!csvText) {
+        throw lastError || new Error("Unable to load any CSV source.");
+      }
+
+      const parsed = parseCsvData(csvText);
       visits = parsed.visits;
       cities = parsed.cities;
       cityLookup = new Map(cities.map(city => [city.key, city]));
