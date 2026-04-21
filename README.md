@@ -69,6 +69,8 @@ Each row is one gallery card on the Connections page.
 - `image_alt`: alt text
 - `accent`: optional hex color
 
+The live Connections page can also read from a published Google Sheet with the same schema. Missing image-related columns are tolerated, but keeping the full header set makes the CMS easier to manage over time.
+
 ## Cross-page tagging
 
 The cross-reference system works in both directions:
@@ -84,6 +86,11 @@ Example:
 - `id` in connections CSV: `global-queer-community`
 - visit row `connection_tags`: `global-queer-community`
 - connection row `city_tags`: `amsterdam-netherlands|seoul-south-korea`
+
+For best results in the sheet:
+
+- use stable connection ids like `global-queer-community`, not numeric row ids
+- use `city_tags` values that match `city_key` values from the cities CMS, such as `chicago-usa`
 
 ## Image options
 

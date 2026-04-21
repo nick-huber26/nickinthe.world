@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_CITIES_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRByIxtJ23p1SJ8ehZDmbx1jd3DOMTk38xoSqAQcKpIImgxu2zEw69N6_xooFbBf7VNo0yFC62bqR3p/pub?gid=1798659217&single=true&output=csv";
-  const DEFAULT_CONNECTIONS_SHEET_URL = "";
+  const DEFAULT_CONNECTIONS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQMEcBeB7RhPjNz68ETerPlME6noppDYGwXjKTCFoZfRNoBWM8Mzwydq47ZkkdWHffPj5zp0uE_s-JM/pub?gid=1798659217&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const qs = new URLSearchParams(window.location.search);

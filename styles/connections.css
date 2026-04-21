@@ -50,6 +50,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
+  align-items: start;
 }
 
 .connection-card {
@@ -60,6 +61,7 @@
   border: 1px solid rgba(255,255,255,.08);
   box-shadow: var(--shadow);
   backdrop-filter: blur(16px);
+  align-self: start;
 }
 
 .connection-card.expanded {
@@ -76,7 +78,8 @@
 
 .connection-card-media {
   position: relative;
-  min-height: 240px;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
@@ -92,7 +95,7 @@
 
 .connection-card h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.1;
   letter-spacing: -.03em;
 }
@@ -100,7 +103,7 @@
 .connection-card p {
   margin: 0;
   color: rgba(255,255,255,.84);
-  line-height: 1.7;
+  line-height: 1.65;
   font-size: 14px;
 }
 
@@ -124,7 +127,6 @@
 
 .connection-card-body {
   display: none;
-  display: grid;
   grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
   gap: 24px;
   padding: 0 22px 24px;
@@ -161,6 +163,7 @@
 .overlay-gallery {
   min-height: 420px;
   margin-top: 24px;
+  aspect-ratio: auto;
 }
 
 .empty-gallery {

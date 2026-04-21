@@ -292,9 +292,12 @@
 
   function buildCrossReferenceState(visits, cities, connections) {
     const cityByKey = new Map(cities.map(city => [city.key, city]));
+    const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
     const connectionById = new Map(connections.map(connection => [connection.id, connection]));
     const cityConnectionMap = new Map(cities.map(city => [city.key, new Set()]));
-    const connectionCityMap = new Map(connections.map(connection => [connection.id, new Set(connection.cityKeys)]));
+    const connectionCityMap = new Map(
+      connections.map(connection => [connection.id, new Set(resolveConnectionCityKeys(connection.cityKeys, cityByKey, cityBySlug))])
+    );
 
     visits.forEach(visit => {
       visit.connectionIds
@@ -343,6 +346,16 @@
       cityByKey,
       connectionById
     };
+  }
+
+  function resolveConnectionCityKeys(rawCityKeys, cityByKey, cityBySlug) {
+    return rawCityKeys
+      .map(rawKey => {
+        if (cityByKey.has(rawKey)) return rawKey;
+        const city = cityBySlug.get(rawKey);
+        return city ? city.key : "";
+      })
+      .filter(Boolean);
   }
 
   function buildGalleryMarkup(key, images, imageAlt, emptyLabel) {
