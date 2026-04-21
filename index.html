@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Journey</title>
+  <title>Journey CMS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -15,81 +15,76 @@
   />
   <style>
     :root {
-      --bg: #081016;
-      --panel: rgba(10, 16, 24, 0.84);
-      --panel-strong: rgba(8, 12, 20, 0.95);
-      --text: #f6fbff;
-      --muted: rgba(246, 251, 255, 0.74);
-      --line: rgba(255,255,255,0.08);
-      --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --gm-1: #078D70;
-      --gm-2: #26CEAA;
-      --gm-3: #98E8C1;
-      --gm-4: #FFFFFF;
-      --gm-5: #7BADE2;
-      --gm-6: #5049CC;
-      --gm-7: #3D1A78;
-      --flag-gradient: linear-gradient(90deg,
-        #078D70 0%,
-        #26CEAA 16%,
-        #98E8C1 32%,
-        #FFFFFF 48%,
-        #7BADE2 64%,
-        #5049CC 82%,
-        #3D1A78 100%);
+      --bg: #f3efe6;
+      --paper: rgba(255, 252, 245, 0.88);
+      --ink: #1f2328;
+      --muted: #5f6a72;
+      --line: rgba(31, 35, 40, 0.12);
+      --shadow: 0 22px 60px rgba(37, 29, 18, 0.14);
+      --accent: #cf5c36;
+      --accent-soft: rgba(207, 92, 54, 0.14);
+      --map-height: 34rem;
     }
 
-    * { box-sizing: border-box; }
-    html, body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
       margin: 0;
-      height: 100%;
+      color: var(--ink);
+      font-family: "Space Grotesk", system-ui, sans-serif;
       background:
-        radial-gradient(circle at 12% 20%, rgba(38,206,170,.12), transparent 0 28%),
-        radial-gradient(circle at 88% 18%, rgba(80,73,204,.16), transparent 0 30%),
-        radial-gradient(circle at 60% 80%, rgba(123,173,226,.10), transparent 0 28%),
-        var(--bg);
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      overflow: hidden;
+        radial-gradient(circle at top left, rgba(207, 92, 54, 0.18), transparent 0 24rem),
+        radial-gradient(circle at bottom right, rgba(87, 117, 144, 0.15), transparent 0 26rem),
+        linear-gradient(180deg, #f8f4eb 0%, #efe8da 100%);
     }
 
-    .shell {
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
       display: grid;
-      grid-template-columns: 47% 53%;
-      height: 100vh;
-      width: 100%;
-      position: relative;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      margin-bottom: 26px;
     }
 
-    .map-pane {
+    .hero-card,
+    .map-card,
+    .entry {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+      border-radius: 30px;
+      padding: 34px;
       position: relative;
-      border-right: 1px solid var(--line);
       overflow: hidden;
-      background: rgba(8,12,20,.8);
     }
 
-    #map {
+    .hero-card::after {
+      content: "";
       position: absolute;
-      inset: 0;
-      filter: saturate(1.04) contrast(1.02);
-    }
-
-    .map-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 450;
-      background:
-        linear-gradient(180deg, rgba(8,12,20,.46), transparent 22%, transparent 74%, rgba(8,12,20,.66)),
-        radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 36%);
-    }
-
-    .brand {
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      z-index: 500;
-      max-width: min(520px, calc(100% - 48px));
+      inset: auto -30px -38px auto;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(207, 92, 54, 0.26), rgba(207, 92, 54, 0));
       pointer-events: none;
     }
 
@@ -99,517 +94,307 @@
       gap: 10px;
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.10);
       font-size: 12px;
-      letter-spacing: .16em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.9);
-      box-shadow: var(--shadow);
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--line);
     }
 
     .eyebrow::before {
       content: "";
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      background: var(--flag-gradient);
-      box-shadow: 0 0 20px rgba(123,173,226,.35);
-      flex: 0 0 auto;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
     }
 
-    .brand h1 {
-      margin: 14px 0 10px;
-      font-size: clamp(30px, 4vw, 58px);
-      line-height: .96;
-      letter-spacing: -.045em;
-      font-weight: 800;
-      text-wrap: balance;
+    h1 {
+      margin: 18px 0 14px;
+      font-family: "Instrument Serif", serif;
+      font-size: clamp(2.7rem, 6vw, 5.4rem);
+      line-height: 0.94;
+      letter-spacing: -0.04em;
+      font-weight: 400;
+      max-width: 10ch;
     }
 
-    .brand p {
-      margin: 0;
-      max-width: 470px;
+    .hero-copy {
+      max-width: 54ch;
+      font-size: 1.02rem;
+      line-height: 1.7;
       color: var(--muted);
-      font-size: clamp(14px, 1.35vw, 16px);
-      line-height: 1.55;
     }
 
-    .feed-pane {
-      position: relative;
-      overflow: hidden;
-      background: rgba(8,8,16,.38);
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
     }
 
-    .feed-topbar {
-      position: absolute;
-      inset: 0 0 auto 0;
-      z-index: 40;
+    .rule {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid var(--line);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .rule strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .map-card {
+      border-radius: 30px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: var(--map-height);
+    }
+
+    .map-meta {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 20px;
-      background: linear-gradient(180deg, rgba(8,8,16,0.96), rgba(8,8,16,0.72), transparent);
-      pointer-events: none;
+      gap: 12px;
+      padding: 6px 8px 0;
+      font-size: 0.92rem;
+      color: var(--muted);
     }
 
-    .feed-topbar .label,
-    .feed-topbar .count {
-      pointer-events: auto;
+    #map {
+      flex: 1;
+      min-height: 280px;
+      border-radius: 22px;
+      overflow: hidden;
     }
 
-    .feed-topbar .label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: rgba(255,255,255,.7);
-    }
-
-    .feed-topbar .count {
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      backdrop-filter: blur(14px);
-    }
-
-    #feed {
-      position: absolute;
-      inset: 0;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      padding: 84px 24px 50vh;
-      overscroll-behavior: contain;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,.15) transparent;
-    }
-
-    #feed::-webkit-scrollbar { width: 10px; }
-    #feed::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,.14);
-      border-radius: 999px;
-    }
-
-    .feed-inner {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .post {
-      position: relative;
-      min-height: min(88vh, 980px);
+    .entries {
       display: grid;
-      align-items: center;
-      padding: 24px 0;
-      scroll-margin-top: 84px;
+      gap: 18px;
     }
 
-    .post-card {
-      position: relative;
-      overflow: hidden;
+    .entry {
       border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      transition: transform .24s ease, border-color .24s ease, background .24s ease;
-    }
-
-    .post-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 6px;
-      background: var(--accentStripe, var(--flag-gradient));
-      opacity: .96;
-      z-index: 2;
-    }
-
-    .post-media {
-      position: relative;
-      aspect-ratio: 16 / 9;
-      background: rgba(255,255,255,.03);
-      border-bottom: 1px solid rgba(255,255,255,.08);
       overflow: hidden;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
     }
 
-    .gallery-track {
-      position: absolute;
-      inset: 0;
+    .entry.active {
+      transform: translateY(-3px);
+      border-color: rgba(31, 35, 40, 0.2);
+      box-shadow: 0 24px 70px rgba(37, 29, 18, 0.18);
+    }
+
+    .entry-top {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.95fr) 1.05fr;
+      min-height: 320px;
+    }
+
+    .gallery {
+      position: relative;
+      min-height: 100%;
+      background: linear-gradient(135deg, rgba(207, 92, 54, 0.25), rgba(87, 117, 144, 0.26));
     }
 
     .gallery-slide {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity .9s ease;
-      pointer-events: none;
+      transition: opacity 260ms ease;
     }
 
     .gallery-slide.active {
       opacity: 1;
     }
 
-    .gallery-slide img {
+    .gallery img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    .gallery-gradient {
-      position: absolute;
-      inset: auto 0 0 0;
-      height: 38%;
-      background: linear-gradient(180deg, transparent, rgba(8,12,20,.64));
-      z-index: 2;
-      pointer-events: none;
+    .gallery-empty {
+      height: 100%;
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.86rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
     .gallery-dots {
       position: absolute;
-      left: 18px;
+      left: 16px;
       bottom: 16px;
-      z-index: 3;
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
+      z-index: 2;
     }
 
-    .gallery-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.26);
-      border: 1px solid rgba(255,255,255,.28);
-      transition: transform .2s ease, background .2s ease;
+    .gallery-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.36);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
 
-    .gallery-dot.active {
-      background: #fff;
-      transform: scale(1.15);
+    .gallery-dots span.active {
+      background: white;
     }
 
-    .post-content {
-      padding: 22px 24px 24px;
+    .entry-copy {
+      padding: 24px 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.92)),
+        linear-gradient(135deg, var(--accent-soft), transparent 45%);
     }
 
-    .meta-row {
+    .meta {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
-      margin-bottom: 14px;
     }
 
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+    .pill {
       padding: 8px 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      font-size: 12px;
-      color: rgba(255,255,255,.84);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--line);
+      font-size: 0.82rem;
     }
 
-    .chip.city::before {
-      content: "📍";
-      font-size: 12px;
-    }
-
-    .chip.date::before {
-      content: "✦";
-      font-size: 11px;
-      opacity: .75;
-    }
-
-    .post h2 {
-      margin: 0 0 12px;
-      font-size: clamp(26px, 3.1vw, 42px);
-      line-height: 1;
-      letter-spacing: -.04em;
-      text-wrap: balance;
-    }
-
-    .post-summary {
+    .entry h2 {
       margin: 0;
-      font-size: clamp(15px, 1.35vw, 18px);
-      line-height: 1.68;
-      color: rgba(255,255,255,.84);
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
     }
 
-    .post-actions {
-      margin-top: 18px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
+    .summary,
+    .story p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.98rem;
     }
 
-    .action-button {
-      appearance: none;
-      border: 0;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: white;
-      padding: 12px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.1);
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-      font: inherit;
-    }
-
-    .action-button:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.12);
-      border-color: rgba(255,255,255,.18);
-    }
-
-    .story-drawer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .34s ease, opacity .24s ease, margin-top .24s ease;
-      opacity: 0;
-      margin-top: 0;
-    }
-
-    .story-drawer.open {
-      opacity: 1;
-      margin-top: 18px;
-      max-height: 360px;
-    }
-
-    .story-drawer-inner {
-      max-height: 360px;
-      overflow-y: auto;
-      border-radius: 18px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 18px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,.16) transparent;
-    }
-
-    .story-drawer-inner::-webkit-scrollbar { width: 8px; }
-    .story-drawer-inner::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,.16);
-      border-radius: 999px;
-    }
-
-    .story-drawer-inner p {
-      margin: 0 0 1em;
-      font-size: 15px;
-      line-height: 1.72;
-      color: rgba(255,255,255,.86);
-      white-space: pre-wrap;
-    }
-
-    .story-drawer-inner p:last-child { margin-bottom: 0; }
-
-    .active .post-card {
-      border-color: rgba(255,255,255,.18);
-      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
-      transform: translateY(-2px);
-    }
-
-    .empty-media {
-      width: 100%;
-      height: 100%;
+    .story {
       display: grid;
-      place-items: center;
-      color: rgba(255,255,255,.45);
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      font-size: 12px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.08), transparent 0 30%),
-        linear-gradient(135deg, rgba(7,141,112,.22), rgba(61,26,120,.22));
+      gap: 12px;
     }
 
-    .leaflet-container {
-      background: #0b131b;
+    .jump {
+      align-self: flex-start;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
       font: inherit;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      transition: transform 160ms ease, opacity 160ms ease;
     }
 
-    .pin-wrap {
-      position: relative;
-      width: 18px;
-      height: 18px;
-      transform: translate(-50%, -50%);
+    .jump:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+
+    .empty-state {
+      padding: 28px;
+      border-radius: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      color: var(--muted);
     }
 
     .pin {
       width: 18px;
       height: 18px;
-      border-radius: 999px;
-      background: white;
-      border: 3px solid var(--pinColor, #26CEAA);
-      box-shadow: 0 0 0 5px rgba(255,255,255,0.06), 0 12px 24px rgba(0,0,0,.28);
-      cursor: pointer;
-      position: relative;
-      transition: transform .16s ease, box-shadow .16s ease;
-      pointer-events: auto;
-    }
-
-    .pin::after {
-      content: "";
-      position: absolute;
-      inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
-      width: 4px;
-      height: 4px;
       border-radius: 50%;
-      background: var(--pinColor, #26CEAA);
-    }
-
-    .pin:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,.34);
-    }
-
-    .pin-wrap.active .pin {
-      transform: scale(1.16);
-      border-width: 4px;
-      box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 14px 30px rgba(0,0,0,.38);
-    }
-
-    .city-label {
-      position: absolute;
-      left: 50%;
-      top: -14px;
-      transform: translate(-50%, -100%);
-      white-space: nowrap;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: rgba(8,12,20,.92);
-      border: 1px solid rgba(255,255,255,.08);
-      color: white;
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transition: opacity .18s ease;
-      pointer-events: none;
-    }
-
-    .pin-wrap:hover .city-label,
-    .pin-wrap.active .city-label {
-      opacity: 1;
-    }
-
-    .plane-icon {
-      width: 32px;
-      height: 32px;
-      transform-origin: center center;
-      filter: drop-shadow(0 10px 18px rgba(0,0,0,.34));
-      transition: transform .08s linear;
-      opacity: .96;
-    }
-
-    .plane-icon svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .route-line-past {
-      stroke: rgba(255,255,255,0.36);
-      stroke-width: 3.5;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,.16));
-    }
-
-    .route-line-future {
-      stroke: rgba(255,255,255,0.18);
-      stroke-width: 3;
-      fill: none;
-      stroke-dasharray: 10 12;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,.14));
+      border: 3px solid white;
+      box-shadow: 0 10px 24px rgba(31, 35, 40, 0.18);
+      background: var(--pin-color, var(--accent));
     }
 
     .leaflet-popup-content-wrapper,
     .leaflet-popup-tip {
-      background: rgba(13,13,23,.96);
-      color: white;
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
-    }
-
-    .leaflet-popup-content {
-      margin: 12px 14px;
-      font-family: inherit;
+      background: rgba(255, 252, 245, 0.96);
+      color: var(--ink);
+      border: 1px solid rgba(31, 35, 40, 0.08);
     }
 
     @media (max-width: 980px) {
-      html, body { overflow: auto; }
-      .shell {
-        display: block;
-        min-height: 100vh;
-        height: auto;
+      .hero {
+        grid-template-columns: 1fr;
       }
-      .map-pane {
-        position: sticky;
-        top: 0;
-        height: 46vh;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
+
+      .entry-top {
+        grid-template-columns: 1fr;
       }
-      .feed-pane {
-        min-height: 54vh;
+
+      .rules {
+        grid-template-columns: 1fr;
       }
-      #feed {
-        position: relative;
-        inset: auto;
-        height: auto;
-        overflow: visible;
-        padding-bottom: 22vh;
+
+      .map-card {
+        min-height: 23rem;
       }
-      .post { min-height: auto; }
-      .brand h1 { font-size: clamp(28px, 6vw, 42px); }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <section class="map-pane">
-      <div id="map"></div>
-      <div class="map-overlay"></div>
-      <div class="brand">
-        <div class="eyebrow">The Journey</div>
-        <h1>A queer route, traced in motion.</h1>
-        <p>
-          Scroll the story feed to move the plane between cities. Click any pin to jump straight to that stop.
+  <main class="page">
+    <section class="hero">
+      <article class="hero-card">
+        <div class="eyebrow">Static site + CSV CMS</div>
+        <h1>Edit the CSV. Upload the photos. Refresh the page.</h1>
+        <p class="hero-copy">
+          This page reads all of its content from <code>content.csv</code>. Each row becomes one story card and one map pin. To change the site, edit the CSV fields or drop photos into the matching folder inside <code>images/</code>.
         </p>
-      </div>
+        <div class="rules">
+          <div class="rule">
+            <strong>1. Add a row</strong>
+            Create or edit a row in <code>content.csv</code> with the title, copy, date, and coordinates you want to show.
+          </div>
+          <div class="rule">
+            <strong>2. Upload photos</strong>
+            Put images in <code>images/your-folder/</code> and name them <code>1.jpg</code>, <code>2.jpg</code>, <code>3.jpg</code>, or list exact paths in the CSV.
+          </div>
+          <div class="rule">
+            <strong>3. Refresh</strong>
+            The HTML file fetches the CSV directly, so your next refresh shows the new content layout.
+          </div>
+        </div>
+      </article>
+
+      <aside class="map-card">
+        <div class="map-meta">
+          <span>Story map</span>
+          <span><strong id="entryCount">0</strong> entries</span>
+        </div>
+        <div id="map" aria-label="Map of entries"></div>
+      </aside>
     </section>
 
-    <section class="feed-pane">
-      <div class="feed-topbar">
-        <div class="label">Linked map + story stream</div>
-        <div class="count"><span id="postCount">0</span> stops</div>
-      </div>
-      <div id="feed">
-        <div id="feedInner" class="feed-inner"></div>
-      </div>
-    </section>
-  </div>
+    <section id="entries" class="entries" aria-live="polite"></section>
+  </main>
 
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -618,256 +403,171 @@
   ></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-    const DEMO_CSV = `id,city,country,lat,lng,title,date,body,galleryFolder,imageCount,imageExt,imageAlt,themeColor
-1,Chicago,USA,41.8781,-87.6298,"Lakeshore beginning","Jun 1, 2026","The city opens with wind, water, and a skyline that feels like possibility. You start here with a little courage and a lot of curiosity.\n\nEvery stop on the route is part memory, part movement. There is room for softness, celebration, and becoming.","images/chicago",3,"jpg","Chicago gallery","#078D70"
-2,Mexico City,Mexico,19.4326,-99.1332,"Color in motion","Jun 5, 2026","The pace shifts. Rooftops glow, conversation stretches longer, and the city feels layered in the best way.\n\nYou notice how each place adds texture to the route. Different streets. Different energy. Same sense of momentum.","images/mexicocity",3,"jpg","Mexico City gallery","#26CEAA"
-3,Madrid,Spain,40.4168,-3.7038,"Late light","Jun 12, 2026","Plazas soften the evening and everything slows just enough to be felt. The route is no longer abstract. It becomes personal.\n\nBy now the journey is full of contrast: loud and quiet, public and private, planned and accidental.","images/madrid",3,"jpg","Madrid gallery","#7BADE2"
-4,Berlin,Germany,52.52,13.4050,"Edges and openness","Jun 18, 2026","Berlin sharpens the mood. It is minimal, direct, and alive with reinvention.\n\nThe map keeps extending, but the route behind you matters too. That is part of the point.","images/berlin",3,"jpg","Berlin gallery","#5049CC"`;
+    const CSV_URL = "content.csv";
+    const DEFAULT_ACCENT = "#cf5c36";
+    const FALLBACK_IMAGE_EXT = "jpg";
 
-    const CSV_FIELDS = {
-      id: 'id',
-      city: 'city',
-      country: 'country',
-      lat: 'lat',
-      lng: 'lng',
-      title: 'title',
-      date: 'date',
-      body: 'body',
-      galleryFolder: 'galleryFolder',
-      imageCount: 'imageCount',
-      imageExt: 'imageExt',
-      imageAlt: 'imageAlt',
-      themeColor: 'themeColor'
-    };
+    const entryCount = document.getElementById("entryCount");
+    const entriesEl = document.getElementById("entries");
 
-    const qs = new URLSearchParams(window.location.search);
-    const csvUrl = qs.get('csv') || 'feed.csv';
-    const feed = document.getElementById('feed');
-    const feedInner = document.getElementById('feedInner');
-    const postCount = document.getElementById('postCount');
-
-    const DEFAULT_COLORS = ['#078D70', '#26CEAA', '#98E8C1', '#FFFFFF', '#7BADE2', '#5049CC', '#3D1A78'];
-
-    const map = L.map('map', {
-      worldCopyJump: true,
+    const map = L.map("map", {
+      scrollWheelZoom: true,
       zoomControl: false,
       attributionControl: false,
-      scrollWheelZoom: true,
-      minZoom: 2,
-      maxZoom: 10
-    }).setView([20, 10], 2.2);
+      worldCopyJump: true
+    }).setView([25, 5], 2);
 
-    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+    L.control.zoom({ position: "bottomleft" }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
       maxZoom: 19
     }).addTo(map);
 
-    let posts = [];
+    let entries = [];
     let markers = [];
-    let activeIndex = 0;
-    let planeMarker = null;
-    let pastRouteLine = null;
-    let futureRouteLine = null;
     let observer = null;
-    let galleryIntervals = [];
-    let routeAnimationToken = 0;
+    let galleryTimers = [];
+    let activeIndex = 0;
 
-    function normalizeColor(value, index) {
-      const fallback = DEFAULT_COLORS[index % DEFAULT_COLORS.length];
-      const raw = String(value || '').trim();
-      if (!raw) return fallback;
-      if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
-      return fallback;
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    function buildGalleryImages(folder, count, ext = 'jpg') {
-      const cleanFolder = String(folder || '').trim().replace(/\\+/g, '/').replace(/\/+$/, '');
-      const total = parseInt(count, 10);
-      if (!cleanFolder || !Number.isFinite(total) || total < 1) return [];
-      const cleanExt = String(ext || 'jpg').trim().replace(/^\./, '');
-      return Array.from({ length: total }, (_, i) => `${cleanFolder}/${i + 1}.${cleanExt}`);
+    function splitParagraphs(value) {
+      return String(value || "")
+        .split(/\n\s*\n/)
+        .map(part => part.trim())
+        .filter(Boolean);
     }
 
-    function parseCsvData(csvText) {
-      const cleanedCsv = String(csvText || '')
-        .replace(/^\uFEFF/, '')
-        .replace(/\r\n/g, '\n')
-        .trim();
+    function normalizeColor(value) {
+      const raw = String(value || "").trim();
+      return /^#[0-9a-fA-F]{6}$/.test(raw) ? raw : DEFAULT_ACCENT;
+    }
 
-      const result = Papa.parse(cleanedCsv, {
-        header: true,
-        skipEmptyLines: 'greedy',
-        dynamicTyping: false
-      });
+    function buildNumberedImages(folder, count, ext) {
+      const cleanFolder = String(folder || "").trim().replace(/\/+$/, "");
+      const total = parseInt(String(count || "").trim(), 10);
+      const cleanExt = String(ext || FALLBACK_IMAGE_EXT).trim().replace(/^\./, "");
 
-      if (result.errors && result.errors.length) {
-        console.warn('CSV parse errors:', result.errors);
+      if (!cleanFolder || !Number.isFinite(total) || total < 1) {
+        return [];
       }
+
+      return Array.from({ length: total }, (_, index) => `${cleanFolder}/${index + 1}.${cleanExt}`);
+    }
+
+    function parseExplicitImages(value) {
+      return String(value || "")
+        .split("|")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function parseCsv(text) {
+      const result = Papa.parse(String(text || "").replace(/^\uFEFF/, ""), {
+        header: true,
+        skipEmptyLines: "greedy"
+      });
 
       return (result.data || [])
         .map((row, index) => {
-          const galleryFolder = String(row[CSV_FIELDS.galleryFolder] || '').trim();
-          const imageCount = String(row[CSV_FIELDS.imageCount] || '').trim();
-          const imageExt = String(row[CSV_FIELDS.imageExt] || 'jpg').trim() || 'jpg';
-          const lat = parseFloat(String(row[CSV_FIELDS.lat] || '').trim());
-          const lng = parseFloat(String(row[CSV_FIELDS.lng] || '').trim());
+          const lat = Number.parseFloat(String(row.lat || "").trim());
+          const lng = Number.parseFloat(String(row.lng || "").trim());
 
           if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-            console.warn('Skipping row with invalid coordinates:', row);
             return null;
           }
 
+          const explicitImages = parseExplicitImages(row.images);
+          const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
+
           return {
-            id: String(row[CSV_FIELDS.id] || index + 1).trim(),
-            city: String(row[CSV_FIELDS.city] || `City ${index + 1}`).trim(),
-            country: String(row[CSV_FIELDS.country] || '').trim(),
+            id: String(row.id || index + 1).trim(),
+            slug: String(row.slug || `entry-${index + 1}`).trim(),
+            title: String(row.title || `Entry ${index + 1}`).trim(),
+            city: String(row.city || "").trim(),
+            country: String(row.country || "").trim(),
+            date: String(row.date || "").trim(),
             lat,
             lng,
-            title: String(row[CSV_FIELDS.title] || row[CSV_FIELDS.city] || `Post ${index + 1}`).trim(),
-            date: String(row[CSV_FIELDS.date] || '').trim(),
-            body: String(row[CSV_FIELDS.body] || '').trim(),
-            galleryFolder,
-            imageCount: parseInt(imageCount, 10) || 0,
-            imageExt,
-            images: buildGalleryImages(galleryFolder, imageCount, imageExt),
-            imageAlt: String(row[CSV_FIELDS.imageAlt] || row[CSV_FIELDS.title] || '').trim(),
-            themeColor: normalizeColor(row[CSV_FIELDS.themeColor], index)
+            summary: String(row.summary || "").trim(),
+            story: String(row.story || "").trim(),
+            images: explicitImages.length ? explicitImages : folderImages,
+            imageAlt: String(row.image_alt || row.title || "").trim(),
+            accent: normalizeColor(row.accent)
           };
         })
         .filter(Boolean);
     }
 
-    async function loadPosts() {
-      try {
-        const response = await fetch(csvUrl, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Failed to load CSV: ${response.status}`);
-        posts = parseCsvData(await response.text());
-      } catch (error) {
-        console.warn('Falling back to demo CSV.', error);
-        posts = parseCsvData(DEMO_CSV);
-      }
-
-      if (!posts.length) {
-        feedInner.innerHTML = '<div class="post"><div class="post-card"><div class="post-content"><h2>No valid posts found</h2><p class="post-summary">Provide a feed.csv with city, lat, lng, galleryFolder, and imageCount fields.</p></div></div></div>';
-        return;
-      }
-
-      renderFeed();
-      renderMap();
-      setupObserver();
-      setupGalleries();
-      postCount.textContent = String(posts.length);
-      setTimeout(() => activatePost(0, false), 180);
+    function renderEmptyState() {
+      entriesEl.innerHTML = `
+        <div class="empty-state">
+          <h2>No valid entries found.</h2>
+          <p>Check <code>content.csv</code> and make sure each row includes at least <code>title</code>, <code>lat</code>, and <code>lng</code>.</p>
+        </div>
+      `;
+      entryCount.textContent = "0";
     }
 
-    function renderFeed() {
-      feedInner.innerHTML = posts.map((post, index) => {
-        const style = `style="--accentStripe: linear-gradient(180deg, ${escapeAttr(post.themeColor)}, rgba(255,255,255,0.15));"`;
-        const summary = getSummary(post.body);
-        const paragraphs = splitParagraphs(post.body);
+    function renderEntries() {
+      entriesEl.innerHTML = entries.map((entry, index) => {
+        const place = [entry.city, entry.country].filter(Boolean).join(", ");
+        const paragraphs = splitParagraphs(entry.story);
+        const gallery = entry.images.length ? `
+          <div class="gallery" data-gallery="${index}">
+            ${entry.images.map((src, imageIndex) => `
+              <div class="gallery-slide${imageIndex === 0 ? " active" : ""}" data-slide="${imageIndex}">
+                <img src="${escapeHtml(src)}" alt="${escapeHtml(entry.imageAlt || entry.title)}" loading="lazy">
+              </div>
+            `).join("")}
+            ${entry.images.length > 1 ? `
+              <div class="gallery-dots">
+                ${entry.images.map((_, imageIndex) => `
+                  <span class="${imageIndex === 0 ? "active" : ""}" data-dot="${imageIndex}"></span>
+                `).join("")}
+              </div>
+            ` : ""}
+          </div>
+        ` : `
+          <div class="gallery">
+            <div class="gallery-empty">Upload images to show this story stop</div>
+          </div>
+        `;
 
         return `
-          <article class="post" id="post-${escapeAttr(post.id)}" data-index="${index}">
-            <div class="post-card" ${style}>
-              ${buildGalleryMarkup(post, index)}
-              <div class="post-content">
-                <div class="meta-row">
-                  <span class="chip city">${escapeHtml(post.city)}${post.country ? `, ${escapeHtml(post.country)}` : ''}</span>
-                  ${post.date ? `<span class="chip date">${escapeHtml(post.date)}</span>` : ''}
+          <article class="entry" id="${escapeHtml(entry.slug)}" data-index="${index}" style="--accent:${escapeHtml(entry.accent)}; --accent-soft:${escapeHtml(entry.accent)}22;">
+            <div class="entry-top">
+              ${gallery}
+              <div class="entry-copy">
+                <div class="meta">
+                  ${place ? `<span class="pill">${escapeHtml(place)}</span>` : ""}
+                  ${entry.date ? `<span class="pill">${escapeHtml(entry.date)}</span>` : ""}
                 </div>
-                <h2>${escapeHtml(post.title)}</h2>
-                <p class="post-summary">${escapeHtml(summary)}</p>
-                <div class="post-actions">
-                  <button class="action-button story-toggle" type="button" data-open-label="Read more" data-close-label="Close story" aria-expanded="false">
-                    <span>Read more</span>
-                    <span aria-hidden="true">↓</span>
-                  </button>
+                <h2>${escapeHtml(entry.title)}</h2>
+                ${entry.summary ? `<p class="summary">${escapeHtml(entry.summary)}</p>` : ""}
+                <div class="story">
+                  ${paragraphs.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join("")}
                 </div>
-                <div class="story-drawer" hidden>
-                  <div class="story-drawer-inner">
-                    ${paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}
-                  </div>
-                </div>
+                <button class="jump" type="button" data-jump="${index}">Focus on map</button>
               </div>
             </div>
           </article>
         `;
-      }).join('');
+      }).join("");
 
-      bindStoryToggles();
-    }
-
-    function buildGalleryMarkup(post, index) {
-      if (!post.images.length) {
-        return `<div class="post-media"><div class="empty-media">Story stop ${index + 1}</div></div>`;
-      }
-
-      const slides = post.images.map((src, imgIndex) => `
-        <div class="gallery-slide${imgIndex === 0 ? ' active' : ''}" data-gallery-slide="${imgIndex}">
-          <img loading="lazy" src="${escapeAttr(src)}" alt="${escapeAttr(post.imageAlt || post.title)}">
-        </div>
-      `).join('');
-
-      const dots = post.images.map((_, imgIndex) => `
-        <span class="gallery-dot${imgIndex === 0 ? ' active' : ''}" data-gallery-dot="${imgIndex}"></span>
-      `).join('');
-
-      return `
-        <div class="post-media" data-gallery data-gallery-count="${post.images.length}">
-          <div class="gallery-track">${slides}</div>
-          <div class="gallery-gradient"></div>
-          ${post.images.length > 1 ? `<div class="gallery-dots">${dots}</div>` : ''}
-        </div>
-      `;
-    }
-
-    function setupGalleries() {
-      galleryIntervals.forEach(clearInterval);
-      galleryIntervals = [];
-
-      document.querySelectorAll('[data-gallery]').forEach(gallery => {
-        const slides = Array.from(gallery.querySelectorAll('[data-gallery-slide]'));
-        const dots = Array.from(gallery.querySelectorAll('[data-gallery-dot]'));
-        if (slides.length <= 1) return;
-
-        let current = 0;
-        const activate = next => {
-          current = next % slides.length;
-          slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
-          dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
-        };
-
-        const interval = setInterval(() => {
-          activate(current + 1);
-        }, 3200);
-
-        gallery.addEventListener('mouseenter', () => clearInterval(interval), { once: true });
-        galleryIntervals.push(interval);
-      });
-    }
-
-    function bindStoryToggles() {
-      document.querySelectorAll('.story-toggle').forEach(button => {
-        button.addEventListener('click', () => {
-          const drawer = button.closest('.post-content')?.querySelector('.story-drawer');
-          if (!drawer) return;
-          const isOpen = drawer.classList.contains('open');
-
-          drawer.hidden = false;
-          drawer.classList.toggle('open', !isOpen);
-          if (isOpen) {
-            setTimeout(() => { drawer.hidden = true; }, 340);
-          }
-
-          button.setAttribute('aria-expanded', String(!isOpen));
-          button.querySelector('span').textContent = !isOpen
-            ? button.dataset.closeLabel || 'Close story'
-            : button.dataset.openLabel || 'Read more';
-
-          const icon = button.querySelectorAll('span')[1];
-          if (icon) icon.textContent = !isOpen ? '↑' : '↓';
+      document.querySelectorAll("[data-jump]").forEach(button => {
+        button.addEventListener("click", () => {
+          const index = Number.parseInt(button.dataset.jump, 10);
+          activateEntry(index, true);
+          map.flyTo([entries[index].lat, entries[index].lng], Math.max(map.getZoom(), 4), { duration: 1.2 });
         });
       });
     }
@@ -875,262 +575,120 @@
     function renderMap() {
       markers.forEach(marker => marker.remove());
       markers = [];
-      if (pastRouteLine) pastRouteLine.remove();
-      if (futureRouteLine) futureRouteLine.remove();
-      if (planeMarker) planeMarker.remove();
 
       const bounds = [];
 
-      posts.forEach((post, index) => {
-        const icon = L.divIcon({
-          className: 'custom-pin-icon',
-          html: `
-            <div class="pin-wrap" style="--pinColor:${escapeAttr(post.themeColor)}">
-              <button class="pin" type="button" aria-label="Jump to ${escapeAttr(post.city)}"></button>
-              <div class="city-label">${escapeHtml(post.city)}</div>
-            </div>
-          `,
-          iconSize: [18, 18],
-          iconAnchor: [9, 9]
-        });
+      entries.forEach((entry, index) => {
+        const marker = L.marker([entry.lat, entry.lng], {
+          icon: L.divIcon({
+            className: "",
+            html: `<div class="pin" style="--pin-color:${escapeHtml(entry.accent)}"></div>`,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+          })
+        }).addTo(map);
 
-        const marker = L.marker([post.lat, post.lng], { icon, keyboard: false }).addTo(map);
-        marker.on('click', () => scrollToPost(index));
-        marker.bindPopup(`<strong>${escapeHtml(post.city)}</strong><br>${escapeHtml(post.title)}`);
-        marker.__index = index;
+        marker.on("click", () => activateEntry(index, true));
+        marker.bindPopup(`<strong>${escapeHtml(entry.title)}</strong><br>${escapeHtml([entry.city, entry.country].filter(Boolean).join(", "))}`);
         markers.push(marker);
-        bounds.push([post.lat, post.lng]);
+        bounds.push([entry.lat, entry.lng]);
       });
 
       if (bounds.length === 1) {
-        map.setView(bounds[0], 4);
-      } else {
-        map.fitBounds(bounds, { padding: [70, 70], maxZoom: 4 });
+        map.setView(bounds[0], 5);
+      } else if (bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 5 });
+      }
+    }
+
+    function activateEntry(index, scrollIntoView) {
+      activeIndex = index;
+      document.querySelectorAll(".entry").forEach((entry, entryIndex) => {
+        entry.classList.toggle("active", entryIndex === index);
+      });
+
+      const marker = markers[index];
+      if (marker) {
+        marker.openPopup();
       }
 
-      planeMarker = L.marker([posts[0].lat, posts[0].lng], {
-        interactive: false,
-        icon: L.divIcon({
-          className: 'plane-marker',
-          html: `
-            <div class="plane-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
-                <path d="M58.4 30.6L37.2 24.7L28.9 6.9C28.5 6.1 27.7 5.6 26.7 5.6C25.7 5.6 24.8 6.2 24.4 7.1L20 20.8L8.3 17.9C6.7 17.5 5.2 18.3 4.6 19.8L4.1 21C3.5 22.6 4.3 24.3 5.9 24.9L17 29.1L5.8 33.4C4.3 33.9 3.5 35.7 4.1 37.2L4.6 38.5C5.2 39.9 6.7 40.8 8.3 40.4L20 37.5L24.4 51.2C24.8 52.2 25.7 52.8 26.7 52.8C27.8 52.8 28.6 52.3 29 51.4L37.2 33.7L58.4 27.8C60.2 27.3 61.4 25.7 61.4 23.9C61.4 22.1 60.2 20.5 58.4 20L37.2 14.1" fill="#FFFFFF" opacity="0.98"/>
-                <path d="M58.4 30.6L37.2 24.7L28.9 6.9C28.5 6.1 27.7 5.6 26.7 5.6C25.7 5.6 24.8 6.2 24.4 7.1L20 20.8L8.3 17.9C6.7 17.5 5.2 18.3 4.6 19.8L4.1 21C3.5 22.6 4.3 24.3 5.9 24.9L17 29.1L5.8 33.4C4.3 33.9 3.5 35.7 4.1 37.2L4.6 38.5C5.2 39.9 6.7 40.8 8.3 40.4L20 37.5L24.4 51.2C24.8 52.2 25.7 52.8 26.7 52.8C27.8 52.8 28.6 52.3 29 51.4L37.2 33.7L58.4 27.8C60.2 27.3 61.4 25.7 61.4 23.9C61.4 22.1 60.2 20.5 58.4 20L37.2 14.1" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          `,
-          iconSize: [32, 32],
-          iconAnchor: [16, 16]
-        })
-      }).addTo(map);
-
-      updateRouteLines(0);
-      setPlane(posts[0].lat, posts[0].lng, 0);
+      if (scrollIntoView) {
+        document.querySelector(`.entry[data-index="${index}"]`)?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
     }
 
     function setupObserver() {
-      if (observer) observer.disconnect();
-      const sections = Array.from(document.querySelectorAll('.post'));
+      observer?.disconnect();
 
-      observer = new IntersectionObserver(entries => {
-        const visible = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (!visible.length) return;
-        const index = Number(visible[0].target.dataset.index);
-        if (!Number.isNaN(index)) activatePost(index, true);
-      }, {
-        root: feed,
-        threshold: [0.25, 0.45, 0.65, 0.82],
-        rootMargin: '-10% 0px -20% 0px'
-      });
+      observer = new IntersectionObserver((items) => {
+        const visible = items
+          .filter(item => item.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
-      sections.forEach(section => observer.observe(section));
-    }
-
-    function scrollToPost(index) {
-      const target = document.querySelector(`.post[data-index="${index}"]`);
-      if (!target) return;
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      activatePost(index, true);
-    }
-
-    function activatePost(index, panMap = true) {
-      if (!posts[index] || index === activeIndex && planeMarker) {
-        highlightActive(index);
-        updateRouteLines(index);
-        return;
-      }
-
-      const previousIndex = activeIndex;
-      activeIndex = index;
-      highlightActive(index);
-      updateRouteLines(index);
-
-      if (panMap) {
-        map.flyTo([posts[index].lat, posts[index].lng], idealZoom(index), {
-          duration: 1.4,
-          easeLinearity: 0.2
-        });
-      }
-
-      if (!planeMarker) return;
-      if (index === 0 && previousIndex === 0) {
-        setPlane(posts[0].lat, posts[0].lng, 0);
-        return;
-      }
-
-      animatePlane(previousIndex, index);
-    }
-
-    function highlightActive(index) {
-      document.querySelectorAll('.post').forEach(el => {
-        el.classList.toggle('active', Number(el.dataset.index) === index);
-      });
-
-      markers.forEach((marker, i) => {
-        const el = marker.getElement();
-        if (!el) return;
-        const wrap = el.querySelector('.pin-wrap');
-        if (wrap) wrap.classList.toggle('active', i === index);
-      });
-    }
-
-    function idealZoom() {
-      if (window.innerWidth < 980) return 3.2;
-      return Math.min(4.8, Math.max(3.2, map.getZoom()));
-    }
-
-    function updateRouteLines(index) {
-      const pastCoords = posts.slice(0, index + 1).map(post => [post.lat, post.lng]);
-      const futureCoords = posts.slice(index).map(post => [post.lat, post.lng]);
-
-      if (pastRouteLine) pastRouteLine.remove();
-      if (futureRouteLine) futureRouteLine.remove();
-
-      if (pastCoords.length > 1) {
-        pastRouteLine = L.polyline(pastCoords, {
-          color: 'rgba(255,255,255,0.34)',
-          weight: 3.5,
-          opacity: 1,
-          interactive: false,
-          className: 'route-line-past',
-          smoothFactor: 1.2,
-          lineCap: 'round',
-          lineJoin: 'round'
-        }).addTo(map);
-      }
-
-      if (futureCoords.length > 1) {
-        futureRouteLine = L.polyline(futureCoords, {
-          color: 'rgba(255,255,255,0.18)',
-          weight: 3,
-          opacity: 1,
-          dashArray: '10 12',
-          interactive: false,
-          className: 'route-line-future',
-          smoothFactor: 1.2,
-          lineCap: 'round',
-          lineJoin: 'round'
-        }).addTo(map);
-      }
-    }
-
-    function animatePlane(fromIndex, toIndex) {
-      const from = posts[fromIndex];
-      const to = posts[toIndex];
-      if (!from || !to || !planeMarker) return;
-
-      routeAnimationToken += 1;
-      const token = routeAnimationToken;
-      const start = performance.now();
-      const duration = 1150;
-      const bearing = getBearing(from.lat, from.lng, to.lat, to.lng);
-
-      function frame(now) {
-        if (token !== routeAnimationToken) return;
-        const t = Math.min(1, (now - start) / duration);
-        const eased = easeInOutCubic(t);
-        const lat = lerp(from.lat, to.lat, eased);
-        const lng = interpolateLng(from.lng, to.lng, eased);
-        setPlane(lat, lng, bearing);
-        if (t < 1) {
-          requestAnimationFrame(frame);
-        } else {
-          setPlane(to.lat, to.lng, bearing);
+        if (!visible) {
+          return;
         }
+
+        const index = Number.parseInt(visible.target.dataset.index, 10);
+        if (!Number.isNaN(index) && index !== activeIndex) {
+          activateEntry(index, false);
+        }
+      }, {
+        threshold: [0.35, 0.6, 0.85]
+      });
+
+      document.querySelectorAll(".entry").forEach(entry => observer.observe(entry));
+    }
+
+    function setupGalleries() {
+      galleryTimers.forEach(clearInterval);
+      galleryTimers = [];
+
+      document.querySelectorAll("[data-gallery]").forEach(gallery => {
+        const slides = Array.from(gallery.querySelectorAll("[data-slide]"));
+        const dots = Array.from(gallery.querySelectorAll("[data-dot]"));
+
+        if (slides.length < 2) {
+          return;
+        }
+
+        let current = 0;
+        const show = next => {
+          current = next % slides.length;
+          slides.forEach((slide, index) => slide.classList.toggle("active", index === current));
+          dots.forEach((dot, index) => dot.classList.toggle("active", index === current));
+        };
+
+        const timer = window.setInterval(() => show(current + 1), 3200);
+        galleryTimers.push(timer);
+      });
+    }
+
+    async function loadEntries() {
+      const response = await fetch(CSV_URL, { cache: "no-store" });
+      const text = await response.text();
+      entries = parseCsv(text);
+
+      if (!entries.length) {
+        renderEmptyState();
+        return;
       }
 
-      requestAnimationFrame(frame);
+      entryCount.textContent = String(entries.length);
+      renderEntries();
+      renderMap();
+      setupObserver();
+      setupGalleries();
+      activateEntry(0, false);
     }
 
-    function setPlane(lat, lng, bearingDeg) {
-      planeMarker.setLatLng([lat, lng]);
-      const el = planeMarker.getElement();
-      if (!el) return;
-      const plane = el.querySelector('.plane-icon');
-      if (plane) plane.style.transform = `rotate(${bearingDeg}deg)`;
-    }
-
-    function getBearing(lat1, lon1, lat2, lon2) {
-      const toRad = deg => deg * Math.PI / 180;
-      const toDeg = rad => rad * 180 / Math.PI;
-      const φ1 = toRad(lat1);
-      const φ2 = toRad(lat2);
-      const λ1 = toRad(lon1);
-      const λ2 = toRad(lon2);
-      const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
-      const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
-      return toDeg(Math.atan2(y, x)) + 90;
-    }
-
-    function interpolateLng(fromLng, toLng, t) {
-      let delta = toLng - fromLng;
-      if (Math.abs(delta) > 180) {
-        delta -= Math.sign(delta) * 360;
-      }
-      let value = fromLng + delta * t;
-      if (value > 180) value -= 360;
-      if (value < -180) value += 360;
-      return value;
-    }
-
-    function lerp(a, b, t) {
-      return a + (b - a) * t;
-    }
-
-    function easeInOutCubic(t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    function splitParagraphs(text) {
-      return String(text || '')
-        .split(/\n\s*\n/)
-        .map(p => p.trim())
-        .filter(Boolean);
-    }
-
-    function getSummary(text) {
-      const plain = String(text || '').replace(/\s+/g, ' ').trim();
-      if (plain.length <= 180) return plain;
-      return `${plain.slice(0, 177).trim()}...`;
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    }
-
-    function escapeAttr(value) {
-      return escapeHtml(value).replace(/`/g, '&#96;');
-    }
-
-    loadPosts();
+    loadEntries().catch(error => {
+      console.error(error);
+      renderEmptyState();
+    });
   </script>
 </body>
 </html>
