@@ -1,0 +1,36 @@
+id,city,country,lat,lng,title,date,body,galleryFolder,imageCount,imageExt,imageAlt,themeColor
+1,Chicago,USA,41.8818,-87.6232,Home,2025-05-01,"The morning light in the Castro feels like a soft opening scene. Cafés spill onto the sidewalk, murals catch the sun, and the neighborhood carries both history and ease.
+
+There is something grounding about starting here. The city feels layered in memory, pride, and movement, with each block offering another small discovery.
+
+This stop is about arrival, orientation, and letting the journey begin with intention.",,,,,#078D70
+2,Seoul,South Korea,37.566,126.9784,Color After Dark,2026-06-05,"Mexico City shifts beautifully at night. The energy gets louder, warmer, and more cinematic as lights reflect across historic streets and crowded plazas.
+
+There is boldness here, but also intimacy. Between music, conversation, and late dinners, the city invites you to stay present a little longer.
+
+This chapter of the route leans into movement, nightlife, and the thrill of stepping into something larger than yourself.",,,,,#26CEAA
+3,Busan,South Korea,35.10278,129.04028,"Sea, Sound, and Celebration",2026-06-10,"Rio moves with rhythm. Beaches, hills, and neighborhoods all seem connected by music and motion, creating a place that feels impossible to experience passively.
+
+Even quiet moments here feel charged. A walk along the water or a sunset view from above turns into part of the story almost instantly.
+
+This stop adds joy and release to the map, a point where the journey opens up and becomes more expansive.",,,,,#98E8C1
+4,Tokyo,Japan,35.6895,139.6917,Ni-Chome Party,2026-06-15,"Madrid has a way of making a big city feel personal. Long afternoons, broad boulevards, and tucked-away bars make each day feel structured and spontaneous at the same time.
+
+The atmosphere is social without feeling rushed. You can settle into the city and still feel the excitement of being somewhere new.
+
+Here the route slows just enough to take everything in, giving the story a more reflective middle.",,,,,#FFFFFF
+5,Hong Kong,SAR China,22.302711,114.177216,Stopover,2026-06-20,"Berlin feels built for reinvention. Creative spaces, memorials, nightlife, and open conversations all coexist in a way that makes the city feel both serious and alive.
+
+There is texture everywhere, from architecture to street art to the communities that shape each district differently.
+
+This part of the journey introduces contrast: history and futurism, calm and intensity, structure and freedom.",,,,,#7BADE2
+6,Amsterdam,Netherlands,52.377956,4.89707,Pride Fest,2026-06-25,"Athens feels sunlit in every sense. The city is full of warm stone, layered history, and neighborhoods that blend everyday life with monumental views.
+
+The contrast between ancient landmarks and contemporary life creates a feeling of continuity rather than distance.
+
+This stop gives the route a sense of depth, reminding you that identity and belonging are always part of a much longer story.",images/amsterdam,1,jpeg,,#5049CC
+7,Antwerp,Belgium,51.260197,4.402771,Ride the Parade,2026-07-01,"Tokyo can feel infinite, yet it is full of quiet moments hiding inside the scale. A train ride, a side street, or a small late-night meal can become the memory that lasts longest.
+
+The city’s precision is balanced by wonder. It is visually dense, emotionally subtle, and constantly rewarding to notice closely.
+
+This chapter pushes the route outward, carrying the story into a brighter and more futuristic register.",,,,,#3D1A78
