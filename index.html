@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root {
+      --bg: #081016;
+      --panel: rgba(10, 16, 24, 0.84);
+      --panel-strong: rgba(8, 12, 20, 0.95);
+      --text: #f6fbff;
+      --muted: rgba(246, 251, 255, 0.74);
+      --line: rgba(255,255,255,0.08);
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --gm-1: #078D70;
+      --gm-2: #26CEAA;
+      --gm-3: #98E8C1;
+      --gm-4: #FFFFFF;
+      --gm-5: #7BADE2;
+      --gm-6: #5049CC;
+      --gm-7: #3D1A78;
+      --flag-gradient: linear-gradient(90deg,
+        #078D70 0%,
+        #26CEAA 16%,
+        #98E8C1 32%,
+        #FFFFFF 48%,
+        #7BADE2 64%,
+        #5049CC 82%,
+        #3D1A78 100%);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      background:
+        radial-gradient(circle at 12% 20%, rgba(38,206,170,.12), transparent 0 28%),
+        radial-gradient(circle at 88% 18%, rgba(80,73,204,.16), transparent 0 30%),
+        radial-gradient(circle at 60% 80%, rgba(123,173,226,.10), transparent 0 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 47% 53%;
+      height: 100vh;
+      width: 100%;
+      position: relative;
+    }
+
+    .map-pane {
+      position: relative;
+      border-right: 1px solid var(--line);
+      overflow: hidden;
+      background: rgba(8,12,20,.8);
+    }
+
+    #map {
+      position: absolute;
+      inset: 0;
+      filter: saturate(1.04) contrast(1.02);
+    }
+
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 450;
+      background:
+        linear-gradient(180deg, rgba(8,12,20,.46), transparent 22%, transparent 74%, rgba(8,12,20,.66)),
+        radial-gradient(circle at top left, rgba(255,255,255,.05), transparent 36%);
+    }
+
+    .brand {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      z-index: 500;
+      max-width: min(520px, calc(100% - 48px));
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--flag-gradient);
+      box-shadow: 0 0 20px rgba(123,173,226,.35);
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 58px);
+      line-height: .96;
+      letter-spacing: -.045em;
+      font-weight: 800;
+      text-wrap: balance;
+    }
+
+    .brand p {
+      margin: 0;
+      max-width: 470px;
+      color: var(--muted);
+      font-size: clamp(14px, 1.35vw, 16px);
+      line-height: 1.55;
+    }
+
+    .feed-pane {
+      position: relative;
+      overflow: hidden;
+      background: rgba(8,8,16,.38);
+    }
+
+    .feed-topbar {
+      position: absolute;
+      inset: 0 0 auto 0;
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: linear-gradient(180deg, rgba(8,8,16,0.96), rgba(8,8,16,0.72), transparent);
+      pointer-events: none;
+    }
+
+    .feed-topbar .label,
+    .feed-topbar .count {
+      pointer-events: auto;
+    }
+
+    .feed-topbar .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      color: rgba(255,255,255,.7);
+    }
+
+    .feed-topbar .count {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+    }
+
+    #feed {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      padding: 84px 24px 50vh;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.15) transparent;
+    }
+
+    #feed::-webkit-scrollbar { width: 10px; }
+    #feed::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.14);
+      border-radius: 999px;
+    }
+
+    .feed-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .post {
+      position: relative;
+      min-height: min(88vh, 980px);
+      display: grid;
+      align-items: center;
+      padding: 24px 0;
+      scroll-margin-top: 84px;
+    }
+
+    .post-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      transition: transform .24s ease, border-color .24s ease, background .24s ease;
+    }
+
+    .post-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      background: var(--accentStripe, var(--flag-gradient));
+      opacity: .96;
+      z-index: 2;
+    }
+
+    .post-media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .gallery-track {
+      position: absolute;
+      inset: 0;
+    }
+
+    .gallery-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .9s ease;
+      pointer-events: none;
+    }
+
+    .gallery-slide.active {
+      opacity: 1;
+    }
+
+    .gallery-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-gradient {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 38%;
+      background: linear-gradient(180deg, transparent, rgba(8,12,20,.64));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .gallery-dots {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      z-index: 3;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gallery-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.26);
+      border: 1px solid rgba(255,255,255,.28);
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .gallery-dot.active {
+      background: #fff;
+      transform: scale(1.15);
+    }
+
+    .post-content {
+      padding: 22px 24px 24px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 12px;
+      color: rgba(255,255,255,.84);
+    }
+
+    .chip.city::before {
+      content: "📍";
+      font-size: 12px;
+    }
+
+    .chip.date::before {
+      content: "✦";
+      font-size: 11px;
+      opacity: .75;
+    }
+
+    .post h2 {
+      margin: 0 0 12px;
+      font-size: clamp(26px, 3.1vw, 42px);
+      line-height: 1;
+      letter-spacing: -.04em;
+      text-wrap: balance;
+    }
+
+    .post-summary {
+      margin: 0;
+      font-size: clamp(15px, 1.35vw, 18px);
+      line-height: 1.68;
+      color: rgba(255,255,255,.84);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-actions {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .action-button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      padding: 12px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      font: inherit;
+    }
+
+    .action-button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    .story-drawer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .34s ease, opacity .24s ease, margin-top .24s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .story-drawer.open {
+      opacity: 1;
+      margin-top: 18px;
+      max-height: 360px;
+    }
+
+    .story-drawer-inner {
+      max-height: 360px;
+      overflow-y: auto;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 18px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.16) transparent;
+    }
+
+    .story-drawer-inner::-webkit-scrollbar { width: 8px; }
+    .story-drawer-inner::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.16);
+      border-radius: 999px;
+    }
+
+    .story-drawer-inner p {
+      margin: 0 0 1em;
+      font-size: 15px;
+      line-height: 1.72;
+      color: rgba(255,255,255,.86);
+      white-space: pre-wrap;
+    }
+
+    .story-drawer-inner p:last-child { margin-bottom: 0; }
+
+    .active .post-card {
+      border-color: rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.05));
+      transform: translateY(-2px);
+    }
+
+    .empty-media {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.45);
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.08), transparent 0 30%),
+        linear-gradient(135deg, rgba(7,141,112,.22), rgba(61,26,120,.22));
+    }
+
+    .leaflet-container {
+      background: #0b131b;
+      font: inherit;
+    }
+
+    .pin-wrap {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      transform: translate(-50%, -50%);
+    }
+
+    .pin {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: white;
+      border: 3px solid var(--pinColor, #26CEAA);
+      box-shadow: 0 0 0 5px rgba(255,255,255,0.06), 0 12px 24px rgba(0,0,0,.28);
+      cursor: pointer;
+      position: relative;
+      transition: transform .16s ease, box-shadow .16s ease;
+      pointer-events: auto;
+    }
+
+    .pin::after {
+      content: "";
+      position: absolute;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--pinColor, #26CEAA);
+    }
+
+    .pin:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.08), 0 14px 28px rgba(0,0,0,.34);
+    }
+
+    .pin-wrap.active .pin {
+      transform: scale(1.16);
+      border-width: 4px;
+      box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 14px 30px rgba(0,0,0,.38);
+    }
+
+    .city-label {
+      position: absolute;
+      left: 50%;
+      top: -14px;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(8,12,20,.92);
+      border: 1px solid rgba(255,255,255,.08);
+      color: white;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: opacity .18s ease;
+      pointer-events: none;
+    }
+
+    .pin-wrap:hover .city-label,
+    .pin-wrap.active .city-label {
+      opacity: 1;
+    }
+
+    .plane-icon {
+      width: 32px;
+      height: 32px;
+      transform-origin: center center;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.34));
+      transition: transform .08s linear;
+      opacity: .96;
+    }
+
+    .plane-icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .route-line-past {
+      stroke: rgba(255,255,255,0.36);
+      stroke-width: 3.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.16));
+    }
+
+    .route-line-future {
+      stroke: rgba(255,255,255,0.18);
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 10 12;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.14));
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+      background: rgba(13,13,23,.96);
+      color: white;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+    }
+
+    .leaflet-popup-content {
+      margin: 12px 14px;
+      font-family: inherit;
+    }
+
+    @media (max-width: 980px) {
+      html, body { overflow: auto; }
+      .shell {
+        display: block;
+        min-height: 100vh;
+        height: auto;
+      }
+      .map-pane {
+        position: sticky;
+        top: 0;
+        height: 46vh;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .feed-pane {
+        min-height: 54vh;
+      }
+      #feed {
+        position: relative;
+        inset: auto;
+        height: auto;
+        overflow: visible;
+        padding-bottom: 22vh;
+      }
+      .post { min-height: auto; }
+      .brand h1 { font-size: clamp(28px, 6vw, 42px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="map-pane">
+      <div id="map"></div>
+      <div class="map-overlay"></div>
+      <div class="brand">
+        <div class="eyebrow">The Journey</div>
+        <h1>A queer route, traced in motion.</h1>
+        <p>
+          Scroll the story feed to move the plane between cities. Click any pin to jump straight to that stop.
+        </p>
+      </div>
+    </section>
+
+    <section class="feed-pane">
+      <div class="feed-topbar">
+        <div class="label">Linked map + story stream</div>
+        <div class="count"><span id="postCount">0</span> stops</div>
+      </div>
+      <div id="feed">
+        <div id="feedInner" class="feed-inner"></div>
+      </div>
+    </section>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>
+    const DEMO_CSV = `id,city,country,lat,lng,title,date,body,galleryFolder,imageCount,imageExt,imageAlt,themeColor
+1,Chicago,USA,41.8781,-87.6298,"Lakeshore beginning","Jun 1, 2026","The city opens with wind, water, and a skyline that feels like possibility. You start here with a little courage and a lot of curiosity.\n\nEvery stop on the route is part memory, part movement. There is room for softness, celebration, and becoming.","images/chicago",3,"jpg","Chicago gallery","#078D70"
+2,Mexico City,Mexico,19.4326,-99.1332,"Color in motion","Jun 5, 2026","The pace shifts. Rooftops glow, conversation stretches longer, and the city feels layered in the best way.\n\nYou notice how each place adds texture to the route. Different streets. Different energy. Same sense of momentum.","images/mexicocity",3,"jpg","Mexico City gallery","#26CEAA"
+3,Madrid,Spain,40.4168,-3.7038,"Late light","Jun 12, 2026","Plazas soften the evening and everything slows just enough to be felt. The route is no longer abstract. It becomes personal.\n\nBy now the journey is full of contrast: loud and quiet, public and private, planned and accidental.","images/madrid",3,"jpg","Madrid gallery","#7BADE2"
+4,Berlin,Germany,52.52,13.4050,"Edges and openness","Jun 18, 2026","Berlin sharpens the mood. It is minimal, direct, and alive with reinvention.\n\nThe map keeps extending, but the route behind you matters too. That is part of the point.","images/berlin",3,"jpg","Berlin gallery","#5049CC"`;
+
+    const CSV_FIELDS = {
+      id: 'id',
+      city: 'city',
+      country: 'country',
+      lat: 'lat',
+      lng: 'lng',
+      title: 'title',
+      date: 'date',
+      body: 'body',
+      galleryFolder: 'galleryFolder',
+      imageCount: 'imageCount',
+      imageExt: 'imageExt',
+      imageAlt: 'imageAlt',
+      themeColor: 'themeColor'
+    };
+
+    const qs = new URLSearchParams(window.location.search);
+    const csvUrl = qs.get('csv') || 'feed.csv';
+    const feed = document.getElementById('feed');
+    const feedInner = document.getElementById('feedInner');
+    const postCount = document.getElementById('postCount');
+
+    const DEFAULT_COLORS = ['#078D70', '#26CEAA', '#98E8C1', '#FFFFFF', '#7BADE2', '#5049CC', '#3D1A78'];
+
+    const map = L.map('map', {
+      worldCopyJump: true,
+      zoomControl: false,
+      attributionControl: false,
+      scrollWheelZoom: true,
+      minZoom: 2,
+      maxZoom: 10
+    }).setView([20, 10], 2.2);
+
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    let posts = [];
+    let markers = [];
+    let activeIndex = 0;
+    let planeMarker = null;
+    let pastRouteLine = null;
+    let futureRouteLine = null;
+    let observer = null;
+    let galleryIntervals = [];
+    let routeAnimationToken = 0;
+
+    function normalizeColor(value, index) {
+      const fallback = DEFAULT_COLORS[index % DEFAULT_COLORS.length];
+      const raw = String(value || '').trim();
+      if (!raw) return fallback;
+      if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+      return fallback;
+    }
+
+    function buildGalleryImages(folder, count, ext = 'jpg') {
+      const cleanFolder = String(folder || '').trim().replace(/\\+/g, '/').replace(/\/+$/, '');
+      const total = parseInt(count, 10);
+      if (!cleanFolder || !Number.isFinite(total) || total < 1) return [];
+      const cleanExt = String(ext || 'jpg').trim().replace(/^\./, '');
+      return Array.from({ length: total }, (_, i) => `${cleanFolder}/${i + 1}.${cleanExt}`);
+    }
+
+    function parseCsvData(csvText) {
+      const cleanedCsv = String(csvText || '')
+        .replace(/^\uFEFF/, '')
+        .replace(/\r\n/g, '\n')
+        .trim();
+
+      const result = Papa.parse(cleanedCsv, {
+        header: true,
+        skipEmptyLines: 'greedy',
+        dynamicTyping: false
+      });
+
+      if (result.errors && result.errors.length) {
+        console.warn('CSV parse errors:', result.errors);
+      }
+
+      return (result.data || [])
+        .map((row, index) => {
+          const galleryFolder = String(row[CSV_FIELDS.galleryFolder] || '').trim();
+          const imageCount = String(row[CSV_FIELDS.imageCount] || '').trim();
+          const imageExt = String(row[CSV_FIELDS.imageExt] || 'jpg').trim() || 'jpg';
+          const lat = parseFloat(String(row[CSV_FIELDS.lat] || '').trim());
+          const lng = parseFloat(String(row[CSV_FIELDS.lng] || '').trim());
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            console.warn('Skipping row with invalid coordinates:', row);
+            return null;
+          }
+
+          return {
+            id: String(row[CSV_FIELDS.id] || index + 1).trim(),
+            city: String(row[CSV_FIELDS.city] || `City ${index + 1}`).trim(),
+            country: String(row[CSV_FIELDS.country] || '').trim(),
+            lat,
+            lng,
+            title: String(row[CSV_FIELDS.title] || row[CSV_FIELDS.city] || `Post ${index + 1}`).trim(),
+            date: String(row[CSV_FIELDS.date] || '').trim(),
+            body: String(row[CSV_FIELDS.body] || '').trim(),
+            galleryFolder,
+            imageCount: parseInt(imageCount, 10) || 0,
+            imageExt,
+            images: buildGalleryImages(galleryFolder, imageCount, imageExt),
+            imageAlt: String(row[CSV_FIELDS.imageAlt] || row[CSV_FIELDS.title] || '').trim(),
+            themeColor: normalizeColor(row[CSV_FIELDS.themeColor], index)
+          };
+        })
+        .filter(Boolean);
+    }
+
+    async function loadPosts() {
+      try {
+        const response = await fetch(csvUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Failed to load CSV: ${response.status}`);
+        posts = parseCsvData(await response.text());
+      } catch (error) {
+        console.warn('Falling back to demo CSV.', error);
+        posts = parseCsvData(DEMO_CSV);
+      }
+
+      if (!posts.length) {
+        feedInner.innerHTML = '<div class="post"><div class="post-card"><div class="post-content"><h2>No valid posts found</h2><p class="post-summary">Provide a feed.csv with city, lat, lng, galleryFolder, and imageCount fields.</p></div></div></div>';
+        return;
+      }
+
+      renderFeed();
+      renderMap();
+      setupObserver();
+      setupGalleries();
+      postCount.textContent = String(posts.length);
+      setTimeout(() => activatePost(0, false), 180);
+    }
+
+    function renderFeed() {
+      feedInner.innerHTML = posts.map((post, index) => {
+        const style = `style="--accentStripe: linear-gradient(180deg, ${escapeAttr(post.themeColor)}, rgba(255,255,255,0.15));"`;
+        const summary = getSummary(post.body);
+        const paragraphs = splitParagraphs(post.body);
+
+        return `
+          <article class="post" id="post-${escapeAttr(post.id)}" data-index="${index}">
+            <div class="post-card" ${style}>
+              ${buildGalleryMarkup(post, index)}
+              <div class="post-content">
+                <div class="meta-row">
+                  <span class="chip city">${escapeHtml(post.city)}${post.country ? `, ${escapeHtml(post.country)}` : ''}</span>
+                  ${post.date ? `<span class="chip date">${escapeHtml(post.date)}</span>` : ''}
+                </div>
+                <h2>${escapeHtml(post.title)}</h2>
+                <p class="post-summary">${escapeHtml(summary)}</p>
+                <div class="post-actions">
+                  <button class="action-button story-toggle" type="button" data-open-label="Read more" data-close-label="Close story" aria-expanded="false">
+                    <span>Read more</span>
+                    <span aria-hidden="true">↓</span>
+                  </button>
+                </div>
+                <div class="story-drawer" hidden>
+                  <div class="story-drawer-inner">
+                    ${paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      bindStoryToggles();
+    }
+
+    function buildGalleryMarkup(post, index) {
+      if (!post.images.length) {
+        return `<div class="post-media"><div class="empty-media">Story stop ${index + 1}</div></div>`;
+      }
+
+      const slides = post.images.map((src, imgIndex) => `
+        <div class="gallery-slide${imgIndex === 0 ? ' active' : ''}" data-gallery-slide="${imgIndex}">
+          <img loading="lazy" src="${escapeAttr(src)}" alt="${escapeAttr(post.imageAlt || post.title)}">
+        </div>
+      `).join('');
+
+      const dots = post.images.map((_, imgIndex) => `
+        <span class="gallery-dot${imgIndex === 0 ? ' active' : ''}" data-gallery-dot="${imgIndex}"></span>
+      `).join('');
+
+      return `
+        <div class="post-media" data-gallery data-gallery-count="${post.images.length}">
+          <div class="gallery-track">${slides}</div>
+          <div class="gallery-gradient"></div>
+          ${post.images.length > 1 ? `<div class="gallery-dots">${dots}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function setupGalleries() {
+      galleryIntervals.forEach(clearInterval);
+      galleryIntervals = [];
+
+      document.querySelectorAll('[data-gallery]').forEach(gallery => {
+        const slides = Array.from(gallery.querySelectorAll('[data-gallery-slide]'));
+        const dots = Array.from(gallery.querySelectorAll('[data-gallery-dot]'));
+        if (slides.length <= 1) return;
+
+        let current = 0;
+        const activate = next => {
+          current = next % slides.length;
+          slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+          dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+        };
+
+        const interval = setInterval(() => {
+          activate(current + 1);
+        }, 3200);
+
+        gallery.addEventListener('mouseenter', () => clearInterval(interval), { once: true });
+        galleryIntervals.push(interval);
+      });
+    }
+
+    function bindStoryToggles() {
+      document.querySelectorAll('.story-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+          const drawer = button.closest('.post-content')?.querySelector('.story-drawer');
+          if (!drawer) return;
+          const isOpen = drawer.classList.contains('open');
+
+          drawer.hidden = false;
+          drawer.classList.toggle('open', !isOpen);
+          if (isOpen) {
+            setTimeout(() => { drawer.hidden = true; }, 340);
+          }
+
+          button.setAttribute('aria-expanded', String(!isOpen));
+          button.querySelector('span').textContent = !isOpen
+            ? button.dataset.closeLabel || 'Close story'
+            : button.dataset.openLabel || 'Read more';
+
+          const icon = button.querySelectorAll('span')[1];
+          if (icon) icon.textContent = !isOpen ? '↑' : '↓';
+        });
+      });
+    }
+
+    function renderMap() {
+      markers.forEach(marker => marker.remove());
+      markers = [];
+      if (pastRouteLine) pastRouteLine.remove();
+      if (futureRouteLine) futureRouteLine.remove();
+      if (planeMarker) planeMarker.remove();
+
+      const bounds = [];
+
+      posts.forEach((post, index) => {
+        const icon = L.divIcon({
+          className: 'custom-pin-icon',
+          html: `
+            <div class="pin-wrap" style="--pinColor:${escapeAttr(post.themeColor)}">
+              <button class="pin" type="button" aria-label="Jump to ${escapeAttr(post.city)}"></button>
+              <div class="city-label">${escapeHtml(post.city)}</div>
+            </div>
+          `,
+          iconSize: [18, 18],
+          iconAnchor: [9, 9]
+        });
+
+        const marker = L.marker([post.lat, post.lng], { icon, keyboard: false }).addTo(map);
+        marker.on('click', () => scrollToPost(index));
+        marker.bindPopup(`<strong>${escapeHtml(post.city)}</strong><br>${escapeHtml(post.title)}`);
+        marker.__index = index;
+        markers.push(marker);
+        bounds.push([post.lat, post.lng]);
+      });
+
+      if (bounds.length === 1) {
+        map.setView(bounds[0], 4);
+      } else {
+        map.fitBounds(bounds, { padding: [70, 70], maxZoom: 4 });
+      }
+
+      planeMarker = L.marker([posts[0].lat, posts[0].lng], {
+        interactive: false,
+        icon: L.divIcon({
+          className: 'plane-marker',
+          html: `
+            <div class="plane-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <path d="M58.4 30.6L37.2 24.7L28.9 6.9C28.5 6.1 27.7 5.6 26.7 5.6C25.7 5.6 24.8 6.2 24.4 7.1L20 20.8L8.3 17.9C6.7 17.5 5.2 18.3 4.6 19.8L4.1 21C3.5 22.6 4.3 24.3 5.9 24.9L17 29.1L5.8 33.4C4.3 33.9 3.5 35.7 4.1 37.2L4.6 38.5C5.2 39.9 6.7 40.8 8.3 40.4L20 37.5L24.4 51.2C24.8 52.2 25.7 52.8 26.7 52.8C27.8 52.8 28.6 52.3 29 51.4L37.2 33.7L58.4 27.8C60.2 27.3 61.4 25.7 61.4 23.9C61.4 22.1 60.2 20.5 58.4 20L37.2 14.1" fill="#FFFFFF" opacity="0.98"/>
+                <path d="M58.4 30.6L37.2 24.7L28.9 6.9C28.5 6.1 27.7 5.6 26.7 5.6C25.7 5.6 24.8 6.2 24.4 7.1L20 20.8L8.3 17.9C6.7 17.5 5.2 18.3 4.6 19.8L4.1 21C3.5 22.6 4.3 24.3 5.9 24.9L17 29.1L5.8 33.4C4.3 33.9 3.5 35.7 4.1 37.2L4.6 38.5C5.2 39.9 6.7 40.8 8.3 40.4L20 37.5L24.4 51.2C24.8 52.2 25.7 52.8 26.7 52.8C27.8 52.8 28.6 52.3 29 51.4L37.2 33.7L58.4 27.8C60.2 27.3 61.4 25.7 61.4 23.9C61.4 22.1 60.2 20.5 58.4 20L37.2 14.1" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          `,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        })
+      }).addTo(map);
+
+      updateRouteLines(0);
+      setPlane(posts[0].lat, posts[0].lng, 0);
+    }
+
+    function setupObserver() {
+      if (observer) observer.disconnect();
+      const sections = Array.from(document.querySelectorAll('.post'));
+
+      observer = new IntersectionObserver(entries => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (!visible.length) return;
+        const index = Number(visible[0].target.dataset.index);
+        if (!Number.isNaN(index)) activatePost(index, true);
+      }, {
+        root: feed,
+        threshold: [0.25, 0.45, 0.65, 0.82],
+        rootMargin: '-10% 0px -20% 0px'
+      });
+
+      sections.forEach(section => observer.observe(section));
+    }
+
+    function scrollToPost(index) {
+      const target = document.querySelector(`.post[data-index="${index}"]`);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      activatePost(index, true);
+    }
+
+    function activatePost(index, panMap = true) {
+      if (!posts[index] || index === activeIndex && planeMarker) {
+        highlightActive(index);
+        updateRouteLines(index);
+        return;
+      }
+
+      const previousIndex = activeIndex;
+      activeIndex = index;
+      highlightActive(index);
+      updateRouteLines(index);
+
+      if (panMap) {
+        map.flyTo([posts[index].lat, posts[index].lng], idealZoom(index), {
+          duration: 1.4,
+          easeLinearity: 0.2
+        });
+      }
+
+      if (!planeMarker) return;
+      if (index === 0 && previousIndex === 0) {
+        setPlane(posts[0].lat, posts[0].lng, 0);
+        return;
+      }
+
+      animatePlane(previousIndex, index);
+    }
+
+    function highlightActive(index) {
+      document.querySelectorAll('.post').forEach(el => {
+        el.classList.toggle('active', Number(el.dataset.index) === index);
+      });
+
+      markers.forEach((marker, i) => {
+        const el = marker.getElement();
+        if (!el) return;
+        const wrap = el.querySelector('.pin-wrap');
+        if (wrap) wrap.classList.toggle('active', i === index);
+      });
+    }
+
+    function idealZoom() {
+      if (window.innerWidth < 980) return 3.2;
+      return Math.min(4.8, Math.max(3.2, map.getZoom()));
+    }
+
+    function updateRouteLines(index) {
+      const pastCoords = posts.slice(0, index + 1).map(post => [post.lat, post.lng]);
+      const futureCoords = posts.slice(index).map(post => [post.lat, post.lng]);
+
+      if (pastRouteLine) pastRouteLine.remove();
+      if (futureRouteLine) futureRouteLine.remove();
+
+      if (pastCoords.length > 1) {
+        pastRouteLine = L.polyline(pastCoords, {
+          color: 'rgba(255,255,255,0.34)',
+          weight: 3.5,
+          opacity: 1,
+          interactive: false,
+          className: 'route-line-past',
+          smoothFactor: 1.2,
+          lineCap: 'round',
+          lineJoin: 'round'
+        }).addTo(map);
+      }
+
+      if (futureCoords.length > 1) {
+        futureRouteLine = L.polyline(futureCoords, {
+          color: 'rgba(255,255,255,0.18)',
+          weight: 3,
+          opacity: 1,
+          dashArray: '10 12',
+          interactive: false,
+          className: 'route-line-future',
+          smoothFactor: 1.2,
+          lineCap: 'round',
+          lineJoin: 'round'
+        }).addTo(map);
+      }
+    }
+
+    function animatePlane(fromIndex, toIndex) {
+      const from = posts[fromIndex];
+      const to = posts[toIndex];
+      if (!from || !to || !planeMarker) return;
+
+      routeAnimationToken += 1;
+      const token = routeAnimationToken;
+      const start = performance.now();
+      const duration = 1150;
+      const bearing = getBearing(from.lat, from.lng, to.lat, to.lng);
+
+      function frame(now) {
+        if (token !== routeAnimationToken) return;
+        const t = Math.min(1, (now - start) / duration);
+        const eased = easeInOutCubic(t);
+        const lat = lerp(from.lat, to.lat, eased);
+        const lng = interpolateLng(from.lng, to.lng, eased);
+        setPlane(lat, lng, bearing);
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          setPlane(to.lat, to.lng, bearing);
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function setPlane(lat, lng, bearingDeg) {
+      planeMarker.setLatLng([lat, lng]);
+      const el = planeMarker.getElement();
+      if (!el) return;
+      const plane = el.querySelector('.plane-icon');
+      if (plane) plane.style.transform = `rotate(${bearingDeg}deg)`;
+    }
+
+    function getBearing(lat1, lon1, lat2, lon2) {
+      const toRad = deg => deg * Math.PI / 180;
+      const toDeg = rad => rad * 180 / Math.PI;
+      const φ1 = toRad(lat1);
+      const φ2 = toRad(lat2);
+      const λ1 = toRad(lon1);
+      const λ2 = toRad(lon2);
+      const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+      const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+      return toDeg(Math.atan2(y, x)) + 90;
+    }
+
+    function interpolateLng(fromLng, toLng, t) {
+      let delta = toLng - fromLng;
+      if (Math.abs(delta) > 180) {
+        delta -= Math.sign(delta) * 360;
+      }
+      let value = fromLng + delta * t;
+      if (value > 180) value -= 360;
+      if (value < -180) value += 360;
+      return value;
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function splitParagraphs(text) {
+      return String(text || '')
+        .split(/\n\s*\n/)
+        .map(p => p.trim())
+        .filter(Boolean);
+    }
+
+    function getSummary(text) {
+      const plain = String(text || '').replace(/\s+/g, ' ').trim();
+      if (plain.length <= 180) return plain;
+      return `${plain.slice(0, 177).trim()}...`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, '&#96;');
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>
