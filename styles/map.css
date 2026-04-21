@@ -296,19 +296,6 @@ body,
   margin-bottom: 18px;
 }
 
-.city-top-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(220px, .9fr);
-  gap: 14px;
-  align-items: start;
-}
-
-.city-top-main,
-.city-top-side {
-  display: grid;
-  gap: 10px;
-}
-
 .city-ratings {
   display: flex;
   gap: 10px;
@@ -384,6 +371,11 @@ body,
 
 .city-description-wide {
   width: 100%;
+}
+
+.city-list-stack {
+  display: grid;
+  gap: 10px;
 }
 
 .city-list-block {
@@ -699,10 +691,6 @@ body,
   }
 
   .visit-detail {
-    grid-template-columns: 1fr;
-  }
-
-  .city-top-layout {
     grid-template-columns: 1fr;
   }
 

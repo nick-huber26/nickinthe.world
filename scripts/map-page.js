@@ -157,19 +157,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="city-subtitle">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
               </div>
               <div class="city-top-copy">
-                <div class="city-top-layout">
-                  <div class="city-top-main">
-                    ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
+                ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
+                <div class="city-list-stack">
+                  <div class="city-list-block">
+                    <div class="city-list-title">Neighborhoods</div>
+                    ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
                   </div>
-                  <div class="city-top-side">
-                    <div class="city-list-block">
-                      <div class="city-list-title">Neighborhoods</div>
-                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
-                    </div>
-                    <div class="city-list-block">
-                      <div class="city-list-title">Spaces</div>
-                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
-                    </div>
+                  <div class="city-list-block">
+                    <div class="city-list-title">Spaces</div>
+                    ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
                   </div>
                 </div>
                 ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
