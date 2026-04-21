@@ -71,6 +71,12 @@
     };
   }
 
+  function parseRatingValue(value) {
+    const numeric = parseFloat(String(value || "").trim());
+    if (!Number.isFinite(numeric)) return null;
+    return Math.min(5, Math.max(0, numeric));
+  }
+
   function normalizeColor(value, index) {
     const trimmed = String(value || "").trim();
     if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
@@ -164,6 +170,7 @@
     const metadataByCity = new Map();
     rawRows.forEach(({ row, cityKey, rowIndex }) => {
       const existing = metadataByCity.get(cityKey) || {};
+      const cityDescription = String(row.city_description || "").trim();
       metadataByCity.set(cityKey, {
         cityKey,
         city: String(row.city || existing.city || "").trim(),
@@ -175,6 +182,7 @@
         imageExt: String(row.image_ext || existing.imageExt || "jpg").trim(),
         imageAlt: String(row.image_alt || existing.imageAlt || "").trim(),
         accent: String(row.accent || existing.accent || "").trim(),
+        cityDescription: cityDescription || existing.cityDescription || "",
         firstSeen: existing.firstSeen ?? rowIndex
       });
     });
@@ -193,6 +201,10 @@
         );
         const summary = String(row.summary || "").trim();
         const story = String(row.story || "").trim();
+        const legalProtections = parseRatingValue(row.legal_protections);
+        const foreignerFriendliness = parseRatingValue(row.foreigner_friendliness);
+        const neighborhoods = parsePipeList(row.neighborhoods);
+        const spaces = parsePipeList(row.spaces);
 
         if (!parsedDate || !Number.isFinite(lat) || !Number.isFinite(lng)) {
           return null;
@@ -211,7 +223,11 @@
           title: String(row.title || "").trim(),
           summary,
           story,
-          connectionIds: parsePipeList(row.connection_tags),
+          legalProtections,
+          foreignerFriendliness,
+          neighborhoods,
+          spaces,
+          connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || meta.imageAlt || row.title || row.city || "").trim(),
           themeColor: normalizeColor(row.accent || meta.accent, rowIndex),
@@ -230,6 +246,26 @@
       if (existing) {
         existing.visits.push(visit);
         existing.firstVisitIndex = Math.min(existing.firstVisitIndex, visitIndex);
+        if (Number.isFinite(visit.legalProtections)) {
+          existing.legalProtectionsTotal += visit.legalProtections;
+          existing.legalProtectionsCount += 1;
+        }
+        if (Number.isFinite(visit.foreignerFriendliness)) {
+          existing.foreignerFriendlinessTotal += visit.foreignerFriendliness;
+          existing.foreignerFriendlinessCount += 1;
+        }
+        visit.neighborhoods.forEach(item => {
+          if (!existing.neighborhoodLookup.has(item.toLowerCase())) {
+            existing.neighborhoodLookup.add(item.toLowerCase());
+            existing.neighborhoods.push(item);
+          }
+        });
+        visit.spaces.forEach(item => {
+          if (!existing.spaceLookup.has(item.toLowerCase())) {
+            existing.spaceLookup.add(item.toLowerCase());
+            existing.spaces.push(item);
+          }
+        });
         return;
       }
 
@@ -240,11 +276,29 @@
         lat: visit.lat,
         lng: visit.lng,
         themeColor: visit.themeColor,
+        cityDescription: String(metadataByCity.get(visit.cityKey)?.cityDescription || "").trim(),
         visits: [visit],
         firstVisitIndex: visitIndex,
+        legalProtectionsTotal: Number.isFinite(visit.legalProtections) ? visit.legalProtections : 0,
+        legalProtectionsCount: Number.isFinite(visit.legalProtections) ? 1 : 0,
+        foreignerFriendlinessTotal: Number.isFinite(visit.foreignerFriendliness) ? visit.foreignerFriendliness : 0,
+        foreignerFriendlinessCount: Number.isFinite(visit.foreignerFriendliness) ? 1 : 0,
+        neighborhoods: [...visit.neighborhoods],
+        neighborhoodLookup: new Set(visit.neighborhoods.map(item => item.toLowerCase())),
+        spaces: [...visit.spaces],
+        spaceLookup: new Set(visit.spaces.map(item => item.toLowerCase())),
         relatedConnectionIds: [],
         relatedConnections: []
       });
+    });
+
+    groupedCities.forEach(city => {
+      city.legalProtectionsAverage = city.legalProtectionsCount
+        ? city.legalProtectionsTotal / city.legalProtectionsCount
+        : null;
+      city.foreignerFriendlinessAverage = city.foreignerFriendlinessCount
+        ? city.foreignerFriendlinessTotal / city.foreignerFriendlinessCount
+        : null;
     });
 
     return {
@@ -416,6 +470,7 @@
     buildNumberedImages,
     splitParagraphs,
     parseDateValue,
+    parseRatingValue,
     normalizeColor,
     buildCityKey,
     resolveCsvSource,

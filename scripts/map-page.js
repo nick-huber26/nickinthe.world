@@ -14,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const cityCountEl = document.getElementById("cityCount");
   const countryCountEl = document.getElementById("countryCount");
 
+  function buildRatingScale(label, value) {
+    if (!Number.isFinite(value)) return "";
+    const filledCount = Math.max(0, Math.min(5, Math.round(value)));
+    return `
+      <div class="rating-block">
+        <div class="rating-label">${SiteData.escapeHtml(label)}</div>
+        <div class="rating-bubbles" aria-label="${SiteData.escapeAttr(`${label}: ${value.toFixed(1)} out of 5`)}">
+          ${Array.from({ length: 5 }, (_, index) => `
+            <span class="rating-bubble${index < filledCount ? " filled" : ""}"></span>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
   const map = L.map("map", {
     worldCopyJump: true,
     zoomControl: false,
@@ -108,18 +123,56 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderFeed() {
     feedInner.innerHTML = cities.map(city => {
       const cityStyle = `style="--accentStripe: linear-gradient(180deg, ${SiteData.escapeAttr(city.themeColor)}, rgba(255,255,255,0.14));"`;
+      const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
+      const relatedConnections = city.relatedConnections || [];
+      const ratingMarkup = [
+        buildRatingScale("Legal protections", city.legalProtectionsAverage),
+        buildRatingScale("Foreigner friendliness", city.foreignerFriendlinessAverage)
+      ].filter(Boolean).join("");
+      const neighborhoodsMarkup = (city.neighborhoods || [])
+        .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)
+        .join("");
+      const spacesMarkup = (city.spaces || [])
+        .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)
+        .join("");
       return `
         <article class="city-card" id="city-${SiteData.escapeAttr(city.key)}" data-city-key="${SiteData.escapeAttr(city.key)}">
           <div class="post-card" ${cityStyle}>
             <div class="post-content">
-              <div class="meta-row">
-                <span class="chip city">${SiteData.escapeHtml(city.city)}${city.country ? `, ${SiteData.escapeHtml(city.country)}` : ""}</span>
-                <span class="chip count">${city.visits.length} ${city.visits.length === 1 ? "visit" : "visits"}</span>
+              <div class="meta-row meta-row-scroll">
+                <span class="chip city meta-chip-fixed">${SiteData.escapeHtml(city.city)}${city.country ? `, ${SiteData.escapeHtml(city.country)}` : ""}</span>
+                <span class="chip count meta-chip-fixed">${city.visits.length} ${city.visits.length === 1 ? "visit" : "visits"}</span>
+                ${relatedConnections.length ? `
+                  <div class="city-connection-row" aria-label="Related connections">
+                    ${relatedConnections.map(connection => `
+                      <a class="relation-chip" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
+                    `).join("")}
+                  </div>
+                ` : ""}
               </div>
               <div class="city-title-row">
                 <h2>${SiteData.escapeHtml(city.city)}</h2>
                 <div class="city-subtitle">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
               </div>
+              <div class="city-top-copy">
+                <div class="city-top-layout">
+                  <div class="city-top-main">
+                    ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
+                  </div>
+                  <div class="city-top-side">
+                    <div class="city-list-block">
+                      <div class="city-list-title">Neighborhoods</div>
+                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
+                    </div>
+                    <div class="city-list-block">
+                      <div class="city-list-title">Spaces</div>
+                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
+                    </div>
+                  </div>
+                </div>
+                ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
+              </div>
+              <div class="visit-section-heading">Visits</div>
               <div class="visit-chip-row">
                 ${city.visits.map(visit => `
                   <button class="visit-chip" type="button" data-visit-id="${SiteData.escapeAttr(visit.id)}">
@@ -165,29 +218,27 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!detail || !visit) return;
 
       const paragraphs = SiteData.splitParagraphs(visit.story);
-      const relatedConnections = visit.relatedConnections || city.relatedConnections || [];
+      const descriptionMarkup = paragraphs.length
+        ? paragraphs.map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("")
+        : `<p class="visit-field-empty">Add a description for this visit in the <code>story</code> column.</p>`;
+      const summaryMarkup = visit.summary
+        ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
+        : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;
 
       detail.innerHTML = `
         <div class="visit-copy">
-          ${visit.title ? `<h3 class="visit-title">${SiteData.escapeHtml(visit.title)}</h3>` : ""}
-          ${visit.summary ? `<p class="summary">${SiteData.escapeHtml(visit.summary)}</p>` : ""}
-          ${relatedConnections.length ? `
-            <div class="relation-block">
-              <div class="relation-label">Related Connections</div>
-              <div class="relation-chip-row">
-                ${relatedConnections.map(connection => `
-                  <a class="relation-chip" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
-                `).join("")}
-              </div>
+          <div class="visit-section-label">Visit details</div>
+          ${visit.title ? `<h3 class="visit-title">${SiteData.escapeHtml(visit.title)}</h3>` : `<h3 class="visit-title">${SiteData.escapeHtml(visit.dateLabel)}</h3>`}
+          <div class="visit-fields">
+            <div class="visit-field">
+              <div class="visit-field-label">Description</div>
+              <div class="visit-field-body story-panel">${descriptionMarkup}</div>
             </div>
-          ` : `
-            <div class="empty-state">Add connection IDs in the <code>connection_tags</code> column, or reference this city from <code>data/connections.csv</code> to surface linked tags here.</div>
-          `}
-          ${visit.summary || paragraphs.length ? `
-            <div class="story-panel">
-              ${paragraphs.map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("")}
+            <div class="visit-field">
+              <div class="visit-field-label">Summary</div>
+              <div class="visit-field-body summary-panel">${summaryMarkup}</div>
             </div>
-          ` : `<p class="empty-copy"></p>`}
+          </div>
         </div>
         <div class="gallery-shell" data-gallery-key="${SiteData.escapeAttr(city.key)}">
           ${SiteData.buildGalleryMarkup(city.key, visit.images, visit.imageAlt || city.city, `${city.city}<br>${visit.dateLabel}`)}
