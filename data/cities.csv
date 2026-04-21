@@ -6,7 +6,7 @@ id,city_key,title,city,country,date,lat,lng,summary,story,connection_tags,image_
 5,jeju-island-south-korea,,Jeju Island,South Korea,2025-07-11,33.4996,126.5312,,,,images/jeju-island,,,,,
 6,tokyo-japan,,Tokyo,Japan,2025-07-26,35.6762,139.6503,,,design-language,images/tokyo,,,,,
 7,hong-kong-hong-kong,,Hong Kong,Hong Kong,2025-07-30,22.3193,114.1694,,,,images/hong-kong,,,,,
-8,amsterdam-netherlands,,Amsterdam,Netherlands,2025-08-01,52.3676,4.9041,,,global-queer-community,images/amsterdam,1,jpeg,,,
+8,amsterdam-netherlands,,Amsterdam,Netherlands,2025-08-01,52.3676,4.9041,,,global-queer-community,images/amsterdam,1,jpeg,images/amsterdam/1.jpeg,,#26CEAA
 9,antwerp-belgium,,Antwerp,Belgium,2025-08-06,51.2194,4.4025,,,,images/antwerp,,,,,
 10,barcelona-spain,,Barcelona,Spain,2025-08-11,41.3874,2.1686,,,design-language,images/barcelona,,,,,
 11,maastricht-netherlands,,Maastricht,Netherlands,2025-08-15,50.8514,5.6900,,,,images/maastricht,,,,,

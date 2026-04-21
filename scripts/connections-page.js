@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const qs = new URLSearchParams(window.location.search);
 
   const grid = document.getElementById("connectionsGrid");
-  const sourceIndicatorEl = document.getElementById("connectionsSource");
   const connectionCountEl = document.getElementById("connectionCount");
   const gridGalleryIntervals = new Map();
   let activeExpandedId = "";
@@ -39,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     connections = parsedConnections;
     connectionByAnchor = new Map(connections.map(connection => [connection.anchorId, connection]));
-    sourceIndicatorEl.textContent = `${citiesResult.sourceLabel} | ${connectionsResult.sourceLabel}`;
     connectionCountEl.textContent = String(connections.length);
 
     renderGrid();

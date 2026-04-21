@@ -3,7 +3,7 @@ global-queer-community,global-queer-community,Global Queer Community,How queer s
 
 This connection is a place to collect the people, venues, gestures, and aesthetics that created that feeling across multiple destinations.
 
-Use the `city_tags` column when a connection belongs to a city broadly, and use `connection_tags` on individual visit rows when the tie is specific to one stay rather than the entire city history.",community|identity|nightlife,chicago-usa|seoul-south-korea|amsterdam-netherlands,,,,images/amsterdam/1.jpeg,People gathering in Amsterdam,#26CEAA
+Use the city_tags column when a connection belongs to a city broadly, and use connection_tags on individual visit rows when the tie is specific to one stay rather than the entire city history.",community|identity|nightlife,chicago-usa|seoul-south-korea|amsterdam-netherlands,,,,images/amsterdam/1.jpeg,People gathering in Amsterdam,#26CEAA
 design-language,design-language,Design Language Across Cities,How signage, architecture, and visual systems shaped a city's personality.,"Some places tell their story through typefaces, transit systems, posters, storefronts, and the tiny design decisions that make a street feel unmistakably local.
 
 This connection lets you group those observations into one thread even if the cities are far apart.
