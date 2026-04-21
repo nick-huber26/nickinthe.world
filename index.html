@@ -357,25 +357,8 @@
       min-width: 0;
     }
 
-    .visit-headline {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .visit-date {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      font-size: 12px;
-      color: rgba(255,255,255,.84);
-    }
-
     .visit-title {
-      margin: 0;
+      margin: 0 0 12px;
       font-size: 23px;
       line-height: 1.15;
       letter-spacing: -.03em;
@@ -478,7 +461,6 @@
       position: relative;
       width: 18px;
       height: 18px;
-      transform: translate(-50%, -50%);
     }
 
     .pin {
@@ -655,7 +637,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-    const GAY_MEN_FLAG_COLORS = ["#078D70", "#26CEAA", "#98E8C1", "#FFFFFF", "#7BADE2", "#5049CC", "#3D1A78"];
+    const GAY_MEN_FLAG_COLORS = ["#078D70", "#26CEAA", "#98E8C1", "#5EC8E5", "#7BADE2", "#5049CC", "#3D1A78"];
     const CSV_FIELDS = {
       id: "id",
       slug: "slug",
@@ -916,7 +898,7 @@
       renderFeed();
       renderMap();
       bindTopNav();
-      cityCountEl.textContent = String(cities.length);
+      cityCountEl.textContent = String(new Set(cities.map(city => city.key)).size);
       countryCountEl.textContent = String(new Set(cities.map(city => city.country).filter(Boolean)).size);
       setActiveVisit(0, { scrollCard: false, animatePlane: false, flyMap: false });
     }
@@ -987,9 +969,6 @@
 
         detail.innerHTML = `
           <div class="visit-copy">
-            <div class="visit-headline">
-              <span class="visit-date">${escapeHtml(visit.dateLabel)}</span>
-            </div>
             <h3 class="visit-title">${escapeHtml(title)}</h3>
             ${visit.summary ? `<p class="summary">${escapeHtml(visit.summary)}</p>` : ""}
             ${hasCopy ? `
