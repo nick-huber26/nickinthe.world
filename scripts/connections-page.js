@@ -75,29 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <h2>${SiteData.escapeHtml(connection.title)}</h2>
             <p>${SiteData.escapeHtml(connection.summary || "Add a summary in data/connections.csv to preview this connection.")}</p>
+            <div class="connection-card-body">
+              ${SiteData.splitParagraphs(connection.body).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add longer body copy in the <code>body</code> column of data/connections.csv.</p>'}
+            </div>
             <button class="connection-button" type="button" data-toggle-connection="${SiteData.escapeAttr(connection.anchorId)}">Read more</button>
-          </div>
-          <div class="connection-card-body">
-            <div class="gallery-shell overlay-gallery" data-gallery-key="${SiteData.escapeAttr(connection.anchorId)}-expanded">
-              ${SiteData.buildGalleryMarkup(`${connection.anchorId}-expanded`, connection.images, connection.imageAlt, connection.title)}
-            </div>
-            <div class="overlay-copy">
-              <div class="topic-chip-row">
-                ${connection.topicTags.map(tag => `
-                  <span class="topic-chip">${SiteData.escapeHtml(tag)}</span>
-                `).join("")}
-              </div>
-              <div class="relation-chip-row">
-                ${connection.relatedCities.map(city => `
-                  <a class="relation-chip" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
-                `).join("")}
-              </div>
-              <h2>${SiteData.escapeHtml(connection.title)}</h2>
-              ${connection.summary ? `<p class="overlay-summary">${SiteData.escapeHtml(connection.summary)}</p>` : ""}
-              <div class="overlay-body">
-                ${SiteData.splitParagraphs(connection.body).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add longer body copy in the <code>body</code> column of data/connections.csv.</p>'}
-              </div>
-            </div>
           </div>
         </article>
       `;

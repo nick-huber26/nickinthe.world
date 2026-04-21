@@ -85,8 +85,8 @@
 
 .connection-card-copy {
   display: grid;
-  gap: 16px;
-  padding: 20px 22px 22px;
+  gap: 14px;
+  padding: 0 22px 22px;
 }
 
 .connection-card.expanded .connection-card-body {
@@ -127,56 +127,23 @@
 
 .connection-card-body {
   display: none;
-  grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-  gap: 24px;
-  padding: 0 22px 24px;
-  border-top: 1px solid rgba(255,255,255,.08);
-}
-
-.overlay-copy {
-  display: grid;
   gap: 18px;
-  align-content: start;
-  padding-top: 24px;
 }
 
-.overlay-copy h2 {
-  margin: 0;
-  font-size: clamp(30px, 4.2vw, 48px);
-  line-height: .96;
-  letter-spacing: -.04em;
-}
-
-.overlay-summary,
-.overlay-body p {
+.connection-card-body p {
   margin: 0;
   color: rgba(255,255,255,.86);
   line-height: 1.8;
   font-size: 15px;
 }
 
-.overlay-body {
-  display: grid;
-  gap: 14px;
-}
-
-.overlay-gallery {
-  min-height: 420px;
-  margin-top: 24px;
-  aspect-ratio: auto;
-}
-
-.empty-gallery {
-  min-height: 420px;
+.connection-card.expanded .connection-button {
+  order: 5;
 }
 
 @media (max-width: 1040px) {
   .connections-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .connection-card-body {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -195,9 +162,5 @@
 
   .connections-grid {
     grid-template-columns: 1fr;
-  }
-
-  .connection-card-body {
-    padding-inline: 18px;
   }
 }
