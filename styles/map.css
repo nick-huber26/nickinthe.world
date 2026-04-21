@@ -292,36 +292,51 @@ body,
 
 .city-top-copy {
   display: grid;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .city-top-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(220px, .9fr);
-  gap: 18px;
+  gap: 14px;
   align-items: start;
 }
 
 .city-top-main,
 .city-top-side {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .city-ratings {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.16) transparent;
+}
+
+.city-ratings::-webkit-scrollbar {
+  height: 7px;
+}
+
+.city-ratings::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.14);
+  border-radius: 999px;
 }
 
 .rating-block {
   display: grid;
-  gap: 8px;
-  padding: 12px 14px;
-  border-radius: 18px;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 16px;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
+  min-width: 168px;
+  flex: 0 0 auto;
 }
 
 .rating-label {
@@ -333,13 +348,13 @@ body,
 
 .rating-bubbles {
   display: flex;
-  gap: 7px;
+  gap: 6px;
   align-items: center;
 }
 
 .rating-bubble {
-  width: 11px;
-  height: 11px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
   background: rgba(255,255,255,.12);
   border: 1px solid rgba(255,255,255,.14);
@@ -362,8 +377,8 @@ body,
 
 .city-description {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.72;
+  font-size: 14px;
+  line-height: 1.65;
   color: rgba(255,255,255,.84);
 }
 
@@ -373,11 +388,13 @@ body,
 
 .city-list-block {
   display: grid;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: 18px;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
+  max-height: 124px;
+  min-height: 0;
 }
 
 .city-list-title {
@@ -391,10 +408,23 @@ body,
   margin: 0;
   padding-left: 18px;
   display: grid;
-  gap: 6px;
+  gap: 5px;
   color: rgba(255,255,255,.88);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.42;
+  max-height: 76px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.16) transparent;
+}
+
+.city-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.city-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.14);
+  border-radius: 999px;
 }
 
 .city-list-empty {
@@ -402,6 +432,8 @@ body,
   color: rgba(255,255,255,.56);
   font-size: 13px;
   line-height: 1.5;
+  max-height: 76px;
+  overflow-y: auto;
 }
 
 .visit-section-heading,
@@ -670,8 +702,7 @@ body,
     grid-template-columns: 1fr;
   }
 
-  .city-top-layout,
-  .city-ratings {
+  .city-top-layout {
     grid-template-columns: 1fr;
   }
 
