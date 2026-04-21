@@ -1,48 +1,93 @@
 # Repository structure
 
-This repo is now organized around a very simple static publishing workflow:
+This repo now supports two embeddable GitHub Pages views that can reference each other:
 
-- `index.html` is the webpage.
-- `content.csv` is the content source.
-- `images/` holds the pictures used by the page.
+- `cities.html`: the map and city timeline page
+- `connections.html`: the gallery of thematic connection cards
+- `data/cities.csv`: CMS data for map visits and city-level connection tags
+- `data/connections.csv`: CMS data for the Connections gallery
+- `scripts/`: shared parsing logic plus page-specific behavior
+- `styles/`: shared theme plus page-specific layouts
+- `images/`: uploaded media used by either page
 
 ## How to open the site
 
-Because the page uses `fetch()` to load `content.csv`, it should be served over HTTP.
+Because both pages use `fetch()` to load CSV files, they should be served over HTTP.
 
-- GitHub Pages works.
-- A local server like `python3 -m http.server` works.
-- Opening `index.html` directly as a `file://` URL may not load the CSV correctly.
+- GitHub Pages works
+- `python3 -m http.server` works locally
+- opening the HTML directly as a `file://` URL may not load the CSVs correctly
 
-## How to update the site
+## Pages and URLs
 
-1. Open `content.csv`.
-2. Edit an existing row or add a new one.
-3. Upload images into `images/<folder-name>/`.
-4. Refresh the page.
+Once pushed to the GitHub Pages branch, the site exposes:
 
-## CSV columns
+- `/cities.html`
+- `/connections.html`
 
-- `id`: unique row id.
-- `slug`: HTML id for the section.
-- `title`: card headline.
-- `city`: city label.
-- `country`: country label.
-- `date`: visible date string.
-- `lat`: map latitude.
-- `lng`: map longitude.
-- `summary`: short intro text.
-- `story`: longer body copy. Multi-paragraph text is supported.
-- `image_folder`: folder for numbered images like `images/amsterdam`.
-- `image_count`: how many numbered images exist in that folder.
-- `image_ext`: image extension for numbered files, like `jpg`, `jpeg`, or `png`.
-- `images`: optional explicit image paths separated by `|`.
-- `image_alt`: alt text for the gallery.
-- `accent`: optional hex color like `#cf5c36`.
+That means you can embed each page separately inside Google Sites by using its full GitHub Pages URL.
+
+## CMS structure
+
+### `data/cities.csv`
+
+Each row is one visit on the map page.
+
+- `id`: unique visit id
+- `city_key`: stable reference id for a city, shared with `data/connections.csv`
+- `title`: optional visit title
+- `city`: city label
+- `country`: country label
+- `date`: `YYYY-MM-DD`
+- `lat`: map latitude
+- `lng`: map longitude
+- `summary`: optional short visit summary
+- `story`: optional long visit body copy, including multi-paragraph text
+- `connection_tags`: optional connection ids separated by `|`
+- `image_folder`: folder for numbered images like `images/amsterdam`
+- `image_count`: number of numbered images in that folder
+- `image_ext`: file extension for numbered images
+- `images`: optional explicit image paths separated by `|`
+- `image_alt`: alt text
+- `accent`: optional hex color
+
+### `data/connections.csv`
+
+Each row is one gallery card on the Connections page.
+
+- `id`: stable connection id
+- `slug`: optional URL-friendly override for the hash anchor
+- `title`: card title
+- `summary`: short gallery summary
+- `body`: expanded long-form body copy, multi-paragraph supported
+- `topic_tags`: non-city chips separated by `|`
+- `city_tags`: `city_key` values separated by `|`
+- `image_folder`: optional folder for numbered images
+- `image_count`: optional numbered image count
+- `image_ext`: optional numbered image extension
+- `images`: optional explicit image paths separated by `|`
+- `image_alt`: alt text
+- `accent`: optional hex color
+
+## Cross-page tagging
+
+The cross-reference system works in both directions:
+
+- add connection ids in `data/cities.csv -> connection_tags` to show related connection chips on a city visit
+- add city keys in `data/connections.csv -> city_tags` to show related city chips on a connection card
+
+The site merges both sources, so a relationship can be declared from either page's CMS.
+
+Example:
+
+- `city_key` in cities CSV: `amsterdam-netherlands`
+- `id` in connections CSV: `global-queer-community`
+- visit row `connection_tags`: `global-queer-community`
+- connection row `city_tags`: `amsterdam-netherlands|seoul-south-korea`
 
 ## Image options
 
-You can use either image method:
+You can use either image method on both CSVs.
 
 ### Option 1: Numbered folder images
 
@@ -64,13 +109,11 @@ Leave `image_folder`, `image_count`, and `image_ext` blank and set:
 
 - `images=images/amsterdam/cover.jpg|images/amsterdam/street.png`
 
-This is useful when you do not want numbered filenames.
-
 ## Important note
 
-Plain static HTML cannot automatically inspect a folder and discover new image filenames by itself. That is why the CSV needs either:
+Plain static HTML cannot automatically inspect folders and discover new filenames by itself. The CSV needs either:
 
-- a numbered image convention, or
-- explicit image paths
+- a numbered image convention
+- or explicit image paths
 
-Once the CSV matches the images you uploaded, the page updates automatically on refresh.
+Once the CSV rows match the uploaded images, the pages update on refresh.

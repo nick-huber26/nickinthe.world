@@ -1,0 +1,223 @@
+:root {
+  --bg: #071117;
+  --panel: rgba(8, 18, 24, 0.88);
+  --panel-2: rgba(10, 22, 30, 0.96);
+  --text: #f4fbff;
+  --muted: rgba(244, 251, 255, 0.72);
+  --line: rgba(255,255,255,0.11);
+  --line-strong: rgba(255,255,255,0.2);
+  --shadow: 0 18px 60px rgba(0,0,0,.35);
+  --gm-1: #078d70;
+  --gm-2: #26ceaa;
+  --gm-3: #98e8c1;
+  --gm-4: #ffffff;
+  --gm-5: #7bade2;
+  --gm-6: #5049cc;
+  --gm-7: #3d1a78;
+  --flag-gradient: linear-gradient(90deg,
+    var(--gm-1) 0%,
+    var(--gm-2) 16%,
+    var(--gm-3) 32%,
+    var(--gm-4) 48%,
+    var(--gm-5) 64%,
+    var(--gm-6) 82%,
+    var(--gm-7) 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(38,206,170,0.16), transparent 0 26%),
+    radial-gradient(circle at 84% 18%, rgba(80,73,204,0.18), transparent 0 28%),
+    radial-gradient(circle at 62% 78%, rgba(123,173,226,0.14), transparent 0 26%),
+    linear-gradient(180deg, #061016, #09141d 52%, #071117);
+  color: var(--text);
+  font-family: "Comfortaa", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  position: relative;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.eyebrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.page-link,
+.source-indicator,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(14px);
+}
+
+.page-link {
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.page-link:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-1px);
+}
+
+.source-indicator {
+  color: rgba(255,255,255,.78);
+  font-size: 12px;
+}
+
+.pill {
+  font-size: 12px;
+  color: rgba(255,255,255,.88);
+}
+
+.chip-row,
+.relation-chip-row,
+.topic-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip,
+.relation-chip,
+.topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  font-size: 12px;
+  color: rgba(255,255,255,.84);
+}
+
+.relation-chip,
+.topic-chip {
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.relation-chip:hover,
+.topic-chip:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-1px);
+}
+
+.empty-media {
+  width: 100%;
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,.52);
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 12px;
+  text-align: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 26% 30%, rgba(255,255,255,.08), transparent 0 30%),
+    linear-gradient(135deg, rgba(7,141,112,0.28), rgba(80,73,204,0.3));
+}
+
+.gallery-shell {
+  position: relative;
+  min-height: 280px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+}
+
+.gallery-track {
+  position: absolute;
+  inset: 0;
+}
+
+.gallery-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+
+.gallery-slide.active {
+  opacity: 1;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-dots {
+  position: absolute;
+  left: 18px;
+  bottom: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+
+.gallery-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.34);
+  border: 1px solid rgba(255,255,255,.28);
+  transition: transform .2s ease, background .2s ease;
+}
+
+.gallery-dot.active {
+  background: white;
+  transform: scale(1.16);
+}
+
+@media (max-width: 900px) {
+  .eyebrow-row {
+    align-items: flex-start;
+  }
+}

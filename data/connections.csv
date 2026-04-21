@@ -1,0 +1,14 @@
+id,slug,title,summary,body,topic_tags,city_tags,image_folder,image_count,image_ext,images,image_alt,accent
+global-queer-community,global-queer-community,Global Queer Community,How queer spaces and conversations echoed across different stops on the journey.,"Certain cities can feel entirely different on the surface and still offer the same immediate signal: you can breathe here.
+
+This connection is a place to collect the people, venues, gestures, and aesthetics that created that feeling across multiple destinations.
+
+Use the `city_tags` column when a connection belongs to a city broadly, and use `connection_tags` on individual visit rows when the tie is specific to one stay rather than the entire city history.",community|identity|nightlife,chicago-usa|seoul-south-korea|amsterdam-netherlands,,,,images/amsterdam/1.jpeg,People gathering in Amsterdam,#26CEAA
+design-language,design-language,Design Language Across Cities,How signage, architecture, and visual systems shaped a city's personality.,"Some places tell their story through typefaces, transit systems, posters, storefronts, and the tiny design decisions that make a street feel unmistakably local.
+
+This connection lets you group those observations into one thread even if the cities are far apart.
+
+Cards on the map page can link here, and this gallery can link back to the cities where those design instincts felt most vivid.",design|architecture|branding,abu-dhabi-united-arab-emirates|tokyo-japan|barcelona-spain,,,,,,#7BADE2
+rituals-of-belonging,rituals-of-belonging,Rituals of Belonging,Shared routines, habits, and welcome signals that made different places feel familiar.,"Not every connection is about a landmark. Sometimes the strongest throughline is a repeated ritual: a cafe pattern, an evening walk, a way strangers greeted each other, or the social rhythm of a neighborhood.
+
+This card is built for those softer threads that turn a list of cities into a connected experience.",rituals|community|routine,berlin-germany|london-united-kingdom|seoul-south-korea,,,,,,#5049CC
