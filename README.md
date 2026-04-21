@@ -42,6 +42,7 @@ Each row is one visit on the map page.
 - `lat`: map latitude
 - `lng`: map longitude
 - `city_description`: optional city-level description shown on the card regardless of which visit is selected; the most recent non-empty value for a city wins
+- `city_hero_image`: optional city-level background image for the top section of the city card; the most recent non-empty value for a city wins
 - `legal_protections`: optional 0-5 visit rating used in the city card average for legal protections
 - `foreigner_friendliness`: optional 0-5 visit rating used in the city card average for foreigner friendliness
 - `neighborhoods`: optional visit-level neighborhood names separated by `|`; combined uniquely on the city card
