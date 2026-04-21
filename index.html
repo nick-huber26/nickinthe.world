@@ -549,7 +549,7 @@
     };
 
     const qs = new URLSearchParams(window.location.search);
-    const csvUrl = qs.get('csv');
+    const csvUrl = qs.get('csv') || 'feed.csv';
     const feed = document.getElementById('feed');
     const feedInner = document.getElementById('feedInner');
     const postCount = document.getElementById('postCount');
@@ -608,13 +608,9 @@
 
     async function loadPosts() {
       try {
-        if (csvUrl) {
-          const response = await fetch(csvUrl);
-          if (!response.ok) throw new Error(`Failed to load CSV: ${response.status}`);
-          posts = parseCsvData(await response.text());
-        } else {
-          posts = parseCsvData(DEMO_CSV);
-        }
+        const response = await fetch(csvUrl);
+        if (!response.ok) throw new Error(`Failed to load CSV: ${response.status}`);
+        posts = parseCsvData(await response.text());
       } catch (error) {
         console.error(error);
         posts = parseCsvData(DEMO_CSV);
