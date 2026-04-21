@@ -206,6 +206,23 @@
       flex: 0 0 auto;
     }
 
+    .feed-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+    }
+
+    .source-indicator {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.78);
+      white-space: nowrap;
+    }
+
     #feed {
       position: absolute;
       inset: 0;
@@ -561,7 +578,7 @@
         align-items: stretch;
       }
 
-      .feed-count {
+      .feed-meta {
         align-self: center;
       }
 
@@ -629,7 +646,10 @@
           </div>
           <button id="nextVisit" class="nav-button" type="button">Next</button>
         </div>
-        <div class="feed-count"><span id="cityCount">0</span> cities / <span id="countryCount">0</span> countries</div>
+        <div class="feed-meta">
+          <div id="sourceIndicator" class="source-indicator">Source: Loading</div>
+          <div class="feed-count"><span id="cityCount">0</span> cities / <span id="countryCount">0</span> countries</div>
+        </div>
       </div>
       <div id="feed"><div id="feedInner" class="feed-inner"></div></div>
     </section>
@@ -669,6 +689,7 @@
     const currentPlaceEl = document.getElementById("currentPlace");
     const cityCountEl = document.getElementById("cityCount");
     const countryCountEl = document.getElementById("countryCount");
+    const sourceIndicatorEl = document.getElementById("sourceIndicator");
 
     const map = L.map("map", {
       worldCopyJump: true,
@@ -908,6 +929,7 @@
         const response = await fetch(csvUrl, { cache: "no-store" });
         if (!response.ok) throw new Error(`Failed to load remote CSV: ${response.status}`);
         csvText = await response.text();
+        if (sourceIndicatorEl) sourceIndicatorEl.textContent = "Source: Google Sheet";
       } catch (error) {
         lastError = error;
       }
@@ -917,12 +939,14 @@
           const fallbackResponse = await fetch(LOCAL_FALLBACK_CSV, { cache: "no-store" });
           if (!fallbackResponse.ok) throw new Error(`Failed to load fallback CSV: ${fallbackResponse.status}`);
           csvText = await fallbackResponse.text();
+          if (sourceIndicatorEl) sourceIndicatorEl.textContent = "Source: Local fallback";
         } catch (fallbackError) {
           lastError = fallbackError;
         }
       }
 
       if (!csvText) {
+        if (sourceIndicatorEl) sourceIndicatorEl.textContent = "Source: Unavailable";
         throw lastError || new Error("Unable to load any CSV source.");
       }
 
