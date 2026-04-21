@@ -1,24 +1,19 @@
 id,slug,title,city,country,date,lat,lng,summary,story,image_folder,image_count,image_ext,images,image_alt,accent
-1,chicago-home,Home,Chicago,USA,2025-05-01,41.8818,-87.6232,"A grounded opening with skyline, water, and the first step into the route.","The first stop sets the tone for the whole project. It is the point where the map begins and where the story starts to feel real.
-
-Use this field for the full write-up you want to display on the page. You can keep it short or write multiple paragraphs.
-
-If you want a photo gallery, upload files such as 1.jpg, 2.jpg, and 3.jpg into images/chicago and keep image_count in sync.",images/chicago,0,jpg,,Chicago stop,#cf5c36
-2,seoul-after-dark,Color After Dark,Seoul,South Korea,2026-06-05,37.566,126.9784,"A denser chapter with energy, motion, and city light.","Each row in this CSV becomes one visible story card. Edit the text here any time you want to update the site.
-
-If you prefer exact file names instead of numbered images, you can fill in the images column with paths separated by pipes. Example: images/seoul/hero.jpg|images/seoul/night.jpg",images/seoul,0,jpg,,Seoul stop,#ff9f1c
-3,busan-waterline,"Sea, Sound, and Celebration",Busan,South Korea,2026-06-10,35.10278,129.04028,"A coastal stop with a lighter mood and more breathing room.","The summary is the short intro shown near the title. The story field is the longer body copy shown in the card.
-
-Coordinates control the map pin location, so you can reshape the route just by changing lat and lng.",images/busan,0,jpg,,Busan stop,#2a9d8f
-4,tokyo-ni-chome,Ni-Chome Party,Tokyo,Japan,2026-06-15,35.6895,139.6917,"A high-density city stop with nightlife and contrast.","This setup is intentionally simple: one HTML file, one CSV, and an images folder.
-
-That means you can update content without touching JavaScript unless you want to change the layout itself.",images/tokyo,0,jpg,,Tokyo stop,#6c5ce7
-5,hong-kong-stopover,Stopover,Hong Kong,SAR China,2026-06-20,22.302711,114.177216,"A brief pause that still adds tension and texture to the route.","You can remove rows, reorder them, or add new ones. The page follows the CSV order from top to bottom.",images/hong-kong,0,jpg,,Hong Kong stop,#577590
-6,amsterdam-pride,Pride Fest,Amsterdam,Netherlands,2026-06-25,52.377956,4.89707,"A sample entry already wired to the existing image folder in this repo.","This row uses the numbered image-folder pattern. Because image_folder is set to images/amsterdam and image_count is 1, the page loads images/amsterdam/1.jpeg automatically.
-
-Add images/amsterdam/2.jpeg and change image_count to 2 if you want a larger gallery.",images/amsterdam,1,jpeg,,Amsterdam pride,#d1495b
-7,antwerp-parade,Ride the Parade,Antwerp,Belgium,2026-07-01,51.260197,4.402771,"A brighter final chapter that closes the sequence with momentum.","The easiest workflow is:
-
-1. Add or edit a row in content.csv.
-2. Upload images into a matching folder.
-3. Refresh the site.",images/antwerp,0,jpg,,Antwerp stop,#0077b6
+1,chicago,,Chicago,USA,,41.8781,-87.6298,,,images/chicago,,,,,
+2,abu-dhabi,,Abu Dhabi,United Arab Emirates,,24.4539,54.3773,,,images/abu-dhabi,,,,,
+3,seoul,,Seoul,South Korea,,37.5665,126.9780,,,images/seoul,,,,,
+4,busan,,Busan,South Korea,,35.1796,129.0756,,,images/busan,,,,,
+5,jeju-island,,Jeju Island,South Korea,,33.4996,126.5312,,,images/jeju-island,,,,,
+6,tokyo,,Tokyo,Japan,,35.6762,139.6503,,,images/tokyo,,,,,
+7,hong-kong,,Hong Kong,Hong Kong,,22.3193,114.1694,,,images/hong-kong,,,,,
+8,amsterdam,,Amsterdam,Netherlands,,52.3676,4.9041,,,images/amsterdam,,,,,
+9,antwerp,,Antwerp,Belgium,,51.2194,4.4025,,,images/antwerp,,,,,
+10,barcelona,,Barcelona,Spain,,41.3874,2.1686,,,images/barcelona,,,,,
+11,maastricht,,Maastricht,Netherlands,,50.8514,5.6900,,,images/maastricht,,,,,
+12,berlin,,Berlin,Germany,,52.5200,13.4050,,,images/berlin,,,,,
+13,prague,,Prague,Czech Republic,,50.0755,14.4378,,,images/prague,,,,,
+14,brussels,,Brussels,Belgium,,50.8503,4.3517,,,images/brussels,,,,,
+15,london,,London,United Kingdom,,51.5072,-0.1276,,,images/london,,,,,
+16,paris,,Paris,France,,48.8566,2.3522,,,images/paris,,,,,
+17,hyderabad,,Hyderabad,India,,17.3850,78.4867,,,images/hyderabad,,,,,
+18,taipei,,Taipei,Taiwan,,25.0330,121.5654,,,images/taipei,,,,,
