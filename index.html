@@ -683,6 +683,12 @@
       maxZoom: 19
     }).addTo(map);
 
+    map.on("zoomend", () => {
+      if (!suppressPreferredZoomUpdate) {
+        preferredZoom = map.getZoom();
+      }
+    });
+
     let visits = [];
     let cities = [];
     let cityLookup = new Map();
@@ -694,6 +700,9 @@
     let outgoingLine = null;
     let activeVisitIndex = 0;
     let animationToken = 0;
+    let cameraAnimationToken = 0;
+    let preferredZoom = 3.8;
+    let suppressPreferredZoomUpdate = false;
     const galleryIntervals = new Map();
     const dateFormatter = new Intl.DateTimeFormat("en-US", {
       month: "short",
@@ -1081,6 +1090,8 @@
         map.fitBounds(bounds, { padding: [70, 70], maxZoom: 4 });
       }
 
+      preferredZoom = map.getZoom();
+
       planeMarker = L.marker([visits[0].lat, visits[0].lng], {
         interactive: false,
         icon: L.divIcon({
@@ -1136,7 +1147,7 @@
       }
 
       if (flyMap) {
-        map.flyTo([nextVisit.lat, nextVisit.lng], idealZoom(), { duration: 1.2, easeLinearity: 0.22 });
+        animateMapTransition(previousIndex, activeVisitIndex);
       }
 
       if (planeMarker) {
@@ -1200,6 +1211,59 @@
     function idealZoom() {
       if (window.innerWidth < 980) return 3.2;
       return Math.min(4.8, Math.max(3.2, map.getZoom()));
+    }
+
+    function animateMapTransition(fromIndex, toIndex) {
+      const targetVisit = visits[toIndex];
+      if (!targetVisit) return;
+
+      const savedZoom = preferredZoom || map.getZoom() || idealZoom();
+      const fromVisit = visits[fromIndex] || targetVisit;
+      const token = ++cameraAnimationToken;
+
+      if (fromVisit.lat === targetVisit.lat && fromVisit.lng === targetVisit.lng) {
+        runProgrammaticZoom(() => {
+          map.flyTo([targetVisit.lat, targetVisit.lng], savedZoom, {
+            duration: 0.9,
+            easeLinearity: 0.22
+          });
+        });
+        return;
+      }
+
+      const legBounds = L.latLngBounds(
+        [fromVisit.lat, fromVisit.lng],
+        [targetVisit.lat, targetVisit.lng]
+      );
+      const legZoom = map.getBoundsZoom(legBounds.pad(0.24), false, [96, 96]);
+      const midZoom = Math.min(savedZoom, legZoom);
+
+      runProgrammaticZoom(() => {
+        map.flyToBounds(legBounds.pad(0.24), {
+          padding: [96, 96],
+          maxZoom: midZoom,
+          duration: 0.6,
+          easeLinearity: 0.2
+        });
+      });
+
+      window.setTimeout(() => {
+        if (token !== cameraAnimationToken) return;
+        runProgrammaticZoom(() => {
+          map.flyTo([targetVisit.lat, targetVisit.lng], savedZoom, {
+            duration: 0.75,
+            easeLinearity: 0.22
+          });
+        });
+      }, 620);
+    }
+
+    function runProgrammaticZoom(callback) {
+      suppressPreferredZoomUpdate = true;
+      callback();
+      window.setTimeout(() => {
+        suppressPreferredZoomUpdate = false;
+      }, 1500);
     }
 
     function updateRouteHighlights(index) {
