@@ -544,9 +544,20 @@
 6,Seoul,South Korea,37.5665,126.9780,"Neon after dark","Jun 27, 2026","By the time the route reaches Seoul, the journey feels more reflective. Bright streets and quiet moments start to overlap in a way that feels almost surreal.\n\nThere is texture everywhere — light on wet pavement, windows stacked high over crowded avenues, and the sense that the city is still unfolding after midnight.\n\nThis final chapter holds onto momentum, but it also makes room for meaning. It is where motion settles into memory.","https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=1400&q=80|https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&w=1400&q=80|https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?auto=format&fit=crop&w=1400&q=80","Seoul at night","#3D1A78"`;
 
     const CSV_FIELDS = {
-      id: 'id', city: 'city', country: 'country', lat: 'lat', lng: 'lng',
-      title: 'title', date: 'date', body: 'body', image: 'image', imageAlt: 'imageAlt', themeColor: 'themeColor'
-    };
+  id: 'id',
+  city: 'city',
+  country: 'country',
+  lat: 'lat',
+  lng: 'lng',
+  title: 'title',
+  date: 'date',
+  body: 'body',
+  galleryFolder: 'galleryFolder',
+  imageCount: 'imageCount',
+  imageExt: 'imageExt',
+  imageAlt: 'imageAlt',
+  themeColor: 'themeColor'
+};
 
     const qs = new URLSearchParams(window.location.search);
     const csvUrl = qs.get('csv') || 'feed.csv';
@@ -579,25 +590,40 @@
     let animationToken = 0;
     const galleryIntervals = new Map();
 
+    function buildGalleryImages(folder, count, ext = 'jpg') {
+      const cleanFolder = String(folder || '').trim().replace(/\/+$/, '');
+      const total = parseInt(count, 10);
+
+      if (!cleanFolder || !Number.isFinite(total) || total < 1) return [];
+
+      const cleanExt = String(ext || 'jpg').trim().replace(/^\./, '');
+
+        return Array.from({ length: total }, (_, i) => `${cleanFolder}/${i + 1}.${cleanExt}`);
+      }
+    
     function parseCsvData(csvText) {
       const result = Papa.parse(csvText, { header: true, skipEmptyLines: true, dynamicTyping: false });
       return (result.data || []).map((row, index) => {
-        const rawImage = row[CSV_FIELDS.image] || '';
-        const images = rawImage.split('|').map(s => s.trim()).filter(Boolean);
+        const galleryFolder = row[CSV_FIELDS.galleryFolder] || '';
+        const imageCount = row[CSV_FIELDS.imageCount] || '';
+        const imageExt = row[CSV_FIELDS.imageExt] || 'jpg';
+        const images = buildGalleryImages(galleryFolder, imageCount, imageExt);
         return {
-          id: row[CSV_FIELDS.id] || String(index + 1),
-          city: row[CSV_FIELDS.city] || `City ${index + 1}`,
-          country: row[CSV_FIELDS.country] || '',
-          lat: parseFloat(row[CSV_FIELDS.lat]),
-          lng: parseFloat(row[CSV_FIELDS.lng]),
-          title: row[CSV_FIELDS.title] || row[CSV_FIELDS.city] || `Post ${index + 1}`,
-          date: row[CSV_FIELDS.date] || '',
-          body: row[CSV_FIELDS.body] || '',
-          images,
-          imageAlt: row[CSV_FIELDS.imageAlt] || row[CSV_FIELDS.title] || '',
-          themeColor: normalizeColor(row[CSV_FIELDS.themeColor], index)
-        };
-      }).filter(item => Number.isFinite(item.lat) && Number.isFinite(item.lng));
+        id: row[CSV_FIELDS.id] || String(index + 1),
+        city: row[CSV_FIELDS.city] || `City ${index + 1}`,
+        country: row[CSV_FIELDS.country] || '',
+        lat: parseFloat(row[CSV_FIELDS.lat]),
+        lng: parseFloat(row[CSV_FIELDS.lng]),
+        title: row[CSV_FIELDS.title] || row[CSV_FIELDS.city] || `Post ${index + 1}`,
+        date: row[CSV_FIELDS.date] || '',
+        body: row[CSV_FIELDS.body] || '',
+        galleryFolder,
+        imageCount: parseInt(imageCount, 10) || 0,
+        imageExt,
+        images,
+        imageAlt: row[CSV_FIELDS.imageAlt] || row[CSV_FIELDS.title] || '',
+        themeColor: normalizeColor(row[CSV_FIELDS.themeColor], index)
+};
     }
 
     function normalizeColor(value, index) {
