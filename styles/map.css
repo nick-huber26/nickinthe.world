@@ -9,7 +9,7 @@ body,
   position: fixed;
   inset: 0;
   display: grid;
-  grid-template-columns: minmax(340px, 44%) minmax(420px, 56%);
+  grid-template-columns: minmax(360px, 47%) minmax(400px, 53%);
   height: 100dvh;
   width: 100%;
 }
@@ -691,7 +691,7 @@ body,
 
 @media (max-width: 1500px) {
   .shell {
-    grid-template-columns: minmax(320px, 41%) minmax(420px, 59%);
+    grid-template-columns: minmax(340px, 46%) minmax(400px, 54%);
   }
 
   .brand {
@@ -724,7 +724,7 @@ body,
 
 @media (max-width: 1320px) {
   .shell {
-    grid-template-columns: minmax(300px, 38%) minmax(440px, 62%);
+    grid-template-columns: minmax(320px, 45%) minmax(400px, 55%);
   }
 
   .brand {
@@ -780,7 +780,7 @@ body,
 
 @media (max-width: 1180px) {
   .shell {
-    grid-template-columns: minmax(280px, 36%) minmax(420px, 64%);
+    grid-template-columns: minmax(300px, 44%) minmax(400px, 56%);
   }
 
   .feed-topbar {
