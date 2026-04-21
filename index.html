@@ -973,13 +973,13 @@
         const detail = document.querySelector(`[data-city-detail="${city.key}"]`);
         if (!detail || !visit) return;
 
-        const title = visit.title || `${city.city}`;
+        const title = visit.title;
         const hasCopy = Boolean(visit.summary || visit.story);
         const paragraphs = splitParagraphs(visit.story);
 
         detail.innerHTML = `
           <div class="visit-copy">
-            <h3 class="visit-title">${escapeHtml(title)}</h3>
+            ${title ? `<h3 class="visit-title">${escapeHtml(title)}</h3>` : ""}
             ${visit.summary ? `<p class="summary">${escapeHtml(visit.summary)}</p>` : ""}
             ${hasCopy ? `
               <div class="story-panel">
@@ -1069,7 +1069,6 @@
             setActiveVisit(visitIndex, { scrollCard: true, animatePlane: true, flyMap: true });
           }
         });
-        marker.bindPopup(`<strong>${escapeHtml(city.city)}</strong><br>${escapeHtml(city.country)}`);
         cityMarkers.set(city.key, marker);
         bounds.push([city.lat, city.lng]);
       });
@@ -1207,11 +1206,6 @@
       cityMarkers.forEach((marker, cityKey) => {
         const wrap = marker.getElement()?.querySelector(".pin-wrap");
         if (wrap) wrap.classList.toggle("active", cityKey === activeVisit.cityKey);
-        if (cityKey === activeVisit.cityKey) {
-          marker.openPopup();
-        } else {
-          marker.closePopup();
-        }
       });
     }
 
