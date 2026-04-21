@@ -55,9 +55,11 @@
     }
 
     .shell {
+      position: fixed;
+      inset: 0;
       display: grid;
       grid-template-columns: 48% 52%;
-      height: 100vh;
+      height: 100dvh;
       width: 100%;
     }
 
@@ -119,8 +121,9 @@
       position: absolute;
       inset: 0 0 auto 0;
       z-index: 120;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       align-items: center;
       gap: 16px;
       padding: 18px 20px;
@@ -128,20 +131,13 @@
       isolation: isolate;
     }
 
-    .feed-label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      color: rgba(255,255,255,.72);
-      white-space: nowrap;
-    }
-
     .timeline-nav {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 12px;
       min-width: 0;
+      flex: 1 1 auto;
     }
 
     .nav-button {
@@ -168,7 +164,8 @@
 
     .timeline-current {
       min-width: 0;
-      padding: 10px 16px;
+      max-width: 280px;
+      padding: 10px 18px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.05);
@@ -186,7 +183,7 @@
     }
 
     .timeline-current strong {
-      font-size: 14px;
+      font-size: 15px;
       letter-spacing: .02em;
     }
 
@@ -194,12 +191,11 @@
       margin-top: 2px;
       font-size: 12px;
       color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: .12em;
+      text-transform: none;
+      letter-spacing: .02em;
     }
 
     .feed-count {
-      justify-self: end;
       padding: 8px 12px;
       border-radius: 999px;
       font-size: 12px;
@@ -207,6 +203,7 @@
       border: 1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(14px);
       white-space: nowrap;
+      flex: 0 0 auto;
     }
 
     #feed {
@@ -560,13 +557,16 @@
 
     @media (max-width: 1100px) {
       .feed-topbar {
-        grid-template-columns: 1fr;
-        justify-items: stretch;
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      .feed-label,
       .feed-count {
-        justify-self: center;
+        align-self: center;
+      }
+
+      .timeline-nav {
+        justify-content: center;
       }
     }
 
@@ -574,6 +574,8 @@
       html, body { overflow: auto; }
 
       .shell {
+        position: relative;
+        inset: auto;
         display: block;
         min-height: 100vh;
         height: auto;
@@ -619,7 +621,6 @@
 
     <section class="feed-pane">
       <div class="feed-topbar">
-        <div class="feed-label">Trip Timeline</div>
         <div class="timeline-nav">
           <button id="prevVisit" class="nav-button" type="button">Previous</button>
           <div class="timeline-current">
