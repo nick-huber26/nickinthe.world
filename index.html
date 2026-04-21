@@ -677,10 +677,10 @@
       accent: "accent"
     };
 
-    const DEFAULT_GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1sfp9a9TUgl44EYfsZ6k9YsQhF1oEY6fBFGO0GjiiMZQ/edit?usp=sharing";
+    const DEFAULT_GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRByIxtJ23p1SJ8ehZDmbx1jd3DOMTk38xoSqAQcKpIImgxu2zEw69N6_xooFbBf7VNo0yFC62bqR3p/pub?gid=1798659217&single=true&output=csv";
     const LOCAL_FALLBACK_CSV = "content.csv";
     const qs = new URLSearchParams(window.location.search);
-    const csvUrl = qs.get("csv") || buildGoogleSheetCsvUrl(DEFAULT_GOOGLE_SHEET_URL);
+    const csvUrl = qs.get("csv") || resolveCsvSource(DEFAULT_GOOGLE_SHEET_URL);
     const feed = document.getElementById("feed");
     const feedInner = document.getElementById("feedInner");
     const prevVisitButton = document.getElementById("prevVisit");
@@ -814,6 +814,13 @@
       } catch (error) {
         return LOCAL_FALLBACK_CSV;
       }
+    }
+
+    function resolveCsvSource(sheetUrl) {
+      const raw = String(sheetUrl || "").trim();
+      if (!raw) return LOCAL_FALLBACK_CSV;
+      if (raw.includes("output=csv")) return raw;
+      return buildGoogleSheetCsvUrl(raw);
     }
 
     function parseCsvData(csvText) {
