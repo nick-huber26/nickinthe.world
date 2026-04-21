@@ -1,9 +1,5 @@
 id,city,country,lat,lng,title,date,body,image,imageAlt,themeColor
-1,San Francisco,USA,37.7749,-122.4194,"Castro Mornings","2026-06-01","The morning light in the Castro feels like a soft opening scene. Cafés spill onto the sidewalk, murals catch the sun, and the neighborhood carries both history and ease.
 
-There is something grounding about starting here. The city feels layered in memory, pride, and movement, with each block offering another small discovery.
-
-This stop is about arrival, orientation, and letting the journey begin with intention.","https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1200&q=80|https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80|https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=1200&q=80","Street scene and skyline",#078D70
 2,Mexico City,Mexico,19.4326,-99.1332,"Color After Dark","2026-06-05","Mexico City shifts beautifully at night. The energy gets louder, warmer, and more cinematic as lights reflect across historic streets and crowded plazas.
 
 There is boldness here, but also intimacy. Between music, conversation, and late dinners, the city invites you to stay present a little longer.
