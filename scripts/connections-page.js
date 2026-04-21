@@ -14,21 +14,23 @@ document.addEventListener("DOMContentLoaded", () => {
   let connectionByAnchor = new Map();
 
   async function loadConnections() {
-    const citiesCsvUrl = qs.get("citiesCsv") || SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
-    const connectionsCsvUrl = qs.get("connectionsCsv") || SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
+    const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
+    const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
+    const remoteCitiesCsvUrl = SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
+    const remoteConnectionsCsvUrl = SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
 
     const [citiesResult, connectionsResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
-        fallbackUrl: LOCAL_CITIES_CSV,
-        primaryLabel: "Cities: Google Sheet",
-        fallbackLabel: "Cities: Local fallback"
+        fallbackUrl: citiesCsvUrl === LOCAL_CITIES_CSV ? remoteCitiesCsvUrl : LOCAL_CITIES_CSV,
+        primaryLabel: citiesCsvUrl === LOCAL_CITIES_CSV ? "Cities: Local CMS" : "Cities: Override source",
+        fallbackLabel: citiesCsvUrl === LOCAL_CITIES_CSV ? "Cities: Google Sheet fallback" : "Cities: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: connectionsCsvUrl,
-        fallbackUrl: LOCAL_CONNECTIONS_CSV,
-        primaryLabel: "Connections: Google Sheet",
-        fallbackLabel: "Connections: Local fallback"
+        fallbackUrl: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? remoteConnectionsCsvUrl : LOCAL_CONNECTIONS_CSV,
+        primaryLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Local CMS" : "Connections: Override source",
+        fallbackLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Google Sheet fallback" : "Connections: Local fallback"
       })
     ]);
 
