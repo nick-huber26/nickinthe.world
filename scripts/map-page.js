@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPlaceEl = document.getElementById("currentPlace");
   const cityCountEl = document.getElementById("cityCount");
   const countryCountEl = document.getElementById("countryCount");
-  const sourceIndicatorEl = document.getElementById("sourceIndicator");
 
   const map = L.map("map", {
     worldCopyJump: true,
@@ -83,10 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     cities.forEach(city => {
       if (city.visits[0]) selectedVisitIdByCity.set(city.key, city.visits[0].id);
     });
-
-    if (sourceIndicatorEl) {
-      sourceIndicatorEl.textContent = `${citiesResult.sourceLabel} | ${connectionsResult.sourceLabel}`;
-    }
 
     if (!visits.length) {
       feedInner.innerHTML = '<div class="post-card"><div class="post-content"><h2>No valid trips found</h2><p class="summary">Add visits with a city, date, latitude, longitude, and optional connection tags to data/cities.csv.</p></div></div>';

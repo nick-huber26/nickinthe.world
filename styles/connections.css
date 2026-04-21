@@ -62,6 +62,10 @@
   backdrop-filter: blur(16px);
 }
 
+.connection-card.expanded {
+  grid-column: 1 / -1;
+}
+
 .connection-card::before {
   content: "";
   position: absolute;
@@ -80,6 +84,10 @@
   display: grid;
   gap: 16px;
   padding: 20px 22px 22px;
+}
+
+.connection-card.expanded .connection-card-body {
+  display: grid;
 }
 
 .connection-card h2 {
@@ -114,47 +122,20 @@
   transform: translateY(-1px);
 }
 
-.connection-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  padding: 26px;
-}
-
-.overlay-backdrop {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  background: rgba(4,8,12,.68);
-  backdrop-filter: blur(14px);
-  cursor: pointer;
-}
-
-.overlay-card {
-  position: relative;
-  z-index: 1;
-  width: min(980px, 100%);
-  max-height: min(90vh, 960px);
-  overflow: auto;
-  border-radius: 30px;
-  background: linear-gradient(180deg, rgba(8,18,24,.98), rgba(10,22,30,.96));
-  border: 1px solid rgba(255,255,255,.1);
-  box-shadow: var(--shadow);
-}
-
-.overlay-card-content {
+.connection-card-body {
+  display: none;
   display: grid;
   grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
   gap: 24px;
-  padding: 24px;
+  padding: 0 22px 24px;
+  border-top: 1px solid rgba(255,255,255,.08);
 }
 
 .overlay-copy {
   display: grid;
   gap: 18px;
   align-content: start;
+  padding-top: 24px;
 }
 
 .overlay-copy h2 {
@@ -177,22 +158,9 @@
   gap: 14px;
 }
 
-.close-button {
-  position: sticky;
-  top: 16px;
-  margin: 16px 16px 0 auto;
-  display: block;
-  z-index: 2;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.06);
-  color: white;
-  border-radius: 999px;
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
 .overlay-gallery {
   min-height: 420px;
+  margin-top: 24px;
 }
 
 .empty-gallery {
@@ -204,7 +172,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .overlay-card-content {
+  .connection-card-body {
     grid-template-columns: 1fr;
   }
 }
@@ -226,7 +194,7 @@
     grid-template-columns: 1fr;
   }
 
-  .connection-overlay {
-    padding: 14px;
+  .connection-card-body {
+    padding-inline: 18px;
   }
 }

@@ -8,13 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const grid = document.getElementById("connectionsGrid");
   const sourceIndicatorEl = document.getElementById("connectionsSource");
   const connectionCountEl = document.getElementById("connectionCount");
-  const overlay = document.getElementById("connectionOverlay");
-  const overlayContent = document.getElementById("overlayContent");
-  const overlayBackdrop = document.getElementById("overlayBackdrop");
-  const closeOverlayButton = document.getElementById("closeOverlay");
   const gridGalleryIntervals = new Map();
-  const overlayGalleryIntervals = new Map();
-  let overlayBound = false;
+  let activeExpandedId = "";
 
   let connections = [];
   let connectionByAnchor = new Map();
@@ -48,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
     connectionCountEl.textContent = String(connections.length);
 
     renderGrid();
-    bindOverlay();
-    openHashTarget();
+    bindGridInteractions();
+    expandHashTarget();
   }
 
   function renderGrid() {
@@ -80,76 +75,69 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <h2>${SiteData.escapeHtml(connection.title)}</h2>
             <p>${SiteData.escapeHtml(connection.summary || "Add a summary in data/connections.csv to preview this connection.")}</p>
-            <button class="connection-button" type="button" data-open-connection="${SiteData.escapeAttr(connection.anchorId)}">Read more</button>
+            <button class="connection-button" type="button" data-toggle-connection="${SiteData.escapeAttr(connection.anchorId)}">Read more</button>
+          </div>
+          <div class="connection-card-body">
+            <div class="gallery-shell overlay-gallery" data-gallery-key="${SiteData.escapeAttr(connection.anchorId)}-expanded">
+              ${SiteData.buildGalleryMarkup(`${connection.anchorId}-expanded`, connection.images, connection.imageAlt, connection.title)}
+            </div>
+            <div class="overlay-copy">
+              <div class="topic-chip-row">
+                ${connection.topicTags.map(tag => `
+                  <span class="topic-chip">${SiteData.escapeHtml(tag)}</span>
+                `).join("")}
+              </div>
+              <div class="relation-chip-row">
+                ${connection.relatedCities.map(city => `
+                  <a class="relation-chip" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
+                `).join("")}
+              </div>
+              <h2>${SiteData.escapeHtml(connection.title)}</h2>
+              ${connection.summary ? `<p class="overlay-summary">${SiteData.escapeHtml(connection.summary)}</p>` : ""}
+              <div class="overlay-body">
+                ${SiteData.splitParagraphs(connection.body).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add longer body copy in the <code>body</code> column of data/connections.csv.</p>'}
+              </div>
+            </div>
           </div>
         </article>
       `;
     }).join("");
 
     SiteData.startGalleries(grid, gridGalleryIntervals);
+  }
 
-    document.querySelectorAll("[data-open-connection]").forEach(button => {
-      button.addEventListener("click", () => openConnection(button.dataset.openConnection));
+  function bindGridInteractions() {
+    document.querySelectorAll("[data-toggle-connection]").forEach(button => {
+      button.addEventListener("click", () => toggleConnection(button.dataset.toggleConnection));
     });
   }
 
-  function bindOverlay() {
-    if (overlayBound) return;
-    overlayBound = true;
+  function toggleConnection(anchorId) {
+    const nextId = activeExpandedId === anchorId ? "" : anchorId;
+    activeExpandedId = nextId;
 
-    overlayBackdrop.addEventListener("click", closeOverlay);
-    closeOverlayButton.addEventListener("click", closeOverlay);
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !overlay.hidden) closeOverlay();
+    document.querySelectorAll(".connection-card").forEach(card => {
+      const expanded = card.id === nextId;
+      card.classList.toggle("expanded", expanded);
+      const button = card.querySelector("[data-toggle-connection]");
+      if (button) button.textContent = expanded ? "Show less" : "Read more";
+      if (expanded) {
+        card.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
+
+    if (nextId) {
+      window.history.replaceState(null, "", `#${nextId}`);
+    } else {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   }
 
-  function openConnection(anchorId) {
-    const connection = connectionByAnchor.get(anchorId);
-    if (!connection) return;
-
-    overlay.hidden = false;
-    overlayContent.innerHTML = `
-      <div class="overlay-card-content">
-        <div class="gallery-shell overlay-gallery" data-gallery-key="${SiteData.escapeAttr(anchorId)}-overlay">
-          ${SiteData.buildGalleryMarkup(`${anchorId}-overlay`, connection.images, connection.imageAlt, connection.title)}
-        </div>
-        <div class="overlay-copy">
-          <div class="topic-chip-row">
-            ${connection.topicTags.map(tag => `
-              <span class="topic-chip">${SiteData.escapeHtml(tag)}</span>
-            `).join("")}
-          </div>
-          <div class="relation-chip-row">
-            ${connection.relatedCities.map(city => `
-              <a class="relation-chip" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
-            `).join("")}
-          </div>
-          <h2 id="overlayTitle">${SiteData.escapeHtml(connection.title)}</h2>
-          ${connection.summary ? `<p class="overlay-summary">${SiteData.escapeHtml(connection.summary)}</p>` : ""}
-          <div class="overlay-body">
-            ${SiteData.splitParagraphs(connection.body).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add longer body copy in the <code>body</code> column of data/connections.csv.</p>'}
-          </div>
-        </div>
-      </div>
-    `;
-
-    SiteData.startGalleries(overlayContent, overlayGalleryIntervals);
-    window.history.replaceState(null, "", `#${connection.anchorId}`);
-  }
-
-  function closeOverlay() {
-    overlayGalleryIntervals.forEach(intervalId => clearInterval(intervalId));
-    overlayGalleryIntervals.clear();
-    overlay.hidden = true;
-    overlayContent.innerHTML = "";
-    window.history.replaceState(null, "", window.location.pathname + window.location.search);
-  }
-
-  function openHashTarget() {
+  function expandHashTarget() {
     const hash = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
     if (!hash) return;
-    openConnection(hash);
+    if (!connectionByAnchor.has(hash)) return;
+    toggleConnection(hash);
   }
 
   loadConnections().catch(error => {
