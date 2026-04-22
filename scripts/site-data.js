@@ -450,6 +450,8 @@
           type: String(row.type || "").trim(),
           date: parsedDate?.raw || "",
           dateLabel: parsedDate?.label || String(row.display_date || "").trim(),
+          addedDate: String(row.date_added || "").trim(),
+          addedDateLabel: parseDateValue(row.date_added)?.label || String(row.date_added_display || "").trim(),
           timestamp: parsedDate?.timestamp || 0,
           summary: String(row.summary || "").trim(),
           description: String(row.description || row.body || "").trim(),

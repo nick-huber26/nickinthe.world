@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <strong>${SiteData.escapeHtml(inspiration.creator || "Creator not added yet")}</strong>
               </div>
               <div class="panel-meta-inline-item">
-                <div class="panel-label">Date</div>
+                <div class="panel-label">Published date</div>
                 <strong>${SiteData.escapeHtml(inspiration.dateLabel || "Date not added yet")}</strong>
               </div>
             </div>
@@ -391,6 +391,11 @@ document.addEventListener("DOMContentLoaded", () => {
           ${SiteData.splitParagraphs(inspiration.description || inspiration.summary)
             .map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`)
             .join("") || "<p>Add longer copy in the description column of data/inspirations.csv.</p>"}
+        </div>
+
+        <div class="panel-footnote">
+          <div class="panel-label">Date added</div>
+          <strong>${SiteData.escapeHtml(inspiration.addedDateLabel || inspiration.addedDate || "Date not added yet")}</strong>
         </div>
       </div>
     `;
