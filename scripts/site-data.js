@@ -232,6 +232,8 @@
           neighborhoods,
           spaces,
           connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
+          storyIds: parsePipeList(row.story_tags).map(item => slugify(item)).filter(Boolean),
+          inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || meta.imageAlt || row.title || row.city || "").trim(),
           themeColor: normalizeColor(row.accent || meta.accent, rowIndex),
@@ -359,12 +361,14 @@
           body: String(row.body || "").trim(),
           topicTags: parsePipeList(row.topic_tags),
           cityKeys: parsePipeList(row.city_tags).map(item => slugify(item)).filter(Boolean),
+          storyIds: parsePipeList(row.story_tags).map(item => slugify(item)).filter(Boolean),
+          inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
-          relatedCities: []
-          ,
+          relatedCities: [],
+          relatedStories: [],
           relatedInspirations: []
         };
       })
@@ -410,6 +414,7 @@
           size: normalizeStorySize(row.size),
           cityKeys: parsePipeList(row.city_tags).map(item => slugify(item)).filter(Boolean),
           connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
+          inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
           themeColor: normalizeColor(row.accent, rowIndex),
@@ -549,6 +554,8 @@
     const storyById = new Map(stories.map(story => [story.id, story]));
     const cityStoryMap = new Map(cities.map(city => [city.key, new Set()]));
     const connectionStoryMap = new Map(connections.map(connection => [connection.id, new Set()]));
+    const storyCityMap = new Map(stories.map(story => [story.id, new Set()]));
+    const storyConnectionMap = new Map(stories.map(story => [story.id, new Set()]));
 
     stories.forEach(story => {
       const resolvedCityKeys = resolveConnectionCityKeys(story.cityKeys, cityByKey, cityBySlug);
@@ -568,6 +575,28 @@
 
       uniqueCityKeys.forEach(cityKey => cityStoryMap.get(cityKey)?.add(story.id));
       uniqueConnectionIds.forEach(connectionId => connectionStoryMap.get(connectionId)?.add(story.id));
+      uniqueCityKeys.forEach(cityKey => storyCityMap.get(story.id)?.add(cityKey));
+      uniqueConnectionIds.forEach(connectionId => storyConnectionMap.get(story.id)?.add(connectionId));
+    });
+
+    cities.forEach(city => {
+      city.visits.forEach(visit => {
+        (visit.storyIds || [])
+          .filter(storyId => storyById.has(storyId))
+          .forEach(storyId => {
+            cityStoryMap.get(city.key)?.add(storyId);
+            storyCityMap.get(storyId)?.add(city.key);
+          });
+      });
+    });
+
+    connections.forEach(connection => {
+      (connection.storyIds || [])
+        .filter(storyId => storyById.has(storyId))
+        .forEach(storyId => {
+          connectionStoryMap.get(connection.id)?.add(storyId);
+          storyConnectionMap.get(storyId)?.add(connection.id);
+        });
     });
 
     cities.forEach(city => {
@@ -586,6 +615,22 @@
         .filter(Boolean);
     });
 
+    stories.forEach(story => {
+      const relatedCityKeys = Array.from(storyCityMap.get(story.id) || [])
+        .filter(cityKey => cityByKey.has(cityKey));
+      const relatedConnectionIds = Array.from(storyConnectionMap.get(story.id) || [])
+        .filter(connectionId => connectionById.has(connectionId));
+
+      story.cityKeys = relatedCityKeys;
+      story.connectionIds = relatedConnectionIds;
+      story.relatedCities = relatedCityKeys
+        .map(cityKey => cityByKey.get(cityKey))
+        .filter(Boolean);
+      story.relatedConnections = relatedConnectionIds
+        .map(connectionId => connectionById.get(connectionId))
+        .filter(Boolean);
+    });
+
     return {
       cityByKey,
       connectionById
@@ -601,6 +646,9 @@
     const cityInspirationMap = new Map(cities.map(city => [city.key, new Set()]));
     const connectionInspirationMap = new Map(connections.map(connection => [connection.id, new Set()]));
     const storyInspirationMap = new Map(stories.map(story => [story.id, new Set()]));
+    const inspirationCityMap = new Map(inspirations.map(inspiration => [inspiration.id, new Set()]));
+    const inspirationConnectionMap = new Map(inspirations.map(inspiration => [inspiration.id, new Set()]));
+    const inspirationStoryMap = new Map(inspirations.map(inspiration => [inspiration.id, new Set()]));
 
     inspirations.forEach(inspiration => {
       const resolvedCityKeys = resolveConnectionCityKeys(inspiration.cityKeys, cityByKey, cityBySlug);
@@ -628,6 +676,38 @@
       uniqueCityKeys.forEach(cityKey => cityInspirationMap.get(cityKey)?.add(inspiration.id));
       uniqueConnectionIds.forEach(connectionId => connectionInspirationMap.get(connectionId)?.add(inspiration.id));
       uniqueStoryIds.forEach(storyId => storyInspirationMap.get(storyId)?.add(inspiration.id));
+      uniqueCityKeys.forEach(cityKey => inspirationCityMap.get(inspiration.id)?.add(cityKey));
+      uniqueConnectionIds.forEach(connectionId => inspirationConnectionMap.get(inspiration.id)?.add(connectionId));
+      uniqueStoryIds.forEach(storyId => inspirationStoryMap.get(inspiration.id)?.add(storyId));
+    });
+
+    cities.forEach(city => {
+      city.visits.forEach(visit => {
+        (visit.inspirationIds || [])
+          .filter(inspirationId => inspirationById.has(inspirationId))
+          .forEach(inspirationId => {
+            cityInspirationMap.get(city.key)?.add(inspirationId);
+            inspirationCityMap.get(inspirationId)?.add(city.key);
+          });
+      });
+    });
+
+    connections.forEach(connection => {
+      (connection.inspirationIds || [])
+        .filter(inspirationId => inspirationById.has(inspirationId))
+        .forEach(inspirationId => {
+          connectionInspirationMap.get(connection.id)?.add(inspirationId);
+          inspirationConnectionMap.get(inspirationId)?.add(connection.id);
+        });
+    });
+
+    stories.forEach(story => {
+      (story.inspirationIds || [])
+        .filter(inspirationId => inspirationById.has(inspirationId))
+        .forEach(inspirationId => {
+          storyInspirationMap.get(story.id)?.add(inspirationId);
+          inspirationStoryMap.get(inspirationId)?.add(story.id);
+        });
     });
 
     cities.forEach(city => {
@@ -651,6 +731,28 @@
       story.relatedInspirationIds = relatedInspirationIds;
       story.relatedInspirations = relatedInspirationIds
         .map(inspirationId => inspirationById.get(inspirationId))
+        .filter(Boolean);
+    });
+
+    inspirations.forEach(inspiration => {
+      const relatedCityKeys = Array.from(inspirationCityMap.get(inspiration.id) || [])
+        .filter(cityKey => cityByKey.has(cityKey));
+      const relatedConnectionIds = Array.from(inspirationConnectionMap.get(inspiration.id) || [])
+        .filter(connectionId => connectionById.has(connectionId));
+      const relatedStoryIds = Array.from(inspirationStoryMap.get(inspiration.id) || [])
+        .filter(storyId => storyById.has(storyId));
+
+      inspiration.cityKeys = relatedCityKeys;
+      inspiration.connectionIds = relatedConnectionIds;
+      inspiration.storyIds = relatedStoryIds;
+      inspiration.relatedCities = relatedCityKeys
+        .map(cityKey => cityByKey.get(cityKey))
+        .filter(Boolean);
+      inspiration.relatedConnections = relatedConnectionIds
+        .map(connectionId => connectionById.get(connectionId))
+        .filter(Boolean);
+      inspiration.relatedStories = relatedStoryIds
+        .map(storyId => storyById.get(storyId))
         .filter(Boolean);
     });
 

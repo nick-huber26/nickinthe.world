@@ -1,4 +1,4 @@
-id,slug,title,date,summary,body,size,city_tags,connection_tags,image_folder,image_count,image_ext,images,image_alt,accent
+id,slug,title,date,summary,body,size,city_tags,connection_tags,inspiration_tags,image_folder,image_count,image_ext,images,image_alt,accent
 seoul-night-window,seoul-night-window,Seoul Night Window,2026-03-07,A vertical frame for the moments when the city felt layered and cinematic.,"Use the body column for the longer text box on the story detail view.
 
 This is where you can write the narrative, scene description, memory, or observation that should open when someone clicks the tile. Multi-paragraph text is supported here, just like it is on the Connections page.",vertical,seoul-south-korea,global-queer-community,,,,images/seoul/1.jpeg,A Seoul street scene at night,#26CEAA

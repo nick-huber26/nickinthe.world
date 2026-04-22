@@ -1,4 +1,4 @@
-id,city_key,title,city,country,date,lat,lng,city_description,legal_protection,social_acceptance,community_access,personal_belonging,neighborhoods,spaces,summary,story,connection_tags,image_folder,image_count,image_ext,images,image_alt,accent
+id,city_key,title,city,country,date,lat,lng,city_description,legal_protection,social_acceptance,community_access,personal_belonging,neighborhoods,spaces,summary,story,connection_tags,story_tags,inspiration_tags,image_folder,image_count,image_ext,images,image_alt,accent
 1,chicago-usa,,Chicago,USA,2025-05-25,41.8781,-87.6298,,,,,,,,,,,images/chicago,,,,,
 2,abu-dhabi-united-arab-emirates,,Abu Dhabi,United Arab Emirates,2025-06-22,24.4539,54.3773,,,,,,,,,,,images/abu-dhabi,,,,,
 3,seoul-south-korea,,Seoul,South Korea,2025-06-23,37.5665,126.9780,"Culture exists in every corner of this city, and vibrant nightlife defines the neighborhoods",4,4,4,4,,,,,,global-queer-community,images/seoul,,,images/seoul/1.jpeg,,

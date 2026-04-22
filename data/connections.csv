@@ -1,4 +1,4 @@
-id,slug,title,summary,body,topic_tags,city_tags,image_folder,image_count,image_ext,images,image_alt,accent
+id,slug,title,summary,body,topic_tags,city_tags,story_tags,inspiration_tags,image_folder,image_count,image_ext,images,image_alt,accent
 global-queer-community,global-queer-community,Global Queer Community,How queer spaces and conversations echoed across different stops on the journey.,"Certain cities can feel entirely different on the surface and still offer the same immediate signal: you can breathe here.
 
 This connection is a place to collect the people, venues, gestures, and aesthetics that created that feeling across multiple destinations.

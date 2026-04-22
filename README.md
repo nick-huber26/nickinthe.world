@@ -57,6 +57,8 @@ Each row is one visit on the map page.
 - `summary`: optional short visit summary
 - `story`: optional long visit body copy, including multi-paragraph text
 - `connection_tags`: optional connection ids separated by `|`
+- `story_tags`: optional story ids separated by `|`
+- `inspiration_tags`: optional inspiration ids separated by `|`
 - `image_folder`: folder for numbered images like `images/amsterdam`
 - `image_count`: number of numbered images in that folder
 - `image_ext`: file extension for numbered images
@@ -75,6 +77,8 @@ Each row is one gallery card on the Connections page.
 - `body`: expanded long-form body copy, multi-paragraph supported
 - `topic_tags`: non-city chips separated by `|`
 - `city_tags`: `city_key` values separated by `|`
+- `story_tags`: optional story ids separated by `|`
+- `inspiration_tags`: optional inspiration ids separated by `|`
 - `image_folder`: optional folder for numbered images
 - `image_count`: optional numbered image count
 - `image_ext`: optional numbered image extension
@@ -83,6 +87,8 @@ Each row is one gallery card on the Connections page.
 - `accent`: optional hex color
 
 The live Connections page can also read from a published Google Sheet with the same schema. Missing image-related columns are tolerated, but keeping the full header set makes the CMS easier to manage over time.
+
+`city_tags` should match `city_key` values from `data/cities.csv`. `story_tags` should match `id` values from `data/stories.csv`. `inspiration_tags` should match `id` values from `data/inspirations.csv`.
 
 ### `data/stories.csv`
 
@@ -97,6 +103,7 @@ Each row is one tile on the Stories page.
 - `size`: `square`, `landscape`, or `vertical`
 - `city_tags`: one or more `city_key` values separated by `|`
 - `connection_tags`: optional connection ids separated by `|`
+- `inspiration_tags`: optional inspiration ids separated by `|`
 - `image_folder`: optional folder for numbered images
 - `image_count`: optional numbered image count
 - `image_ext`: optional numbered image extension
@@ -104,7 +111,7 @@ Each row is one tile on the Stories page.
 - `image_alt`: alt text
 - `accent`: optional hex color
 
-`city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`.
+`city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`. `inspiration_tags` should match `id` values from `data/inspirations.csv`.
 
 ### `data/inspirations.csv`
 
@@ -137,12 +144,16 @@ Each row is one poster on the Inspirations wall.
 
 ## Cross-page tagging
 
-The cross-reference system works in both directions:
+The cross-reference system works in both directions across all four page types.
 
-- add connection ids in `data/cities.csv -> connection_tags` to show related connection chips on a city visit
-- add city keys in `data/connections.csv -> city_tags` to show related city chips on a connection card
+Each CSV can declare relationships to the other three:
 
-The site merges both sources, so a relationship can be declared from either page's CMS.
+- `data/cities.csv`: `connection_tags`, `story_tags`, `inspiration_tags`
+- `data/connections.csv`: `city_tags`, `story_tags`, `inspiration_tags`
+- `data/stories.csv`: `city_tags`, `connection_tags`, `inspiration_tags`
+- `data/inspirations.csv`: `city_tags`, `connection_tags`, `story_tags`
+
+The site merges both sources for every relationship, so a link can be declared from either side.
 
 Example:
 
@@ -153,7 +164,7 @@ Example:
 
 For best results in the sheet:
 
-- use stable connection ids like `global-queer-community`, not numeric row ids
+- use stable ids like `global-queer-community` or `gay-bar-why-we-went-out`, not numeric row ids
 - use `city_tags` values that match `city_key` values from the cities CMS, such as `chicago-usa`
 
 ## Image options
