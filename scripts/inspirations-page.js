@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let pointerDownPosterId = "";
   let pointerIsActive = false;
   let pointerHasCapture = false;
+  let suppressPosterClick = false;
   let wallImageMetrics = {
     width: 1800,
     height: 1200
@@ -190,10 +191,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function bindWallInteractions() {
+    posterWall.addEventListener("click", event => {
+      const posterId = event.target.closest("[data-inspiration-id]")?.dataset.inspirationId;
+      if (!posterId || suppressPosterClick) {
+        suppressPosterClick = false;
+        return;
+      }
+      openPanel(posterId);
+    });
+
     wallViewport.addEventListener("pointerdown", event => {
       pointerIsActive = true;
       dragMoved = false;
       pointerHasCapture = false;
+      suppressPosterClick = false;
       dragPointerId = event.pointerId;
       dragStartX = event.clientX;
       dragStartY = event.clientY;
@@ -210,6 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dragMoved = true;
       }
       if (!dragMoved) return;
+      suppressPosterClick = true;
       if (!pointerHasCapture) {
         wallViewport.classList.add("is-dragging");
         wallViewport.setPointerCapture(event.pointerId);
@@ -225,15 +237,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dragPointerId !== null && event.pointerId === dragPointerId && pointerHasCapture) {
         wallViewport.releasePointerCapture(event.pointerId);
       }
-      const shouldOpenPoster = !dragMoved && pointerDownPosterId;
       pointerIsActive = false;
       pointerHasCapture = false;
       dragPointerId = null;
       pointerDownPosterId = "";
       wallViewport.classList.remove("is-dragging");
-      if (shouldOpenPoster) {
-        openPanel(shouldOpenPoster);
-      }
     };
 
     wallViewport.addEventListener("pointerup", stopDragging);
