@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const wallState = {
     scale: 1,
-    minScale: 0.66,
+    minScale: 0.2,
     maxScale: 2.4,
     translateX: 0,
     translateY: 0,
@@ -291,7 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const localAnchorX = Number.isFinite(anchorX) ? anchorX : viewportRect.width / 2;
     const localAnchorY = Number.isFinite(anchorY) ? anchorY : viewportRect.height / 2;
     const previousScale = wallState.scale;
-    const nextScale = clampValue(previousScale * factor, wallState.minScale, wallState.maxScale);
+    const minScale = getHeightLimitedMinScale();
+    const nextScale = clampValue(previousScale * factor, minScale, wallState.maxScale);
     if (nextScale === previousScale) return;
 
     wallState.translateX = localAnchorX - ((localAnchorX - wallState.translateX) / previousScale) * nextScale;
@@ -440,6 +441,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function clampValue(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function getHeightLimitedMinScale() {
+    const viewportRect = wallViewport.getBoundingClientRect();
+    if (!viewportRect.height || !wallState.height) {
+      return wallState.minScale;
+    }
+
+    return Math.max(wallState.minScale, viewportRect.height / wallState.height);
   }
 
   function loadWallImageMetrics() {
