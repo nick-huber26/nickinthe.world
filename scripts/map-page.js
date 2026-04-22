@@ -274,19 +274,23 @@ document.addEventListener("DOMContentLoaded", () => {
         : `<div class="visit-media-empty">${SiteData.escapeHtml(city.city)}<br>${SiteData.escapeHtml(visit.dateLabel)}</div>`;
 
       detail.innerHTML = `
-        <h3 class="visit-title visit-title-row">${visit.title ? SiteData.escapeHtml(visit.title) : SiteData.escapeHtml(visit.dateLabel)}</h3>
-        <div class="visit-media-column">
-          ${visitImageMarkup}
-        </div>
-        <div class="visit-copy">
-          <div class="visit-fields">
-            <div class="visit-field">
-              <div class="visit-field-label">Description</div>
-              <div class="visit-field-body story-panel">${descriptionMarkup}</div>
+        <div class="visit-detail-layout">
+          <h3 class="visit-title visit-title-row">${visit.title ? SiteData.escapeHtml(visit.title) : SiteData.escapeHtml(visit.dateLabel)}</h3>
+          <div class="visit-detail-body">
+            <div class="visit-media-column">
+              ${visitImageMarkup}
             </div>
-            <div class="visit-field">
-              <div class="visit-field-label">Summary</div>
-              <div class="visit-field-body summary-panel">${summaryMarkup}</div>
+            <div class="visit-copy">
+              <div class="visit-fields">
+                <div class="visit-field">
+                  <div class="visit-field-label">Description</div>
+                  <div class="visit-field-body story-panel">${descriptionMarkup}</div>
+                </div>
+                <div class="visit-field">
+                  <div class="visit-field-label">Summary</div>
+                  <div class="visit-field-body summary-panel">${summaryMarkup}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
