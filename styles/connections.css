@@ -93,7 +93,7 @@ body,
 .connection-card-media {
   position: relative;
   display: block;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   min-height: 0;
   margin: 0 0 16px 6px;
   z-index: 1;
