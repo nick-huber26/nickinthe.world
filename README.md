@@ -88,6 +88,7 @@ Each row is one tile on the Stories page.
 - `id`: stable story id
 - `slug`: optional URL-friendly override for the hash anchor
 - `title`: tile title
+- `date`: optional story date in `YYYY-MM-DD`; used to sort stories newest first and display a formatted date on the card back
 - `summary`: short teaser text shown on the gallery tile and modal
 - `body`: longer story copy, multi-paragraph supported
 - `size`: `square`, `landscape`, or `vertical`

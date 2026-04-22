@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `).join("")}
               </div>
               <div class="story-back-copy">
+                ${story.dateLabel ? `<div class="story-back-date">${SiteData.escapeHtml(story.dateLabel)}</div>` : ""}
                 <h2>${SiteData.escapeHtml(story.title)}</h2>
                 <div class="story-back-text">
                   ${SiteData.splitParagraphs(story.body || story.summary).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add story text in the <code>body</code> or <code>summary</code> column of data/stories.csv.</p>'}

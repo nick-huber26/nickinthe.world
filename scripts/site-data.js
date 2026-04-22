@@ -389,6 +389,7 @@
         const id = slugify(row.id || row.slug || title || `story-${rowIndex + 1}`);
         if (!id) return null;
 
+        const parsedDate = parseDateValue(row.date);
         const explicitImages = parseExplicitImages(row.images);
         const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
 
@@ -397,6 +398,9 @@
           slug: slugify(row.slug || id) || id,
           anchorId: `story-${slugify(row.slug || id) || id}`,
           title: title || id,
+          date: parsedDate?.raw || "",
+          dateLabel: parsedDate?.label || "",
+          timestamp: parsedDate?.timestamp || 0,
           summary: String(row.summary || "").trim(),
           body: String(row.body || "").trim(),
           size: normalizeStorySize(row.size),
@@ -411,7 +415,10 @@
         };
       })
       .filter(Boolean)
-      .sort((a, b) => a.sourceIndex - b.sourceIndex);
+      .sort((a, b) => {
+        if (a.timestamp !== b.timestamp) return b.timestamp - a.timestamp;
+        return a.sourceIndex - b.sourceIndex;
+      });
   }
 
   function buildCrossReferenceState(visits, cities, connections) {
