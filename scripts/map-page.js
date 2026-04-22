@@ -128,7 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
       const relatedConnections = city.relatedConnections || [];
       const cityHeroStyle = city.cityHeroImage
-        ? ` style="--cityHeroImage: url(&quot;${SiteData.escapeAttr(city.cityHeroImage)}&quot;);"`
+        ? ` style="background:
+            linear-gradient(180deg, rgba(7,15,20,.18) 0%, rgba(7,15,20,.34) 20%, rgba(7,15,20,.64) 58%, rgba(7,15,20,.9) 100%),
+            linear-gradient(110deg, rgba(6,12,18,.62) 0%, rgba(6,12,18,.18) 32%, rgba(6,12,18,.52) 100%),
+            radial-gradient(circle at 18% 18%, rgba(255,255,255,.1), transparent 28%),
+            url('${SiteData.escapeAttr(city.cityHeroImage)}') center center / cover no-repeat;"`
         : "";
       const ratingMarkup = [
         buildRatingScale("Legal protections", city.legalProtectionsAverage),
@@ -230,7 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       detail.innerHTML = `
         <div class="visit-copy">
-          <div class="visit-section-label">Visit details</div>
           ${visit.title ? `<h3 class="visit-title">${SiteData.escapeHtml(visit.title)}</h3>` : `<h3 class="visit-title">${SiteData.escapeHtml(visit.dateLabel)}</h3>`}
           <div class="visit-fields">
             <div class="visit-field">
