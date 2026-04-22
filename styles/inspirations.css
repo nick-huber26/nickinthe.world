@@ -17,9 +17,8 @@
 .wall-pane {
   position: relative;
   min-width: 0;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  padding: 22px 22px 22px 24px;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 .wall-topbar,
@@ -29,11 +28,16 @@
 }
 
 .wall-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: start;
-  margin-bottom: 16px;
+  padding: 22px 22px 0 24px;
+  z-index: 3;
 }
 
 .wall-copy h1 {
@@ -92,9 +96,9 @@
 }
 
 .wall-viewport {
-  min-height: 0;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  position: relative;
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -348,15 +352,14 @@
 
   .wall-pane {
     min-height: 100vh;
-    padding: 18px 16px;
-  }
-
-  .wall-pane::before {
-    inset: 10px;
   }
 
   .wall-viewport {
-    height: 68vh;
+    inset: 0;
+  }
+
+  .wall-topbar {
+    padding: 18px 16px 0;
   }
 
   .inspiration-panel {
