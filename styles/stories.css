@@ -201,7 +201,6 @@
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  overflow: hidden;
   border-radius: 28px;
   box-shadow: var(--shadow);
   border: 1px solid rgba(255,255,255,0.12);
@@ -237,8 +236,8 @@
 
 .story-tile-back-inner {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  align-content: start;
   gap: 14px;
   padding: 18px;
   overflow-y: auto;
@@ -296,10 +295,7 @@
 }
 
 .story-back-copy {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  flex-direction: column;
+  display: grid;
   gap: 12px;
 }
 
@@ -319,12 +315,9 @@
 
 .story-back-text {
   display: grid;
-  flex: 1;
   align-content: start;
   gap: 10px;
   padding-bottom: 2px;
-  overflow-y: auto;
-  scrollbar-width: thin;
 }
 
 .story-back-text p {
