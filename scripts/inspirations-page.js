@@ -351,38 +351,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const image = inspiration.images[0];
+    const allTagMarkup = [
+      ...buildTagLinks(inspiration.relatedCities, city => `cities.html#city-${city.key}`, city => city.city, "tag-chip-city", true),
+      ...buildTagLinks(inspiration.relatedStories, story => `stories.html#${story.anchorId}`, story => story.title, "tag-chip-story", true),
+      ...buildTagLinks(inspiration.relatedConnections, connection => `connections.html#${connection.anchorId}`, connection => connection.title, "tag-chip-connection", true)
+    ].join("");
     panelContent.innerHTML = `
       <div class="panel-stack">
-        <div class="panel-poster">
-          ${image
-            ? `<img loading="lazy" src="${SiteData.escapeAttr(image)}" alt="${SiteData.escapeAttr(inspiration.imageAlt || inspiration.title)}">`
-            : `<div class="poster-placeholder" style="--poster-accent:${SiteData.escapeAttr(inspiration.themeColor)};">${SiteData.escapeHtml(inspiration.title)}</div>`}
+        <div class="panel-tag-strip chip-row">
+          ${allTagMarkup || `<span class="chip">No tags linked yet</span>`}
         </div>
 
-        <div class="panel-header">
-          <div class="panel-label">${SiteData.escapeHtml(inspiration.type || "Inspiration")}</div>
-          <h2>${SiteData.escapeHtml(inspiration.title)}</h2>
-          ${inspiration.summary ? `<p class="panel-summary">${SiteData.escapeHtml(inspiration.summary)}</p>` : ""}
-        </div>
+        <div class="panel-hero">
+          <div class="panel-poster panel-poster-compact">
+            ${image
+              ? `<img loading="lazy" src="${SiteData.escapeAttr(image)}" alt="${SiteData.escapeAttr(inspiration.imageAlt || inspiration.title)}">`
+              : `<div class="poster-placeholder" style="--poster-accent:${SiteData.escapeAttr(inspiration.themeColor)};">${SiteData.escapeHtml(inspiration.title)}</div>`}
+          </div>
 
-        <div class="panel-meta-grid">
-          ${buildMetaCard("Date", inspiration.dateLabel || "Date not added yet")}
-          ${buildMetaCard("Creator", inspiration.creator || "Creator not added yet")}
-        </div>
-
-        <div class="panel-tag-group">
-          <div class="panel-tag-title">Cities</div>
-          <div class="chip-row">${buildTagLinks(inspiration.relatedCities, city => `cities.html#city-${city.key}`, city => city.city, "tag-chip-city")}</div>
-        </div>
-
-        <div class="panel-tag-group">
-          <div class="panel-tag-title">Stories</div>
-          <div class="chip-row">${buildTagLinks(inspiration.relatedStories, story => `stories.html#${story.anchorId}`, story => story.title, "tag-chip-story")}</div>
-        </div>
-
-        <div class="panel-tag-group">
-          <div class="panel-tag-title">Connections</div>
-          <div class="chip-row">${buildTagLinks(inspiration.relatedConnections, connection => `connections.html#${connection.anchorId}`, connection => connection.title, "tag-chip-connection")}</div>
+          <div class="panel-header">
+            <div class="panel-label">${SiteData.escapeHtml(inspiration.type || "Inspiration")}</div>
+            <h2>${SiteData.escapeHtml(inspiration.title)}</h2>
+            <div class="panel-meta-inline">
+              <div class="panel-meta-inline-item">
+                <div class="panel-label">Author</div>
+                <strong>${SiteData.escapeHtml(inspiration.creator || "Creator not added yet")}</strong>
+              </div>
+              <div class="panel-meta-inline-item">
+                <div class="panel-label">Date</div>
+                <strong>${SiteData.escapeHtml(inspiration.dateLabel || "Date not added yet")}</strong>
+              </div>
+            </div>
+            ${inspiration.summary ? `<p class="panel-summary">${SiteData.escapeHtml(inspiration.summary)}</p>` : ""}
+          </div>
         </div>
 
         <div class="panel-description">
@@ -395,25 +396,18 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  function buildMetaCard(label, value) {
-    return `
-      <div class="panel-meta-card">
-        <div class="panel-label">${SiteData.escapeHtml(label)}</div>
-        <strong>${SiteData.escapeHtml(value)}</strong>
-      </div>
-    `;
-  }
-
-  function buildTagLinks(items, hrefFn, labelFn, chipClass) {
+  function buildTagLinks(items, hrefFn, labelFn, chipClass, asArray = false) {
     if (!items.length) {
-      return `<span class="chip ${chipClass}">No tags linked yet</span>`;
+      return asArray ? [] : `<span class="chip ${chipClass}">No tags linked yet</span>`;
     }
 
-    return items.map(item => `
+    const markup = items.map(item => `
       <a class="relation-chip ${chipClass}" href="${SiteData.escapeAttr(hrefFn(item))}">
         ${SiteData.escapeHtml(labelFn(item))}
       </a>
-    `).join("");
+    `);
+
+    return asArray ? markup : markup.join("");
   }
 
   function closePanel(options = {}) {
