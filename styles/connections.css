@@ -81,8 +81,8 @@ body,
 .connection-card.expanded {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
   align-items: start;
 }
 
@@ -105,7 +105,8 @@ body,
 }
 
 .connection-card.expanded .connection-card-media {
-  margin: 6px 0 0 6px;
+  grid-column: 1;
+  margin: 0 0 16px 6px;
 }
 
 .connection-card-media .gallery-shell,
@@ -125,7 +126,13 @@ body,
   z-index: 1;
 }
 
+.connection-card:not(.expanded) .connection-card-copy {
+  align-content: start;
+  min-height: 220px;
+}
+
 .connection-card.expanded .connection-card-copy {
+  grid-column: 2 / -1;
   align-content: start;
   gap: 16px;
   padding: 22px 24px 22px 0;
@@ -139,11 +146,31 @@ body,
   margin: 0;
 }
 
+.connection-card:not(.expanded) .relation-chip-row {
+  min-height: 48px;
+  max-height: 48px;
+  overflow-y: auto;
+  align-content: flex-start;
+}
+
 .connection-card h2 {
   margin: 0;
   font-size: 22px;
   line-height: 1.1;
   letter-spacing: -.03em;
+}
+
+.connection-title {
+  max-width: 100%;
+}
+
+.connection-card:not(.expanded) .connection-title {
+  min-height: calc(1.1em * 3);
+  max-height: calc(1.1em * 3);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .connection-card.expanded h2 {
@@ -159,6 +186,13 @@ body,
 
 .connection-summary {
   max-width: 70ch;
+}
+
+.connection-card:not(.expanded) .connection-summary {
+  min-height: calc(1.65em * 3);
+  max-height: calc(1.65em * 3);
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .connection-card.expanded .connection-summary {
@@ -206,7 +240,7 @@ body,
   }
 
   .connection-card.expanded {
-    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
   }
 }

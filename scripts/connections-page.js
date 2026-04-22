@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="connection-card-copy">
             ${tagMarkup ? `<div class="relation-chip-row">${tagMarkup}</div>` : ""}
-            <h2>${SiteData.escapeHtml(connection.title)}</h2>
+            <h2 class="connection-title">${SiteData.escapeHtml(connection.title)}</h2>
             <p class="connection-summary">${SiteData.escapeHtml(connection.summary || "Add a summary in data/connections.csv to preview this connection.")}</p>
             <div class="connection-card-body">
               ${SiteData.splitParagraphs(connection.body).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add longer body copy in the <code>body</code> column of data/connections.csv.</p>'}
