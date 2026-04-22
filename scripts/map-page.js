@@ -204,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
               <div class="city-subtitle city-subtitle-below">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
               <div class="city-top-copy">
+                ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
                 ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
                 <div class="city-list-stack">
                   <div class="city-list-block">
@@ -215,7 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
                   </div>
                 </div>
-                ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
               </div>
               <div class="visit-section-heading">Visits</div>
               <div class="visit-chip-row">
