@@ -93,8 +93,7 @@ body,
   display: flex;
   aspect-ratio: 1 / 1;
   min-height: 0;
-  padding: 18px 18px 0 24px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 18px 18px 16px 24px;
   z-index: 1;
 }
 
@@ -108,7 +107,7 @@ body,
 .connection-card-copy {
   display: grid;
   gap: 14px;
-  padding: 0 22px 22px;
+  padding: 0 22px 22px 24px;
   position: relative;
   z-index: 1;
 }
