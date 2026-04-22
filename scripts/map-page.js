@@ -269,13 +269,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const summaryMarkup = visit.summary
         ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
         : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;
+      const visitImage = visit.images?.[0] || "";
+      const visitImageMarkup = visitImage
+        ? `<div class="visit-media-box"><img loading="lazy" src="${SiteData.escapeAttr(visitImage)}" alt="${SiteData.escapeAttr(visit.imageAlt || city.city)}"></div>`
+        : `<div class="visit-media-empty">${SiteData.escapeHtml(city.city)}<br>${SiteData.escapeHtml(visit.dateLabel)}</div>`;
 
       detail.innerHTML = `
         <div class="visit-media-column">
           ${visit.title ? `<h3 class="visit-title">${SiteData.escapeHtml(visit.title)}</h3>` : `<h3 class="visit-title">${SiteData.escapeHtml(visit.dateLabel)}</h3>`}
-          <div class="gallery-shell" data-gallery-key="${SiteData.escapeAttr(`${city.key}-visit`)}">
-            ${SiteData.buildGalleryMarkup(`${city.key}-visit`, visit.images, visit.imageAlt || city.city, `${city.city}<br>${visit.dateLabel}`)}
-          </div>
+          ${visitImageMarkup}
         </div>
         <div class="visit-copy">
           <div class="visit-fields">
