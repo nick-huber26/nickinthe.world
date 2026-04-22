@@ -1,3 +1,7 @@
+.connections-page {
+  --tag-inspiration: #5049CC;
+}
+
 .connections-shell {
   min-height: 100vh;
   padding: 28px 24px 40px;

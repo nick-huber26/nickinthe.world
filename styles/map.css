@@ -5,6 +5,10 @@ body,
   overflow: hidden;
 }
 
+.map-page {
+  --tag-inspiration: #5049CC;
+}
+
 .shell {
   position: fixed;
   inset: 0;
