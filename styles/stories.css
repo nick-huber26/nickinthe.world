@@ -279,6 +279,10 @@
   --chip-accent: var(--tag-connection);
 }
 
+.story-chip-inspiration {
+  --chip-accent: var(--tag-inspiration);
+}
+
 .story-chip-story {
   --chip-accent: var(--tag-story);
 }

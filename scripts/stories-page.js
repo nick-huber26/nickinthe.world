@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const LOCAL_STORIES_CSV = "data/stories.csv";
+  const LOCAL_INSPIRATIONS_CSV = "data/inspirations.csv";
   const qs = new URLSearchParams(window.location.search);
 
   const grid = document.getElementById("storiesGrid");
@@ -19,8 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
     const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
     const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
+    const inspirationsCsvUrl = qs.get("inspirationsCsv") || LOCAL_INSPIRATIONS_CSV;
 
-    const [citiesResult, connectionsResult, storiesResult] = await Promise.all([
+    const [citiesResult, connectionsResult, storiesResult, inspirationsResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: LOCAL_CITIES_CSV,
@@ -38,15 +40,23 @@ document.addEventListener("DOMContentLoaded", () => {
         fallbackUrl: LOCAL_STORIES_CSV,
         primaryLabel: "Stories CMS",
         fallbackLabel: "Stories local fallback"
+      }),
+      SiteData.fetchTextWithFallback({
+        primaryUrl: inspirationsCsvUrl,
+        fallbackUrl: LOCAL_INSPIRATIONS_CSV,
+        primaryLabel: "Inspirations CMS",
+        fallbackLabel: "Inspirations local fallback"
       })
     ]);
 
     const parsedCities = SiteData.parseCitiesCsv(citiesResult.text, Papa);
     const parsedConnections = SiteData.parseConnectionsCsv(connectionsResult.text, Papa);
     const parsedStories = SiteData.parseStoriesCsv(storiesResult.text, Papa);
+    const parsedInspirations = SiteData.parseInspirationsCsv(inspirationsResult.text, Papa);
 
     SiteData.buildCrossReferenceState(parsedCities.visits, parsedCities.cities, parsedConnections);
     SiteData.buildStoryReferenceState(parsedStories, parsedCities.cities, parsedConnections);
+    SiteData.buildInspirationReferenceState(parsedInspirations, parsedCities.cities, parsedConnections, parsedStories);
 
     stories = parsedStories;
     availableCityFilters = buildAvailableCityFilters(stories);
@@ -88,6 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 `).join("")}
                 ${story.relatedConnections.map(connection => `
                   <a class="story-chip story-chip-connection" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
+                `).join("")}
+                ${(story.relatedInspirations || []).map(inspiration => `
+                  <a class="story-chip story-chip-inspiration" href="inspirations.html#${SiteData.escapeAttr(inspiration.anchorId)}">${SiteData.escapeHtml(inspiration.title)}</a>
                 `).join("")}
               </div>
               <div class="story-back-copy">
@@ -263,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
     availableCityFilters = [];
     availableConnectionFilters = [];
     renderFilters();
-    grid.innerHTML = '<article class="story-tile story-tile-empty"><div class="story-tile-copy"><h2>Unable to load stories</h2><p>Check that <code>data/stories.csv</code>, <code>data/cities.csv</code>, and <code>data/connections.csv</code> are available to the page.</p></div></article>';
+    grid.innerHTML = '<article class="story-tile story-tile-empty"><div class="story-tile-copy"><h2>Unable to load stories</h2><p>Check that <code>data/stories.csv</code>, <code>data/cities.csv</code>, <code>data/connections.csv</code>, and <code>data/inspirations.csv</code> are available to the page.</p></div></article>';
   });
 
   window.addEventListener("hashchange", () => {

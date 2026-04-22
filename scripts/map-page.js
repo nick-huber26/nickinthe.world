@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const LOCAL_STORIES_CSV = "data/stories.csv";
+  const LOCAL_INSPIRATIONS_CSV = "data/inspirations.csv";
   const qs = new URLSearchParams(window.location.search);
 
   const feed = document.getElementById("feed");
@@ -71,10 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
     const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
     const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
+    const inspirationsCsvUrl = qs.get("inspirationsCsv") || LOCAL_INSPIRATIONS_CSV;
     const remoteCitiesCsvUrl = SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
     const remoteConnectionsCsvUrl = SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
 
-    const [citiesResult, connectionsResult, storiesResult] = await Promise.all([
+    const [citiesResult, connectionsResult, storiesResult, inspirationsResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: citiesCsvUrl === LOCAL_CITIES_CSV ? remoteCitiesCsvUrl : LOCAL_CITIES_CSV,
@@ -92,14 +94,22 @@ document.addEventListener("DOMContentLoaded", () => {
         fallbackUrl: LOCAL_STORIES_CSV,
         primaryLabel: storiesCsvUrl === LOCAL_STORIES_CSV ? "Stories: Local CMS" : "Stories: Override source",
         fallbackLabel: "Stories: Local fallback"
+      }),
+      SiteData.fetchTextWithFallback({
+        primaryUrl: inspirationsCsvUrl,
+        fallbackUrl: LOCAL_INSPIRATIONS_CSV,
+        primaryLabel: inspirationsCsvUrl === LOCAL_INSPIRATIONS_CSV ? "Inspirations: Local CMS" : "Inspirations: Override source",
+        fallbackLabel: "Inspirations: Local fallback"
       })
     ]);
 
     const parsedCities = SiteData.parseCitiesCsv(citiesResult.text, Papa);
     const parsedConnections = SiteData.parseConnectionsCsv(connectionsResult.text, Papa);
     const parsedStories = SiteData.parseStoriesCsv(storiesResult.text, Papa);
+    const parsedInspirations = SiteData.parseInspirationsCsv(inspirationsResult.text, Papa);
     SiteData.buildCrossReferenceState(parsedCities.visits, parsedCities.cities, parsedConnections);
     SiteData.buildStoryReferenceState(parsedStories, parsedCities.cities, parsedConnections);
+    SiteData.buildInspirationReferenceState(parsedInspirations, parsedCities.cities, parsedConnections, parsedStories);
 
     visits = parsedCities.visits;
     cities = parsedCities.cities;
@@ -138,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
       const relatedConnections = city.relatedConnections || [];
       const relatedStories = city.relatedStories || [];
+      const relatedInspirations = city.relatedInspirations || [];
       const ratingMarkup = [
         buildRatingScale("Legal protection", city.legalProtectionAverage),
         buildRatingScale("Social acceptance", city.socialAcceptanceAverage),
@@ -168,6 +179,13 @@ document.addEventListener("DOMContentLoaded", () => {
                   <div class="city-story-row" aria-label="Related stories">
                     ${relatedStories.map(story => `
                       <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
+                    `).join("")}
+                  </div>
+                ` : ""}
+                ${relatedInspirations.length ? `
+                  <div class="city-story-row" aria-label="Related inspirations">
+                    ${relatedInspirations.map(inspiration => `
+                      <a class="topic-chip tag-chip-inspiration" href="inspirations.html#${SiteData.escapeAttr(inspiration.anchorId)}">${SiteData.escapeHtml(inspiration.title)}</a>
                     `).join("")}
                   </div>
                 ` : ""}

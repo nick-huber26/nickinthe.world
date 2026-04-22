@@ -17,6 +17,7 @@
   --tag-city: #26CEAA;
   --tag-connection: #7BADE2;
   --tag-story: #98E8C1;
+  --tag-inspiration: #f2c66d;
   --flag-gradient: linear-gradient(90deg,
     var(--gm-1) 0%,
     var(--gm-2) 16%,
@@ -166,6 +167,10 @@ textarea {
 
 .tag-chip-story {
   --chip-accent: var(--tag-story);
+}
+
+.tag-chip-inspiration {
+  --chip-accent: var(--tag-inspiration);
 }
 
 .empty-media {

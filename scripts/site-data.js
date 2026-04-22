@@ -306,7 +306,9 @@
         relatedConnectionIds: [],
         relatedConnections: [],
         relatedStoryIds: [],
-        relatedStories: []
+        relatedStories: [],
+        relatedInspirationIds: [],
+        relatedInspirations: []
       });
     });
 
@@ -362,6 +364,8 @@
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
           relatedCities: []
+          ,
+          relatedInspirations: []
         };
       })
       .filter(Boolean)
@@ -411,7 +415,8 @@
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
           relatedCities: [],
-          relatedConnections: []
+          relatedConnections: [],
+          relatedInspirations: []
         };
       })
       .filter(Boolean)
@@ -468,7 +473,8 @@
           sourceIndex: rowIndex,
           relatedCities: [],
           relatedConnections: [],
-          relatedStories: []
+          relatedStories: [],
+          relatedInspirations: []
         };
       })
       .filter(Boolean)
@@ -591,6 +597,10 @@
     const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
     const connectionById = new Map(connections.map(connection => [connection.id, connection]));
     const storyById = new Map(stories.map(story => [story.id, story]));
+    const inspirationById = new Map(inspirations.map(inspiration => [inspiration.id, inspiration]));
+    const cityInspirationMap = new Map(cities.map(city => [city.key, new Set()]));
+    const connectionInspirationMap = new Map(connections.map(connection => [connection.id, new Set()]));
+    const storyInspirationMap = new Map(stories.map(story => [story.id, new Set()]));
 
     inspirations.forEach(inspiration => {
       const resolvedCityKeys = resolveConnectionCityKeys(inspiration.cityKeys, cityByKey, cityBySlug);
@@ -614,12 +624,41 @@
       inspiration.relatedStories = uniqueStoryIds
         .map(storyId => storyById.get(storyId))
         .filter(Boolean);
+
+      uniqueCityKeys.forEach(cityKey => cityInspirationMap.get(cityKey)?.add(inspiration.id));
+      uniqueConnectionIds.forEach(connectionId => connectionInspirationMap.get(connectionId)?.add(inspiration.id));
+      uniqueStoryIds.forEach(storyId => storyInspirationMap.get(storyId)?.add(inspiration.id));
+    });
+
+    cities.forEach(city => {
+      const relatedInspirationIds = Array.from(cityInspirationMap.get(city.key) || []);
+      city.relatedInspirationIds = relatedInspirationIds;
+      city.relatedInspirations = relatedInspirationIds
+        .map(inspirationId => inspirationById.get(inspirationId))
+        .filter(Boolean);
+    });
+
+    connections.forEach(connection => {
+      const relatedInspirationIds = Array.from(connectionInspirationMap.get(connection.id) || []);
+      connection.relatedInspirationIds = relatedInspirationIds;
+      connection.relatedInspirations = relatedInspirationIds
+        .map(inspirationId => inspirationById.get(inspirationId))
+        .filter(Boolean);
+    });
+
+    stories.forEach(story => {
+      const relatedInspirationIds = Array.from(storyInspirationMap.get(story.id) || []);
+      story.relatedInspirationIds = relatedInspirationIds;
+      story.relatedInspirations = relatedInspirationIds
+        .map(inspirationId => inspirationById.get(inspirationId))
+        .filter(Boolean);
     });
 
     return {
       cityByKey,
       connectionById,
-      storyById
+      storyById,
+      inspirationById
     };
   }
 
