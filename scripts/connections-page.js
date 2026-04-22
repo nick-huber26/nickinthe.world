@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const REMOTE_CITIES_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=0&single=true&output=csv";
+  const REMOTE_CONNECTIONS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1903131448&single=true&output=csv";
+  const REMOTE_STORIES_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1163359358&single=true&output=csv";
+  const REMOTE_INSPIRATIONS_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1604551648&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const LOCAL_STORIES_CSV = "data/stories.csv";
@@ -14,34 +18,34 @@ document.addEventListener("DOMContentLoaded", () => {
   let connectionByAnchor = new Map();
 
   async function loadConnections() {
-    const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
-    const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
-    const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
-    const inspirationsCsvUrl = qs.get("inspirationsCsv") || LOCAL_INSPIRATIONS_CSV;
+    const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
+    const connectionsCsvUrl = qs.get("connectionsCsv") || REMOTE_CONNECTIONS_CSV;
+    const storiesCsvUrl = qs.get("storiesCsv") || REMOTE_STORIES_CSV;
+    const inspirationsCsvUrl = qs.get("inspirationsCsv") || REMOTE_INSPIRATIONS_CSV;
 
     const [citiesResult, connectionsResult, storiesResult, inspirationsResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: LOCAL_CITIES_CSV,
-        primaryLabel: citiesCsvUrl === LOCAL_CITIES_CSV ? "Cities: Local CMS" : "Cities: Override source",
+        primaryLabel: citiesCsvUrl === REMOTE_CITIES_CSV ? "Cities: Google Sheet CMS" : "Cities: Override source",
         fallbackLabel: "Cities: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: connectionsCsvUrl,
         fallbackUrl: LOCAL_CONNECTIONS_CSV,
-        primaryLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Local CMS" : "Connections: Override source",
+        primaryLabel: connectionsCsvUrl === REMOTE_CONNECTIONS_CSV ? "Connections: Google Sheet CMS" : "Connections: Override source",
         fallbackLabel: "Connections: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: storiesCsvUrl,
         fallbackUrl: LOCAL_STORIES_CSV,
-        primaryLabel: storiesCsvUrl === LOCAL_STORIES_CSV ? "Stories: Local CMS" : "Stories: Override source",
+        primaryLabel: storiesCsvUrl === REMOTE_STORIES_CSV ? "Stories: Google Sheet CMS" : "Stories: Override source",
         fallbackLabel: "Stories: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: inspirationsCsvUrl,
         fallbackUrl: LOCAL_INSPIRATIONS_CSV,
-        primaryLabel: inspirationsCsvUrl === LOCAL_INSPIRATIONS_CSV ? "Inspirations: Local CMS" : "Inspirations: Override source",
+        primaryLabel: inspirationsCsvUrl === REMOTE_INSPIRATIONS_CSV ? "Inspirations: Google Sheet CMS" : "Inspirations: Override source",
         fallbackLabel: "Inspirations: Local fallback"
       })
     ]);

@@ -1,6 +1,8 @@
 # Repository structure
 
-This repo now supports four embeddable GitHub Pages views that can reference each other:
+This repo now supports four embeddable GitHub Pages views that can reference each other.
+
+The public site is now wired to use published Google Sheet CSV tabs as the primary CMS source, with the local `data/*.csv` files kept in the repo as fallback backups.
 
 - `cities.html`: the map and city timeline page
 - `connections.html`: the gallery of thematic connection cards
@@ -32,6 +34,32 @@ Once pushed to the GitHub Pages branch, the site exposes:
 - `/inspirations.html`
 
 That means you can embed each page separately inside Google Sites by using its full GitHub Pages URL.
+
+## Live CMS Source
+
+Each public page now loads data from the published Google Sheet tabs first, then falls back to the matching local CSV in `data/` if the remote fetch fails.
+
+Primary live sources:
+
+- `cities`: `https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=0&single=true&output=csv`
+- `connections`: `https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1903131448&single=true&output=csv`
+- `stories`: `https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1163359358&single=true&output=csv`
+- `inspirations`: `https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=1604551648&single=true&output=csv`
+
+That means content updates made through the Google Sheet or the Apps Script CMS tool can appear on the public site without pushing a new GitHub commit.
+
+The local CSV files still matter because they:
+
+- provide a fallback if a published sheet URL is unavailable
+- give you a versioned snapshot in Git
+- make it easy to restore or compare past content states
+
+If you need to test a different source temporarily, each page still accepts URL overrides through query params such as:
+
+- `citiesCsv`
+- `connectionsCsv`
+- `storiesCsv`
+- `inspirationsCsv`
 
 ## CMS structure
 
