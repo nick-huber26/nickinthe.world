@@ -275,8 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
         : `<div class="visit-media-empty">${SiteData.escapeHtml(city.city)}<br>${SiteData.escapeHtml(visit.dateLabel)}</div>`;
 
       detail.innerHTML = `
+        <h3 class="visit-title visit-title-row">${visit.title ? SiteData.escapeHtml(visit.title) : SiteData.escapeHtml(visit.dateLabel)}</h3>
         <div class="visit-media-column">
-          ${visit.title ? `<h3 class="visit-title">${SiteData.escapeHtml(visit.title)}</h3>` : `<h3 class="visit-title">${SiteData.escapeHtml(visit.dateLabel)}</h3>`}
           ${visitImageMarkup}
         </div>
         <div class="visit-copy">
