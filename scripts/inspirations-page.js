@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const LOCAL_STORIES_CSV = "data/stories.csv";
   const LOCAL_INSPIRATIONS_CSV = "data/inspirations.csv";
+  const WALL_IMAGE_URL = "images/inspirations/brick-wall-nitw.jpg";
   const qs = new URLSearchParams(window.location.search);
 
   const shell = document.querySelector("[data-inspirations-shell]");
@@ -36,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let wallImageMetrics = {
+    width: 1800,
+    height: 1200
+  };
 
   async function loadInspirations() {
     const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
@@ -43,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
     const inspirationsCsvUrl = qs.get("inspirationsCsv") || LOCAL_INSPIRATIONS_CSV;
 
-    const [citiesResult, connectionsResult, storiesResult, inspirationsResult] = await Promise.all([
+    const [citiesResult, connectionsResult, storiesResult, inspirationsResult, wallMetrics] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: LOCAL_CITIES_CSV,
@@ -67,7 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
         fallbackUrl: LOCAL_INSPIRATIONS_CSV,
         primaryLabel: "Inspirations CMS",
         fallbackLabel: "Inspirations local fallback"
-      })
+      }),
+      loadWallImageMetrics()
     ]);
 
     const parsedCities = SiteData.parseCitiesCsv(citiesResult.text, Papa);
@@ -80,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     SiteData.buildInspirationReferenceState(parsedInspirations, parsedCities.cities, parsedConnections, parsedStories);
 
     inspirations = parsedInspirations;
+    wallImageMetrics = wallMetrics;
     inspirationByAnchor = new Map(inspirations.map(inspiration => [inspiration.anchorId, inspiration]));
     inspirationCountEl.textContent = String(inspirations.length);
 
@@ -89,9 +96,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderWall() {
+    posterWall.style.backgroundImage = `url("${WALL_IMAGE_URL}")`;
+    posterWall.style.backgroundRepeat = "no-repeat";
+    posterWall.style.backgroundPosition = "center center";
+    posterWall.style.backgroundSize = "100% 100%";
+
     if (!inspirations.length) {
-      posterWall.style.width = "1200px";
-      posterWall.style.height = "900px";
+      posterWall.style.width = `${wallImageMetrics.width}px`;
+      posterWall.style.height = `${wallImageMetrics.height}px`;
       posterWall.innerHTML = `
         <article class="poster-card" style="left:240px; top:180px; width:280px; height:380px;">
           <div class="poster-frame">
@@ -147,8 +159,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function buildWallLayout(items) {
     const padding = 220;
     const posterPositions = [];
-    let maxRight = 1200;
-    let maxBottom = 900;
+    let maxRight = wallImageMetrics.width;
+    let maxBottom = wallImageMetrics.height;
 
     items.forEach((item, index) => {
       const columnOffset = index % 4;
@@ -301,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
       viewportRect.width / wallState.width,
       viewportRect.height / wallState.height
     );
-    wallState.scale = clampValue(fitScale * 0.94, wallState.minScale, 1.05);
+    wallState.scale = clampValue(fitScale * 1.22, wallState.minScale, 1.24);
     wallState.translateX = (viewportRect.width - wallState.width * wallState.scale) / 2;
     wallState.translateY = (viewportRect.height - wallState.height * wallState.scale) / 2;
     clampPan();
@@ -430,6 +442,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function clampValue(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function loadWallImageMetrics() {
+    return new Promise(resolve => {
+      const image = new window.Image();
+      image.onload = () => {
+        resolve({
+          width: image.naturalWidth || 1800,
+          height: image.naturalHeight || 1200
+        });
+      };
+      image.onerror = () => resolve({ width: 1800, height: 1200 });
+      image.src = WALL_IMAGE_URL;
+    });
   }
 
   loadInspirations().catch(error => {
