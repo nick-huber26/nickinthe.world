@@ -152,6 +152,15 @@
       const existing = metadataByCity.get(cityKey) || {};
       const cityDescription = String(row.city_description || row.description || "").trim();
       const cityImages = parseExplicitImages(row.city_images || row.city_banner_images);
+      const existingCityImages = existing.cityImages || [];
+      const cityImageLookup = new Set(existingCityImages.map(image => image.toLowerCase()));
+      cityImages.forEach(image => {
+        const normalized = image.toLowerCase();
+        if (!cityImageLookup.has(normalized)) {
+          cityImageLookup.add(normalized);
+          existingCityImages.push(image);
+        }
+      });
       metadataByCity.set(cityKey, {
         cityKey,
         city: String(row.city || existing.city || "").trim(),
@@ -164,7 +173,7 @@
         imageAlt: String(row.image_alt || existing.imageAlt || "").trim(),
         accent: String(row.accent || existing.accent || "").trim(),
         cityDescription: cityDescription || existing.cityDescription || "",
-        cityImages: cityImages.length ? cityImages : (existing.cityImages || []),
+        cityImages: existingCityImages,
         firstSeen: existing.firstSeen ?? rowIndex
       });
     });
