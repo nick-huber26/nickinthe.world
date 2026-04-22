@@ -60,6 +60,7 @@ body,
 .connections-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: dense;
   gap: 22px;
   align-items: start;
 }
@@ -79,6 +80,10 @@ body,
 
 .connection-card.expanded {
   grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
 }
 
 .connection-card::before {
@@ -99,12 +104,16 @@ body,
   z-index: 1;
 }
 
+.connection-card.expanded .connection-card-media {
+  margin: 6px 0 0 6px;
+}
+
 .connection-card-media .gallery-shell,
 .connection-card-media .empty-media {
   display: block;
   width: 100%;
   min-height: 100%;
-  border-radius: 22px 0 0 0;
+  border-radius: 22px;
   border-left: 0;
 }
 
@@ -114,6 +123,12 @@ body,
   padding: 0 22px 22px 28px;
   position: relative;
   z-index: 1;
+}
+
+.connection-card.expanded .connection-card-copy {
+  align-content: start;
+  gap: 16px;
+  padding: 22px 24px 22px 0;
 }
 
 .connection-card.expanded .connection-card-body {
@@ -131,11 +146,24 @@ body,
   letter-spacing: -.03em;
 }
 
+.connection-card.expanded h2 {
+  font-size: clamp(28px, 3vw, 42px);
+}
+
 .connection-card p {
   margin: 0;
   color: rgba(255,255,255,.84);
   line-height: 1.65;
   font-size: 14px;
+}
+
+.connection-summary {
+  max-width: 70ch;
+}
+
+.connection-card.expanded .connection-summary {
+  font-size: 15px;
+  line-height: 1.75;
 }
 
 .connection-button {
@@ -169,12 +197,17 @@ body,
 }
 
 .connection-card.expanded .connection-button {
-  order: 5;
+  margin-top: 4px;
 }
 
 @media (max-width: 1040px) {
   .connections-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .connection-card.expanded {
+    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+    gap: 22px;
   }
 }
 
@@ -193,5 +226,18 @@ body,
 
   .connections-grid {
     grid-template-columns: 1fr;
+  }
+
+  .connection-card.expanded {
+    display: flex;
+    gap: 0;
+  }
+
+  .connection-card.expanded .connection-card-media {
+    margin: 0 0 16px 6px;
+  }
+
+  .connection-card.expanded .connection-card-copy {
+    padding: 0 22px 22px 28px;
   }
 }
