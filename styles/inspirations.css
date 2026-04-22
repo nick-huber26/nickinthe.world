@@ -32,6 +32,7 @@
   top: 0;
   left: 0;
   right: 0;
+  background: transparent;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
