@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
       const relatedConnections = city.relatedConnections || [];
       const cityHeroStyle = city.cityHeroImage
-        ? ` style="--cityHeroImage: url('${SiteData.escapeAttr(city.cityHeroImage)}');"`
+        ? ` style="--cityHeroImage: url(&quot;${SiteData.escapeAttr(city.cityHeroImage)}&quot;);"`
         : "";
       const ratingMarkup = [
         buildRatingScale("Legal protections", city.legalProtectionsAverage),
