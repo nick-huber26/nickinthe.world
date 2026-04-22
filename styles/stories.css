@@ -1,3 +1,9 @@
+.stories-page {
+  --tag-city: #26CEAA;
+  --tag-connection: #7BADE2;
+  --tag-story: #98E8C1;
+}
+
 .stories-shell {
   min-height: 100vh;
   padding: 28px 24px 40px;
@@ -44,6 +50,88 @@
 .stories-panel {
   max-width: 1180px;
   margin: 0 auto;
+}
+
+.stories-filters {
+  max-width: 1180px;
+  margin: 0 auto 24px;
+  display: grid;
+  gap: 14px;
+}
+
+.story-filter-group {
+  display: grid;
+  gap: 10px;
+}
+
+.story-filter-label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.68);
+}
+
+.story-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.story-filter-chip {
+  --chip-accent: rgba(255,255,255,0.28);
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--chip-accent) 65%, rgba(255,255,255,0.08));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)),
+    linear-gradient(135deg, color-mix(in srgb, var(--chip-accent) 18%, transparent), transparent 64%),
+    rgba(9, 16, 23, 0.76);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 -10px 20px rgba(0,0,0,0.18),
+    0 0 0 1px rgba(255,255,255,0.02);
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.story-filter-chip:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 -10px 20px rgba(0,0,0,0.14),
+    0 0 18px color-mix(in srgb, var(--chip-accent) 22%, transparent);
+  transform: translateY(-1px);
+}
+
+.story-filter-chip-city {
+  --chip-accent: var(--tag-city);
+}
+
+.story-filter-chip-connection {
+  --chip-accent: var(--tag-connection);
+}
+
+.story-filter-chip.is-selected {
+  border-color: color-mix(in srgb, var(--chip-accent) 74%, rgba(255,255,255,0.14));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--chip-accent) 24%, rgba(255,255,255,0.08)), rgba(255,255,255,0.04)),
+    linear-gradient(135deg, color-mix(in srgb, var(--chip-accent) 32%, transparent), transparent 62%),
+    rgba(10, 20, 28, 0.92);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--chip-accent) 28%, transparent),
+    inset 0 -8px 18px rgba(0,0,0,0.14),
+    0 0 22px color-mix(in srgb, var(--chip-accent) 24%, transparent);
+  color: white;
+}
+
+.story-filter-chip-clear {
+  --chip-accent: rgba(255,255,255,0.34);
+  font-weight: 600;
 }
 
 .stories-grid {
@@ -150,21 +238,42 @@
 }
 
 .story-chip {
+  --chip-accent: rgba(255,255,255,0.28);
   display: inline-flex;
   align-items: center;
   padding: 7px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid color-mix(in srgb, var(--chip-accent) 62%, rgba(255,255,255,0.08));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03)),
+    linear-gradient(135deg, color-mix(in srgb, var(--chip-accent) 20%, transparent), transparent 68%),
+    rgba(7, 15, 22, 0.78);
   backdrop-filter: blur(14px);
   color: rgba(255,255,255,0.92);
   font-size: 11px;
-  transition: background 0.18s ease, border-color 0.18s ease;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 -8px 16px rgba(0,0,0,0.16);
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.story-chip-city {
+  --chip-accent: var(--tag-city);
+}
+
+.story-chip-connection {
+  --chip-accent: var(--tag-connection);
+}
+
+.story-chip-story {
+  --chip-accent: var(--tag-story);
 }
 
 .story-chip:hover {
-  background: rgba(255,255,255,0.18);
-  border-color: rgba(255,255,255,0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 -8px 16px rgba(0,0,0,0.12),
+    0 0 16px color-mix(in srgb, var(--chip-accent) 22%, transparent);
 }
 
 .story-back-copy {
@@ -248,6 +357,10 @@
   .stories-grid {
     grid-template-columns: 1fr;
     grid-auto-rows: 180px;
+  }
+
+  .story-filter-row {
+    gap: 8px;
   }
 
   .story-size-landscape,

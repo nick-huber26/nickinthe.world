@@ -14,11 +14,22 @@
   <main class="stories-shell">
     <section class="stories-hero">
       <div class="hero-copy">
-        <h1>Browse the stories</h1>
-        <p>A gallery of visual story fragments tied to cities and, when useful, to the larger connections that run between them. Each CSV row becomes one tile in the grid.</p>
+        <h1>browse stories</h1>
+        <p>a visual gallery of story fragments tied to the cities and connections that unite them.</p>
       </div>
       <div class="hero-meta">
         <div class="stories-count"><span id="storyCount">0</span> stories</div>
+      </div>
+    </section>
+
+    <section class="stories-filters" aria-label="Story filters">
+      <div class="story-filter-group">
+        <div class="story-filter-label">Cities</div>
+        <div id="storyCityFilters" class="story-filter-row"></div>
+      </div>
+      <div class="story-filter-group">
+        <div class="story-filter-label">Connections</div>
+        <div id="storyConnectionFilters" class="story-filter-row"></div>
       </div>
     </section>
 
