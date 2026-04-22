@@ -1,7 +1,7 @@
 id,slug,title,creator,type,date,display_date,summary,description,city_tags,connection_tags,story_tags,image_folder,image_count,image_ext,images,image_alt,accent,poster_x,poster_y,poster_width,poster_height
-queer-seoul,queer-seoul,Queer Seoul,John Difulvio,Book,2024-05-14,,A city guide and cultural lens for understanding queer life in Seoul before landing there.,"Use the description column for the longer drawer copy. This can be reflective, practical, or narrative.
+gay-bar-why-we-went-out,gay-bar-why-we-went-out,Gay Bar: Why We Went Out,Jeremy Atherton Lin,Book,2024-05-14,,A book that belongs on the wall as a touchstone for queer nightlife, belonging, and the social rituals around going out.,"Use the description column for the longer drawer copy. This can be reflective, practical, or narrative.
 
-This sample row links to a city, a connection, and a story so you can see the drawer tags working together.",seoul-south-korea,global-queer-community,seoul-night-window,,,,images/seoul/1.jpeg,Neon Seoul street at night,#26CEAA,160,120,250,360
+This sample row links to a city, a connection, and a story so you can see the drawer tags working together.",seoul-south-korea,global-queer-community,seoul-night-window,,,,images/inspirations/gay-bar-why-we-went-out.jpeg,Gay Bar Why We Went Out book cover,#26CEAA,160,120,250,360
 shared-language-on-screen,shared-language-on-screen,Shared Language on Screen,Studio Journal,Film,2025-01-10,,Visual references for transit design, signage, and the feeling of moving through highly legible public space.,"This row is meant to show how a film or visual essay can connect directly to a design theme.
 
 Swap the image with a real poster whenever you have one and adjust poster_x / poster_y if you want to curate the wall composition.",tokyo-japan|barcelona-spain,design-language,shared-language,,,,images/seoul/city-hero.jpeg,Street scene with graphic signage,#7BADE2,520,220,280,400
