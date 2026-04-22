@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let pointerDownPosterId = "";
   let wallImageMetrics = {
     width: 1800,
     height: 1200
@@ -184,8 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function bindWallInteractions() {
-    posterWall.addEventListener("click", handlePosterClick);
-
     wallViewport.addEventListener("pointerdown", event => {
       isDragging = true;
       dragMoved = false;
@@ -194,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dragStartY = event.clientY;
       dragOriginX = wallState.translateX;
       dragOriginY = wallState.translateY;
+      pointerDownPosterId = event.target.closest("[data-inspiration-id]")?.dataset.inspirationId || "";
       wallViewport.classList.add("is-dragging");
       wallViewport.setPointerCapture(event.pointerId);
     });
@@ -215,9 +215,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dragPointerId !== null && event.pointerId === dragPointerId) {
         wallViewport.releasePointerCapture(event.pointerId);
       }
+      const shouldOpenPoster = !dragMoved && pointerDownPosterId;
       isDragging = false;
       dragPointerId = null;
+      pointerDownPosterId = "";
       wallViewport.classList.remove("is-dragging");
+      if (shouldOpenPoster) {
+        openPanel(shouldOpenPoster);
+      }
     };
 
     wallViewport.addEventListener("pointerup", stopDragging);
@@ -241,13 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.addEventListener("hashchange", openHashTarget);
-  }
-
-  function handlePosterClick(event) {
-    if (dragMoved) return;
-    const poster = event.target.closest("[data-inspiration-id]");
-    if (!poster) return;
-    openPanel(poster.dataset.inspirationId);
   }
 
   function handleWheelZoom(event) {
