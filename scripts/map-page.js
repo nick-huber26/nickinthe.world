@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const paragraphs = SiteData.splitParagraphs(visit.story);
       const descriptionMarkup = paragraphs.length
         ? paragraphs.map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("")
-        : `<p class="visit-field-empty">Add a description for this visit in the <code>story</code> column.</p>`;
+        : `<p class="visit-field-empty">Add a description for this visit in the <code>story</code> column. The parser also accepts <code>body</code>.</p>`;
       const summaryMarkup = visit.summary
         ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
         : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;

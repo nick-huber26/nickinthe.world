@@ -391,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="panel-tag-title">Description</div>
           ${SiteData.splitParagraphs(inspiration.description || inspiration.summary)
             .map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`)
-            .join("") || "<p>Add longer copy in the description column of data/inspirations.csv.</p>"}
+            .join("") || "<p>Add longer copy in the description column of data/inspirations.csv. The parser also accepts body.</p>"}
         </div>
 
         <div class="panel-footnote">

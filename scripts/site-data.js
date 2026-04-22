@@ -142,7 +142,7 @@
       .map((row, rowIndex) => {
         const city = String(row.city || "").trim();
         const country = String(row.country || "").trim();
-        const cityKey = buildCityKey(city, country, row.city_key);
+        const cityKey = buildCityKey(city, country, row.city_key || row.slug);
         return { row, rowIndex, cityKey };
       })
       .filter(item => item.cityKey);
@@ -150,7 +150,7 @@
     const metadataByCity = new Map();
     rawRows.forEach(({ row, cityKey, rowIndex }) => {
       const existing = metadataByCity.get(cityKey) || {};
-      const cityDescription = String(row.city_description || "").trim();
+      const cityDescription = String(row.city_description || row.description || "").trim();
       metadataByCity.set(cityKey, {
         cityKey,
         city: String(row.city || existing.city || "").trim(),
@@ -180,7 +180,7 @@
           row.image_ext || meta.imageExt
         );
         const summary = String(row.summary || "").trim();
-        const story = String(row.story || "").trim();
+        const story = String(row.story || row.body || "").trim();
         const legalProtection = parseRatingValue(row.legal_protection);
         const socialAcceptance = parseRatingValue(row.social_acceptance);
         const communityAccess = parseRatingValue(row.community_access);

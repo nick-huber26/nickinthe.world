@@ -35,6 +35,16 @@ That means you can embed each page separately inside Google Sites by using its f
 
 ## CMS structure
 
+Each CSV now follows the same broad pattern:
+
+- identity first: `id`, then the page key (`slug` or `city_key`), then `title`
+- primary content next: dates, summaries, and long-form copy
+- relationship tags grouped together in a consistent order
+- page-specific fields after that
+- media fields at the end: `image_folder`, `image_count`, `image_ext`, `images`, `image_alt`, `accent`
+
+That keeps the four CMS files easier to scan side-by-side while preserving the fields each page uniquely needs.
+
 ### `data/cities.csv`
 
 Each row is one visit on the map page.
@@ -47,24 +57,26 @@ Each row is one visit on the map page.
 - `date`: `YYYY-MM-DD`
 - `lat`: map latitude
 - `lng`: map longitude
+- `summary`: optional short visit summary
+- `story`: optional long visit body copy, including multi-paragraph text
 - `city_description`: optional city-level description shown on the card regardless of which visit is selected; the most recent non-empty value for a city wins
+- `connection_tags`: optional connection ids separated by `|`
+- `story_tags`: optional story ids separated by `|`
+- `inspiration_tags`: optional inspiration ids separated by `|`
+- `neighborhoods`: optional visit-level neighborhood names separated by `|`; combined uniquely on the city card
+- `spaces`: optional visit-level space or gay bar names separated by `|`; combined uniquely on the city card
 - `legal_protection`: optional 0-5 visit rating used in the city card average for legal protection
 - `social_acceptance`: optional 0-5 visit rating used in the city card average for social acceptance
 - `community_access`: optional 0-5 visit rating used in the city card average for community access
 - `personal_belonging`: optional 0-5 visit rating used in the city card average for personal belonging
-- `neighborhoods`: optional visit-level neighborhood names separated by `|`; combined uniquely on the city card
-- `spaces`: optional visit-level space or gay bar names separated by `|`; combined uniquely on the city card
-- `summary`: optional short visit summary
-- `story`: optional long visit body copy, including multi-paragraph text
-- `connection_tags`: optional connection ids separated by `|`
-- `story_tags`: optional story ids separated by `|`
-- `inspiration_tags`: optional inspiration ids separated by `|`
 - `image_folder`: folder for numbered images like `images/amsterdam`
 - `image_count`: number of numbered images in that folder
 - `image_ext`: file extension for numbered images
 - `images`: optional explicit image paths separated by `|`
 - `image_alt`: alt text
 - `accent`: optional hex color
+
+The parser also accepts `body` as an alias for `story`, and `description` as an alias for `city_description`.
 
 ### `data/connections.csv`
 
@@ -75,18 +87,16 @@ Each row is one gallery card on the Connections page.
 - `title`: card title
 - `summary`: short gallery summary
 - `body`: expanded long-form body copy, multi-paragraph supported
-- `topic_tags`: non-city chips separated by `|`
 - `city_tags`: `city_key` values separated by `|`
 - `story_tags`: optional story ids separated by `|`
 - `inspiration_tags`: optional inspiration ids separated by `|`
+- `topic_tags`: non-city chips separated by `|`
 - `image_folder`: optional folder for numbered images
 - `image_count`: optional numbered image count
 - `image_ext`: optional numbered image extension
 - `images`: optional explicit image paths separated by `|`
 - `image_alt`: alt text
 - `accent`: optional hex color
-
-The live Connections page can also read from a published Google Sheet with the same schema. Missing image-related columns are tolerated, but keeping the full header set makes the CMS easier to manage over time.
 
 `city_tags` should match `city_key` values from `data/cities.csv`. `story_tags` should match `id` values from `data/stories.csv`. `inspiration_tags` should match `id` values from `data/inspirations.csv`.
 
@@ -100,10 +110,10 @@ Each row is one tile on the Stories page.
 - `date`: optional story date in `YYYY-MM-DD`; used to sort stories newest first and display a formatted date on the card back
 - `summary`: short teaser text shown on the gallery tile and modal
 - `body`: longer story copy, multi-paragraph supported
-- `size`: `square`, `landscape`, or `vertical`
 - `city_tags`: one or more `city_key` values separated by `|`
 - `connection_tags`: optional connection ids separated by `|`
 - `inspiration_tags`: optional inspiration ids separated by `|`
+- `size`: `square`, `landscape`, or `vertical`
 - `image_folder`: optional folder for numbered images
 - `image_count`: optional numbered image count
 - `image_ext`: optional numbered image extension
@@ -124,6 +134,8 @@ Each row is one poster on the Inspirations wall.
 - `type`: media type such as `Book`, `Film`, `Podcast`, or `Essay`
 - `date`: optional `YYYY-MM-DD` date used in the drawer
 - `display_date`: optional fallback label if you want custom text instead of a parsed date
+- `date_added`: optional date the inspiration was added to the wall or site
+- `date_added_display`: optional custom added-date label
 - `summary`: short drawer intro
 - `description`: longer body copy, multi-paragraph supported
 - `city_tags`: one or more `city_key` values separated by `|`
@@ -139,6 +151,8 @@ Each row is one poster on the Inspirations wall.
 - `poster_center_y`: optional vertical poster offset from the wall center in pixels; `0` means centered
 - `poster_width`: optional poster width in pixels
 - `poster_height`: optional poster height in pixels
+
+The parser also accepts `body` as an alias for `description`.
 
 `city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`. `story_tags` should match `id` values from `data/stories.csv`.
 
