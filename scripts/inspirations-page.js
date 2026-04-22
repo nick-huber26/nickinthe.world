@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let inspirations = [];
   let inspirationByAnchor = new Map();
   let activeInspirationId = "";
-  let isDragging = false;
   let dragMoved = false;
   let dragPointerId = null;
   let dragStartX = 0;
@@ -38,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let dragOriginX = 0;
   let dragOriginY = 0;
   let pointerDownPosterId = "";
+  let pointerIsActive = false;
+  let pointerHasCapture = false;
   let wallImageMetrics = {
     width: 1800,
     height: 1200
@@ -186,24 +187,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function bindWallInteractions() {
     wallViewport.addEventListener("pointerdown", event => {
-      isDragging = true;
+      pointerIsActive = true;
       dragMoved = false;
+      pointerHasCapture = false;
       dragPointerId = event.pointerId;
       dragStartX = event.clientX;
       dragStartY = event.clientY;
       dragOriginX = wallState.translateX;
       dragOriginY = wallState.translateY;
       pointerDownPosterId = event.target.closest("[data-inspiration-id]")?.dataset.inspirationId || "";
-      wallViewport.classList.add("is-dragging");
-      wallViewport.setPointerCapture(event.pointerId);
     });
 
     wallViewport.addEventListener("pointermove", event => {
-      if (!isDragging || event.pointerId !== dragPointerId) return;
+      if (!pointerIsActive || event.pointerId !== dragPointerId) return;
       const deltaX = event.clientX - dragStartX;
       const deltaY = event.clientY - dragStartY;
-      if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+      if (Math.abs(deltaX) > 6 || Math.abs(deltaY) > 6) {
         dragMoved = true;
+      }
+      if (!dragMoved) return;
+      if (!pointerHasCapture) {
+        wallViewport.classList.add("is-dragging");
+        wallViewport.setPointerCapture(event.pointerId);
+        pointerHasCapture = true;
       }
       wallState.translateX = dragOriginX + deltaX;
       wallState.translateY = dragOriginY + deltaY;
@@ -212,11 +218,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const stopDragging = event => {
-      if (dragPointerId !== null && event.pointerId === dragPointerId) {
+      if (dragPointerId !== null && event.pointerId === dragPointerId && pointerHasCapture) {
         wallViewport.releasePointerCapture(event.pointerId);
       }
       const shouldOpenPoster = !dragMoved && pointerDownPosterId;
-      isDragging = false;
+      pointerIsActive = false;
+      pointerHasCapture = false;
       dragPointerId = null;
       pointerDownPosterId = "";
       wallViewport.classList.remove("is-dragging");
