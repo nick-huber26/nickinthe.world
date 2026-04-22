@@ -201,8 +201,10 @@
         );
         const summary = String(row.summary || "").trim();
         const story = String(row.story || "").trim();
-        const legalProtections = parseRatingValue(row.legal_protections);
-        const foreignerFriendliness = parseRatingValue(row.foreigner_friendliness);
+        const legalProtection = parseRatingValue(row.legal_protection);
+        const socialAcceptance = parseRatingValue(row.social_acceptance);
+        const communityAccess = parseRatingValue(row.community_access);
+        const personalBelonging = parseRatingValue(row.personal_belonging);
         const neighborhoods = parsePipeList(row.neighborhoods);
         const spaces = parsePipeList(row.spaces);
 
@@ -223,8 +225,10 @@
           title: String(row.title || "").trim(),
           summary,
           story,
-          legalProtections,
-          foreignerFriendliness,
+          legalProtection,
+          socialAcceptance,
+          communityAccess,
+          personalBelonging,
           neighborhoods,
           spaces,
           connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
@@ -246,13 +250,21 @@
       if (existing) {
         existing.visits.push(visit);
         existing.firstVisitIndex = Math.min(existing.firstVisitIndex, visitIndex);
-        if (Number.isFinite(visit.legalProtections)) {
-          existing.legalProtectionsTotal += visit.legalProtections;
-          existing.legalProtectionsCount += 1;
+        if (Number.isFinite(visit.legalProtection)) {
+          existing.legalProtectionTotal += visit.legalProtection;
+          existing.legalProtectionCount += 1;
         }
-        if (Number.isFinite(visit.foreignerFriendliness)) {
-          existing.foreignerFriendlinessTotal += visit.foreignerFriendliness;
-          existing.foreignerFriendlinessCount += 1;
+        if (Number.isFinite(visit.socialAcceptance)) {
+          existing.socialAcceptanceTotal += visit.socialAcceptance;
+          existing.socialAcceptanceCount += 1;
+        }
+        if (Number.isFinite(visit.communityAccess)) {
+          existing.communityAccessTotal += visit.communityAccess;
+          existing.communityAccessCount += 1;
+        }
+        if (Number.isFinite(visit.personalBelonging)) {
+          existing.personalBelongingTotal += visit.personalBelonging;
+          existing.personalBelongingCount += 1;
         }
         visit.neighborhoods.forEach(item => {
           if (!existing.neighborhoodLookup.has(item.toLowerCase())) {
@@ -279,10 +291,14 @@
         cityDescription: String(metadataByCity.get(visit.cityKey)?.cityDescription || "").trim(),
         visits: [visit],
         firstVisitIndex: visitIndex,
-        legalProtectionsTotal: Number.isFinite(visit.legalProtections) ? visit.legalProtections : 0,
-        legalProtectionsCount: Number.isFinite(visit.legalProtections) ? 1 : 0,
-        foreignerFriendlinessTotal: Number.isFinite(visit.foreignerFriendliness) ? visit.foreignerFriendliness : 0,
-        foreignerFriendlinessCount: Number.isFinite(visit.foreignerFriendliness) ? 1 : 0,
+        legalProtectionTotal: Number.isFinite(visit.legalProtection) ? visit.legalProtection : 0,
+        legalProtectionCount: Number.isFinite(visit.legalProtection) ? 1 : 0,
+        socialAcceptanceTotal: Number.isFinite(visit.socialAcceptance) ? visit.socialAcceptance : 0,
+        socialAcceptanceCount: Number.isFinite(visit.socialAcceptance) ? 1 : 0,
+        communityAccessTotal: Number.isFinite(visit.communityAccess) ? visit.communityAccess : 0,
+        communityAccessCount: Number.isFinite(visit.communityAccess) ? 1 : 0,
+        personalBelongingTotal: Number.isFinite(visit.personalBelonging) ? visit.personalBelonging : 0,
+        personalBelongingCount: Number.isFinite(visit.personalBelonging) ? 1 : 0,
         neighborhoods: [...visit.neighborhoods],
         neighborhoodLookup: new Set(visit.neighborhoods.map(item => item.toLowerCase())),
         spaces: [...visit.spaces],
@@ -295,11 +311,17 @@
     });
 
     groupedCities.forEach(city => {
-      city.legalProtectionsAverage = city.legalProtectionsCount
-        ? city.legalProtectionsTotal / city.legalProtectionsCount
+      city.legalProtectionAverage = city.legalProtectionCount
+        ? city.legalProtectionTotal / city.legalProtectionCount
         : null;
-      city.foreignerFriendlinessAverage = city.foreignerFriendlinessCount
-        ? city.foreignerFriendlinessTotal / city.foreignerFriendlinessCount
+      city.socialAcceptanceAverage = city.socialAcceptanceCount
+        ? city.socialAcceptanceTotal / city.socialAcceptanceCount
+        : null;
+      city.communityAccessAverage = city.communityAccessCount
+        ? city.communityAccessTotal / city.communityAccessCount
+        : null;
+      city.personalBelongingAverage = city.personalBelongingCount
+        ? city.personalBelongingTotal / city.personalBelongingCount
         : null;
     });
 

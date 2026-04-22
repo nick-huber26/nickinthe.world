@@ -139,8 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const relatedConnections = city.relatedConnections || [];
       const relatedStories = city.relatedStories || [];
       const ratingMarkup = [
-        buildRatingScale("Legal protections", city.legalProtectionsAverage),
-        buildRatingScale("Foreigner friendliness", city.foreignerFriendlinessAverage)
+        buildRatingScale("Legal protection", city.legalProtectionAverage),
+        buildRatingScale("Social acceptance", city.socialAcceptanceAverage),
+        buildRatingScale("Community access", city.communityAccessAverage),
+        buildRatingScale("Personal belonging", city.personalBelongingAverage)
       ].filter(Boolean).join("");
       const neighborhoodsMarkup = (city.neighborhoods || [])
         .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)

@@ -45,8 +45,10 @@ Each row is one visit on the map page.
 - `lat`: map latitude
 - `lng`: map longitude
 - `city_description`: optional city-level description shown on the card regardless of which visit is selected; the most recent non-empty value for a city wins
-- `legal_protections`: optional 0-5 visit rating used in the city card average for legal protections
-- `foreigner_friendliness`: optional 0-5 visit rating used in the city card average for foreigner friendliness
+- `legal_protection`: optional 0-5 visit rating used in the city card average for legal protection
+- `social_acceptance`: optional 0-5 visit rating used in the city card average for social acceptance
+- `community_access`: optional 0-5 visit rating used in the city card average for community access
+- `personal_belonging`: optional 0-5 visit rating used in the city card average for personal belonging
 - `neighborhoods`: optional visit-level neighborhood names separated by `|`; combined uniquely on the city card
 - `spaces`: optional visit-level space or gay bar names separated by `|`; combined uniquely on the city card
 - `summary`: optional short visit summary
