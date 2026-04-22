@@ -96,6 +96,13 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <div class="story-tile-face story-tile-back">
             <div class="story-tile-back-inner">
+              <div class="story-back-copy">
+                ${story.dateLabel ? `<div class="story-back-date">${SiteData.escapeHtml(story.dateLabel)}</div>` : ""}
+                <h2>${SiteData.escapeHtml(story.title)}</h2>
+                <div class="story-back-text">
+                  ${SiteData.splitParagraphs(story.body || story.summary).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add story text in the <code>body</code> or <code>summary</code> column of data/stories.csv.</p>'}
+                </div>
+              </div>
               <div class="story-chip-row">
                 ${story.relatedCities.map(city => `
                   <a class="story-chip story-chip-city" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
@@ -106,13 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${(story.relatedInspirations || []).map(inspiration => `
                   <a class="story-chip story-chip-inspiration" href="inspirations.html#${SiteData.escapeAttr(inspiration.anchorId)}">${SiteData.escapeHtml(inspiration.title)}</a>
                 `).join("")}
-              </div>
-              <div class="story-back-copy">
-                ${story.dateLabel ? `<div class="story-back-date">${SiteData.escapeHtml(story.dateLabel)}</div>` : ""}
-                <h2>${SiteData.escapeHtml(story.title)}</h2>
-                <div class="story-back-text">
-                  ${SiteData.splitParagraphs(story.body || story.summary).map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("") || '<p>Add story text in the <code>body</code> or <code>summary</code> column of data/stories.csv.</p>'}
-                </div>
               </div>
             </div>
           </div>

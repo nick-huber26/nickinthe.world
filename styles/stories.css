@@ -304,7 +304,6 @@
 }
 
 .story-back-date {
-  margin-top: auto;
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -320,8 +319,12 @@
 
 .story-back-text {
   display: grid;
+  flex: 1;
+  align-content: start;
   gap: 10px;
   padding-bottom: 2px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .story-back-text p {
