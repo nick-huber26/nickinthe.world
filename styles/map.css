@@ -226,27 +226,6 @@ body,
   padding: 18px 20px 20px;
 }
 
-.city-hero {
-  position: relative;
-  margin: -18px -20px 12px;
-  padding: 16px 20px 14px;
-  border-radius: 28px 28px 20px 20px;
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(16,24,31,.84), rgba(12,19,27,.72));
-}
-
-.city-hero.has-hero {
-  min-height: 248px;
-  background: rgba(8,14,20,.78);
-}
-
-.city-hero .meta-row,
-.city-hero .city-title-row,
-.city-hero .city-top-copy {
-  position: relative;
-  z-index: 1;
-}
-
 .meta-row {
   display: flex;
   flex-wrap: wrap;

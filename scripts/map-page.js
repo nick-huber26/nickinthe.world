@@ -138,13 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
       const relatedConnections = city.relatedConnections || [];
       const relatedStories = city.relatedStories || [];
-      const cityHeroStyle = city.cityHeroImage
-        ? ` style="background:
-            linear-gradient(180deg, rgba(7,15,20,.18) 0%, rgba(7,15,20,.34) 20%, rgba(7,15,20,.64) 58%, rgba(7,15,20,.9) 100%),
-            linear-gradient(110deg, rgba(6,12,18,.62) 0%, rgba(6,12,18,.18) 32%, rgba(6,12,18,.52) 100%),
-            radial-gradient(circle at 18% 18%, rgba(255,255,255,.1), transparent 28%),
-            url('${SiteData.escapeAttr(city.cityHeroImage)}') center center / cover no-repeat;"`
-        : "";
       const ratingMarkup = [
         buildRatingScale("Legal protections", city.legalProtectionsAverage),
         buildRatingScale("Foreigner friendliness", city.foreignerFriendlinessAverage)
@@ -159,43 +152,41 @@ document.addEventListener("DOMContentLoaded", () => {
         <article class="city-card" id="city-${SiteData.escapeAttr(city.key)}" data-city-key="${SiteData.escapeAttr(city.key)}">
           <div class="post-card" ${cityStyle}>
             <div class="post-content">
-              <div class="city-hero${city.cityHeroImage ? " has-hero" : ""}"${cityHeroStyle}>
-                <div class="meta-row meta-row-scroll">
-                  <span class="chip city meta-chip-fixed">${SiteData.escapeHtml(city.city)}${city.country ? `, ${SiteData.escapeHtml(city.country)}` : ""}</span>
-                  <span class="chip count meta-chip-fixed">${city.visits.length} ${city.visits.length === 1 ? "visit" : "visits"}</span>
-                  ${relatedConnections.length ? `
-                    <div class="city-connection-row" aria-label="Related connections">
-                      ${relatedConnections.map(connection => `
-                        <a class="relation-chip tag-chip-connection" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
-                      `).join("")}
-                    </div>
-                  ` : ""}
-                  ${relatedStories.length ? `
-                    <div class="city-story-row" aria-label="Related stories">
-                      ${relatedStories.map(story => `
-                        <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
-                      `).join("")}
-                    </div>
-                  ` : ""}
-                </div>
-                <div class="city-title-row">
-                  <h2>${SiteData.escapeHtml(city.city)}</h2>
-                  <div class="city-subtitle">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
-                </div>
-                <div class="city-top-copy">
-                  ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
-                  <div class="city-list-stack">
-                    <div class="city-list-block">
-                      <div class="city-list-title">Neighborhoods</div>
-                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
-                    </div>
-                    <div class="city-list-block">
-                      <div class="city-list-title">Spaces</div>
-                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
-                    </div>
+              <div class="meta-row meta-row-scroll">
+                <span class="chip city meta-chip-fixed">${SiteData.escapeHtml(city.city)}${city.country ? `, ${SiteData.escapeHtml(city.country)}` : ""}</span>
+                <span class="chip count meta-chip-fixed">${city.visits.length} ${city.visits.length === 1 ? "visit" : "visits"}</span>
+                ${relatedConnections.length ? `
+                  <div class="city-connection-row" aria-label="Related connections">
+                    ${relatedConnections.map(connection => `
+                      <a class="relation-chip tag-chip-connection" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
+                    `).join("")}
                   </div>
-                  ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
+                ` : ""}
+                ${relatedStories.length ? `
+                  <div class="city-story-row" aria-label="Related stories">
+                    ${relatedStories.map(story => `
+                      <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
+                    `).join("")}
+                  </div>
+                ` : ""}
+              </div>
+              <div class="city-title-row">
+                <h2>${SiteData.escapeHtml(city.city)}</h2>
+                <div class="city-subtitle">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
+              </div>
+              <div class="city-top-copy">
+                ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
+                <div class="city-list-stack">
+                  <div class="city-list-block">
+                    <div class="city-list-title">Neighborhoods</div>
+                    ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
+                  </div>
+                  <div class="city-list-block">
+                    <div class="city-list-title">Spaces</div>
+                    ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
+                  </div>
                 </div>
+                ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
               </div>
               <div class="visit-section-heading">Visits</div>
               <div class="visit-chip-row">
