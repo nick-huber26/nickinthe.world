@@ -1,15 +1,22 @@
+html,
+body,
+.connections-page {
+  min-height: 100%;
+}
+
 .connections-page {
   --tag-inspiration: #5049CC;
 }
 
 .connections-shell {
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100dvh;
   padding: 28px 24px 40px;
 }
 
 .connections-hero {
-  max-width: 1180px;
-  margin: 0 auto 28px;
+  width: 100%;
+  margin: 0 0 28px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
@@ -46,8 +53,8 @@
 }
 
 .gallery-panel {
-  max-width: 1180px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 .connections-grid {
