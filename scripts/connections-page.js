@@ -72,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
               ${connection.relatedCities.map(city => `
                 <a class="relation-chip tag-chip-city" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
               `).join("")}
+              ${connection.relatedStories.map(story => `
+                <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
+              `).join("")}
             </div>
             <h2>${SiteData.escapeHtml(connection.title)}</h2>
             <p>${SiteData.escapeHtml(connection.summary || "Add a summary in data/connections.csv to preview this connection.")}</p>

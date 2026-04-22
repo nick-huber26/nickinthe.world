@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_CONNECTIONS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQMEcBeB7RhPjNz68ETerPlME6noppDYGwXjKTCFoZfRNoBWM8Mzwydq47ZkkdWHffPj5zp0uE_s-JM/pub?gid=1798659217&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
+  const LOCAL_STORIES_CSV = "data/stories.csv";
   const qs = new URLSearchParams(window.location.search);
 
   const feed = document.getElementById("feed");
@@ -69,10 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadTrips() {
     const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
     const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
+    const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
     const remoteCitiesCsvUrl = SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
     const remoteConnectionsCsvUrl = SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
 
-    const [citiesResult, connectionsResult] = await Promise.all([
+    const [citiesResult, connectionsResult, storiesResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: citiesCsvUrl === LOCAL_CITIES_CSV ? remoteCitiesCsvUrl : LOCAL_CITIES_CSV,
@@ -84,12 +86,20 @@ document.addEventListener("DOMContentLoaded", () => {
         fallbackUrl: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? remoteConnectionsCsvUrl : LOCAL_CONNECTIONS_CSV,
         primaryLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Local CMS" : "Connections: Override source",
         fallbackLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Google Sheet fallback" : "Connections: Local fallback"
+      }),
+      SiteData.fetchTextWithFallback({
+        primaryUrl: storiesCsvUrl,
+        fallbackUrl: LOCAL_STORIES_CSV,
+        primaryLabel: storiesCsvUrl === LOCAL_STORIES_CSV ? "Stories: Local CMS" : "Stories: Override source",
+        fallbackLabel: "Stories: Local fallback"
       })
     ]);
 
     const parsedCities = SiteData.parseCitiesCsv(citiesResult.text, Papa);
     const parsedConnections = SiteData.parseConnectionsCsv(connectionsResult.text, Papa);
+    const parsedStories = SiteData.parseStoriesCsv(storiesResult.text, Papa);
     SiteData.buildCrossReferenceState(parsedCities.visits, parsedCities.cities, parsedConnections);
+    SiteData.buildStoryReferenceState(parsedStories, parsedCities.cities, parsedConnections);
 
     visits = parsedCities.visits;
     cities = parsedCities.cities;
@@ -127,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityStyle = `style="--accentStripe: linear-gradient(180deg, ${SiteData.escapeAttr(city.themeColor)}, rgba(255,255,255,0.14));"`;
       const cityDescription = SiteData.escapeHtml(city.cityDescription || "");
       const relatedConnections = city.relatedConnections || [];
+      const relatedStories = city.relatedStories || [];
       const cityHeroStyle = city.cityHeroImage
         ? ` style="background:
             linear-gradient(180deg, rgba(7,15,20,.18) 0%, rgba(7,15,20,.34) 20%, rgba(7,15,20,.64) 58%, rgba(7,15,20,.9) 100%),
@@ -156,6 +167,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="city-connection-row" aria-label="Related connections">
                       ${relatedConnections.map(connection => `
                         <a class="relation-chip tag-chip-connection" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
+                      `).join("")}
+                    </div>
+                  ` : ""}
+                  ${relatedStories.length ? `
+                    <div class="city-story-row" aria-label="Related stories">
+                      ${relatedStories.map(story => `
+                        <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
                       `).join("")}
                     </div>
                   ` : ""}
@@ -642,6 +660,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadTrips().catch(error => {
     console.error(error);
-    feedInner.innerHTML = '<div class="post-card"><div class="post-content"><h2>Unable to load trips</h2><p class="summary">Check that data/cities.csv and data/connections.csv are available to the page.</p></div></div>';
+    feedInner.innerHTML = '<div class="post-card"><div class="post-content"><h2>Unable to load trips</h2><p class="summary">Check that data/cities.csv, data/connections.csv, and data/stories.csv are available to the page.</p></div></div>';
   });
 });

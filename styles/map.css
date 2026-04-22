@@ -374,13 +374,15 @@ body,
   border-color: rgba(255,255,255,.92);
 }
 
-.city-connection-row {
+.city-connection-row,
+.city-story-row {
   display: flex;
   gap: 10px;
   min-width: max-content;
 }
 
-.city-connection-row .relation-chip {
+.city-connection-row .relation-chip,
+.city-story-row .topic-chip {
   flex: 0 0 auto;
 }
 

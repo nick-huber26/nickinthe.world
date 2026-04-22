@@ -291,7 +291,9 @@
         spaces: [...visit.spaces],
         spaceLookup: new Set(visit.spaces.map(item => item.toLowerCase())),
         relatedConnectionIds: [],
-        relatedConnections: []
+        relatedConnections: [],
+        relatedStoryIds: [],
+        relatedStories: []
       });
     });
 
@@ -455,6 +457,9 @@
     const cityByKey = new Map(cities.map(city => [city.key, city]));
     const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
     const connectionById = new Map(connections.map(connection => [connection.id, connection]));
+    const storyById = new Map(stories.map(story => [story.id, story]));
+    const cityStoryMap = new Map(cities.map(city => [city.key, new Set()]));
+    const connectionStoryMap = new Map(connections.map(connection => [connection.id, new Set()]));
 
     stories.forEach(story => {
       const resolvedCityKeys = resolveConnectionCityKeys(story.cityKeys, cityByKey, cityBySlug);
@@ -470,6 +475,25 @@
         .filter(Boolean);
       story.relatedConnections = uniqueConnectionIds
         .map(connectionId => connectionById.get(connectionId))
+        .filter(Boolean);
+
+      uniqueCityKeys.forEach(cityKey => cityStoryMap.get(cityKey)?.add(story.id));
+      uniqueConnectionIds.forEach(connectionId => connectionStoryMap.get(connectionId)?.add(story.id));
+    });
+
+    cities.forEach(city => {
+      const relatedStoryIds = Array.from(cityStoryMap.get(city.key) || []);
+      city.relatedStoryIds = relatedStoryIds;
+      city.relatedStories = relatedStoryIds
+        .map(storyId => storyById.get(storyId))
+        .filter(Boolean);
+    });
+
+    connections.forEach(connection => {
+      const relatedStoryIds = Array.from(connectionStoryMap.get(connection.id) || []);
+      connection.relatedStoryIds = relatedStoryIds;
+      connection.relatedStories = relatedStoryIds
+        .map(storyId => storyById.get(storyId))
         .filter(Boolean);
     });
 
