@@ -125,8 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     posterWall.innerHTML = layout.items.map(item => {
       const image = item.images[0];
-      const creatorMarkup = item.creator ? `<div class="poster-creator">${SiteData.escapeHtml(item.creator)}</div>` : "";
-      const typeLabel = item.type || "Inspiration";
       return `
         <button
           class="poster-card${item.anchorId === activeInspirationId ? " is-active" : ""}"
@@ -136,18 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
           style="left:${item.left}px; top:${item.top}px; width:${item.posterWidth}px; height:${item.posterHeight}px; --poster-accent:${SiteData.escapeAttr(item.themeColor)}; --poster-tilt:${SiteData.escapeAttr(item.tilt)}deg;"
           aria-label="Open inspiration ${SiteData.escapeAttr(item.title)}"
         >
-          <div class="poster-frame">
-            <div class="poster-media">
-              ${image
-                ? `<img loading="lazy" src="${SiteData.escapeAttr(image)}" alt="${SiteData.escapeAttr(item.imageAlt || item.title)}">`
-                : `<div class="poster-placeholder">${SiteData.escapeHtml(item.title)}</div>`}
-              <div class="poster-shade"></div>
-            </div>
-            <div class="poster-caption">
-              <div class="poster-kicker">${SiteData.escapeHtml(typeLabel)}</div>
-              <h2 class="poster-title">${SiteData.escapeHtml(item.title)}</h2>
-              ${creatorMarkup}
-            </div>
+          <div class="poster-media">
+            ${image
+              ? `<img loading="lazy" src="${SiteData.escapeAttr(image)}" alt="${SiteData.escapeAttr(item.imageAlt || item.title)}">`
+              : `<div class="poster-placeholder">${SiteData.escapeHtml(item.title)}</div>`}
           </div>
         </button>
       `;
@@ -163,13 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let maxBottom = wallImageMetrics.height;
 
     items.forEach((item, index) => {
-      const columnOffset = index % 4;
-      const rowOffset = Math.floor(index / 4);
-      const fallbackLeft = 180 + columnOffset * 320 + (rowOffset % 2) * 52;
-      const fallbackTop = 140 + rowOffset * 420 + (columnOffset % 2) * 28;
-      const left = item.posterX || fallbackLeft;
-      const top = item.posterY || fallbackTop;
-      const tilt = (((index % 7) - 3) * 0.9).toFixed(2);
+      const centerLeft = wallImageMetrics.width / 2 - item.posterWidth / 2;
+      const centerTop = wallImageMetrics.height / 2 - item.posterHeight / 2;
+      const left = centerLeft + item.posterCenterX;
+      const top = centerTop + item.posterCenterY;
+      const tilt = buildPosterTilt(index);
 
       posterPositions.push({
         ...item,
@@ -187,6 +175,12 @@ document.addEventListener("DOMContentLoaded", () => {
       height: maxBottom,
       items: posterPositions
     };
+  }
+
+  function buildPosterTilt(index) {
+    const magnitude = 1 + (index % 5);
+    const direction = index % 2 === 0 ? -1 : 1;
+    return (direction * magnitude).toFixed(2);
   }
 
   function bindWallInteractions() {

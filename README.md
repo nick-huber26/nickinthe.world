@@ -128,8 +128,8 @@ Each row is one poster on the Inspirations wall.
 - `images`: optional explicit image paths separated by `|`
 - `image_alt`: alt text for the poster art
 - `accent`: optional hex color used for placeholder styling
-- `poster_x`: optional horizontal poster position on the wall in pixels
-- `poster_y`: optional vertical poster position on the wall in pixels
+- `poster_center_x`: optional horizontal poster offset from the wall center in pixels; `0` means centered
+- `poster_center_y`: optional vertical poster offset from the wall center in pixels; `0` means centered
 - `poster_width`: optional poster width in pixels
 - `poster_height`: optional poster height in pixels
 

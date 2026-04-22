@@ -143,6 +143,7 @@
   cursor: pointer;
   text-align: left;
   transform: rotate(var(--poster-tilt, 0deg));
+  box-shadow: 0 18px 38px rgba(0,0,0,0.34);
 }
 
 .poster-card:hover,
@@ -151,36 +152,9 @@
   z-index: 4;
 }
 
-.poster-frame {
-  position: relative;
+.poster-media {
   width: 100%;
   height: 100%;
-  border-radius: 4px;
-  overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.2)),
-    rgba(12, 12, 12, 0.94);
-  border: 10px solid #111112;
-  box-shadow:
-    0 22px 42px rgba(0,0,0,0.46),
-    0 4px 10px rgba(0,0,0,0.38),
-    inset 0 0 0 1px rgba(255,255,255,0.06);
-}
-
-.poster-frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.18), transparent 18%, transparent 68%, rgba(0,0,0,0.24)),
-    linear-gradient(135deg, rgba(255,255,255,0.08), transparent 28%);
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-.poster-media {
-  position: absolute;
-  inset: 0;
 }
 
 .poster-media img,
@@ -189,6 +163,7 @@
   height: 100%;
   display: block;
   object-fit: cover;
+  border-radius: 2px;
 }
 
 .poster-placeholder {
@@ -202,50 +177,6 @@
   color: rgba(255,255,255,0.82);
   font-size: 15px;
   line-height: 1.4;
-}
-
-.poster-shade {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.62)),
-    rgba(0,0,0,0.28);
-  transition: opacity .22s ease;
-}
-
-.poster-card:hover .poster-shade,
-.poster-card:focus-visible .poster-shade,
-.poster-card.is-active .poster-shade {
-  opacity: 0.16;
-}
-
-.poster-caption {
-  position: absolute;
-  inset: auto 16px 16px;
-  display: grid;
-  gap: 4px;
-  pointer-events: none;
-}
-
-.poster-kicker {
-  font-size: 10px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.72);
-}
-
-.poster-title {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.08;
-  color: white;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.44);
-}
-
-.poster-creator {
-  font-size: 12px;
-  color: rgba(255,255,255,0.84);
-  text-shadow: 0 2px 8px rgba(0,0,0,0.44);
 }
 
 .inspiration-panel {

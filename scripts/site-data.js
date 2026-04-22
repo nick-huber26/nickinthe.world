@@ -438,8 +438,8 @@
         const parsedDate = parseDateValue(row.date);
         const explicitImages = parseExplicitImages(row.images);
         const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
-        const width = Math.max(180, parseInt(String(row.poster_width || "").trim(), 10) || 240);
-        const height = Math.max(260, parseInt(String(row.poster_height || "").trim(), 10) || 340);
+        const width = Math.max(180, parseInt(String(row.poster_width || "").trim(), 10) || 280);
+        const height = Math.max(260, parseInt(String(row.poster_height || "").trim(), 10) || 390);
 
         return {
           id,
@@ -459,8 +459,8 @@
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
           themeColor: normalizeColor(row.accent, rowIndex),
-          posterX: parseFloat(String(row.poster_x || "").trim()) || 0,
-          posterY: parseFloat(String(row.poster_y || "").trim()) || 0,
+          posterCenterX: parseFloat(String(row.poster_center_x || "").trim()) || 0,
+          posterCenterY: parseFloat(String(row.poster_center_y || "").trim()) || 0,
           posterWidth: width,
           posterHeight: height,
           sourceIndex: rowIndex,
