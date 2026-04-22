@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   ${relatedConnections.length ? `
                     <div class="city-connection-row" aria-label="Related connections">
                       ${relatedConnections.map(connection => `
-                        <a class="relation-chip" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
+                        <a class="relation-chip tag-chip-connection" href="connections.html#${SiteData.escapeAttr(connection.anchorId)}">${SiteData.escapeHtml(connection.title)}</a>
                       `).join("")}
                     </div>
                   ` : ""}

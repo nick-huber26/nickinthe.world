@@ -14,6 +14,9 @@
   --gm-5: #7bade2;
   --gm-6: #5049cc;
   --gm-7: #3d1a78;
+  --tag-city: #26CEAA;
+  --tag-connection: #7BADE2;
+  --tag-story: #98E8C1;
   --flag-gradient: linear-gradient(90deg,
     var(--gm-1) 0%,
     var(--gm-2) 16%,
@@ -121,27 +124,48 @@ textarea {
 .chip,
 .relation-chip,
 .topic-chip {
+  --chip-accent: rgba(255,255,255,0.28);
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid color-mix(in srgb, var(--chip-accent) 62%, rgba(255,255,255,0.08));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03)),
+    linear-gradient(135deg, color-mix(in srgb, var(--chip-accent) 20%, transparent), transparent 68%),
+    rgba(7, 15, 22, 0.78);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 -8px 16px rgba(0,0,0,0.16);
   font-size: 12px;
-  color: rgba(255,255,255,.84);
+  color: rgba(255,255,255,.92);
 }
 
 .relation-chip,
 .topic-chip {
-  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
 }
 
 .relation-chip:hover,
 .topic-chip:hover {
-  background: rgba(255,255,255,.12);
-  border-color: rgba(255,255,255,.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 -8px 16px rgba(0,0,0,0.12),
+    0 0 16px color-mix(in srgb, var(--chip-accent) 22%, transparent);
   transform: translateY(-1px);
+}
+
+.tag-chip-city {
+  --chip-accent: var(--tag-city);
+}
+
+.tag-chip-connection {
+  --chip-accent: var(--tag-connection);
+}
+
+.tag-chip-story {
+  --chip-accent: var(--tag-story);
 }
 
 .empty-media {

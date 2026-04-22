@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="connection-card-copy">
             <div class="topic-chip-row">
               ${connection.topicTags.map(tag => `
-                <span class="topic-chip">${SiteData.escapeHtml(tag)}</span>
+                <span class="topic-chip tag-chip-story">${SiteData.escapeHtml(tag)}</span>
               `).join("")}
             </div>
             <div class="relation-chip-row">
               ${connection.relatedCities.map(city => `
-                <a class="relation-chip" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
+                <a class="relation-chip tag-chip-city" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
               `).join("")}
             </div>
             <h2>${SiteData.escapeHtml(connection.title)}</h2>

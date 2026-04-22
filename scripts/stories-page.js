@@ -120,6 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearLabel = selectedSet.size ? "Clear filters" : "Clear filter";
     return `
       <button class="story-filter-chip story-filter-chip-clear" type="button" data-clear-filter="${type}">${clearLabel}</button>
+      ${!items.length ? `
+        <span class="story-filter-chip story-filter-chip-empty" aria-disabled="true">No ${type} filters available</span>
+      ` : ""}
       ${items.map(item => `
         <button
           class="story-filter-chip story-filter-chip-${type}${selectedSet.has(item.id) ? " is-selected" : ""}"
@@ -243,6 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadStories().catch(error => {
     console.error(error);
+    availableCityFilters = [];
+    availableConnectionFilters = [];
+    renderFilters();
     grid.innerHTML = '<article class="story-tile story-tile-empty"><div class="story-tile-copy"><h2>Unable to load stories</h2><p>Check that <code>data/stories.csv</code>, <code>data/cities.csv</code>, and <code>data/connections.csv</code> are available to the page.</p></div></article>';
   });
 });
