@@ -97,6 +97,7 @@ Each row is one visit on the map page.
 - `social_acceptance`: optional 0-5 visit rating used in the city card average for social acceptance
 - `community_access`: optional 0-5 visit rating used in the city card average for community access
 - `personal_belonging`: optional 0-5 visit rating used in the city card average for personal belonging
+- `city_images`: optional city-level banner image paths separated by `|`; the most recent non-empty value for a city wins
 - `image_folder`: folder for numbered images like `images/amsterdam`
 - `image_count`: number of numbered images in that folder
 - `image_ext`: file extension for numbered images
@@ -104,7 +105,7 @@ Each row is one visit on the map page.
 - `image_alt`: alt text
 - `accent`: optional hex color
 
-The parser also accepts `body` as an alias for `story`, and `description` as an alias for `city_description`.
+The parser also accepts `body` as an alias for `story`, `description` as an alias for `city_description`, and `city_banner_images` as an alias for `city_images`.
 
 ### `data/connections.csv`
 

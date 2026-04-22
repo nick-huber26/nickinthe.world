@@ -151,6 +151,7 @@
     rawRows.forEach(({ row, cityKey, rowIndex }) => {
       const existing = metadataByCity.get(cityKey) || {};
       const cityDescription = String(row.city_description || row.description || "").trim();
+      const cityImages = parseExplicitImages(row.city_images || row.city_banner_images);
       metadataByCity.set(cityKey, {
         cityKey,
         city: String(row.city || existing.city || "").trim(),
@@ -163,6 +164,7 @@
         imageAlt: String(row.image_alt || existing.imageAlt || "").trim(),
         accent: String(row.accent || existing.accent || "").trim(),
         cityDescription: cityDescription || existing.cityDescription || "",
+        cityImages: cityImages.length ? cityImages : (existing.cityImages || []),
         firstSeen: existing.firstSeen ?? rowIndex
       });
     });
@@ -271,6 +273,7 @@
         lng: visit.lng,
         themeColor: visit.themeColor,
         cityDescription: String(metadataByCity.get(visit.cityKey)?.cityDescription || "").trim(),
+        cityImages: [...(metadataByCity.get(visit.cityKey)?.cityImages || [])],
         visits: [visit],
         firstVisitIndex: visitIndex,
         legalProtectionTotal: Number.isFinite(visit.legalProtection) ? visit.legalProtection : 0,

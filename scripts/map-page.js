@@ -161,6 +161,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const spacesMarkup = (city.spaces || [])
         .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)
         .join("");
+      const cityBannerMarkup = SiteData.buildGalleryMarkup(
+        `${city.key}-banner`,
+        city.cityImages || [],
+        city.city,
+        city.city
+      );
       return `
         <article class="city-card" id="city-${SiteData.escapeAttr(city.key)}" data-city-key="${SiteData.escapeAttr(city.key)}">
           <div class="post-card" ${cityStyle}>
@@ -190,10 +196,13 @@ document.addEventListener("DOMContentLoaded", () => {
                   </div>
                 ` : ""}
               </div>
-              <div class="city-title-row">
-                <h2>${SiteData.escapeHtml(city.city)}</h2>
-                <div class="city-subtitle">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
+              <div class="city-banner-shell gallery-shell" data-gallery-key="${SiteData.escapeAttr(`${city.key}-banner`)}">
+                ${cityBannerMarkup}
+                <div class="city-banner-overlay">
+                  <h2 class="city-banner-title">${SiteData.escapeHtml(city.city)}</h2>
+                </div>
               </div>
+              <div class="city-subtitle city-subtitle-below">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
               <div class="city-top-copy">
                 ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
                 <div class="city-list-stack">
@@ -275,8 +284,8 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
         </div>
-        <div class="gallery-shell" data-gallery-key="${SiteData.escapeAttr(city.key)}">
-          ${SiteData.buildGalleryMarkup(city.key, visit.images, visit.imageAlt || city.city, `${city.city}<br>${visit.dateLabel}`)}
+        <div class="gallery-shell" data-gallery-key="${SiteData.escapeAttr(`${city.key}-visit`)}">
+          ${SiteData.buildGalleryMarkup(`${city.key}-visit`, visit.images, visit.imageAlt || city.city, `${city.city}<br>${visit.dateLabel}`)}
         </div>
       `;
     });
