@@ -1,11 +1,13 @@
 # Repository structure
 
-This repo now supports two embeddable GitHub Pages views that can reference each other:
+This repo now supports three embeddable GitHub Pages views that can reference each other:
 
 - `cities.html`: the map and city timeline page
 - `connections.html`: the gallery of thematic connection cards
+- `stories.html`: a visual story gallery backed by a CSV CMS
 - `data/cities.csv`: CMS data for map visits and city-level connection tags
 - `data/connections.csv`: CMS data for the Connections gallery
+- `data/stories.csv`: CMS data for the Stories gallery
 - `scripts/`: shared parsing logic plus page-specific behavior
 - `styles/`: shared theme plus page-specific layouts
 - `images/`: uploaded media used by either page
@@ -24,6 +26,7 @@ Once pushed to the GitHub Pages branch, the site exposes:
 
 - `/cities.html`
 - `/connections.html`
+- `/stories.html`
 
 That means you can embed each page separately inside Google Sites by using its full GitHub Pages URL.
 
@@ -77,6 +80,27 @@ Each row is one gallery card on the Connections page.
 
 The live Connections page can also read from a published Google Sheet with the same schema. Missing image-related columns are tolerated, but keeping the full header set makes the CMS easier to manage over time.
 
+### `data/stories.csv`
+
+Each row is one tile on the Stories page.
+
+- `id`: stable story id
+- `slug`: optional URL-friendly override for the hash anchor
+- `title`: tile title
+- `summary`: short teaser text shown on the gallery tile and modal
+- `body`: longer story copy, multi-paragraph supported
+- `size`: `square`, `landscape`, or `vertical`
+- `city_tags`: one or more `city_key` values separated by `|`
+- `connection_tags`: optional connection ids separated by `|`
+- `image_folder`: optional folder for numbered images
+- `image_count`: optional numbered image count
+- `image_ext`: optional numbered image extension
+- `images`: optional explicit image paths separated by `|`
+- `image_alt`: alt text
+- `accent`: optional hex color
+
+`city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`.
+
 ## Cross-page tagging
 
 The cross-reference system works in both directions:
@@ -100,7 +124,7 @@ For best results in the sheet:
 
 ## Image options
 
-You can use either image method on both CSVs.
+You can use either image method on `data/connections.csv` and `data/stories.csv`.
 
 ### Option 1: Numbered folder images
 

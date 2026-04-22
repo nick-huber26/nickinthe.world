@@ -347,6 +347,52 @@
       .sort((a, b) => a.sourceIndex - b.sourceIndex);
   }
 
+  function normalizeStorySize(value) {
+    const normalized = slugify(value || "square");
+    if (normalized === "landscape") return "landscape";
+    if (normalized === "vertical" || normalized === "portrait") return "vertical";
+    return "square";
+  }
+
+  function parseStoriesCsv(csvText, Papa) {
+    const cleaned = String(csvText || "").replace(/^\uFEFF/, "");
+    const parsed = Papa.parse(cleaned, {
+      header: true,
+      skipEmptyLines: "greedy",
+      dynamicTyping: false
+    });
+
+    return (parsed.data || [])
+      .map((row, rowIndex) => {
+        const title = String(row.title || "").trim();
+        const id = slugify(row.id || row.slug || title || `story-${rowIndex + 1}`);
+        if (!id) return null;
+
+        const explicitImages = parseExplicitImages(row.images);
+        const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
+
+        return {
+          id,
+          slug: slugify(row.slug || id) || id,
+          anchorId: `story-${slugify(row.slug || id) || id}`,
+          title: title || id,
+          summary: String(row.summary || "").trim(),
+          body: String(row.body || "").trim(),
+          size: normalizeStorySize(row.size),
+          cityKeys: parsePipeList(row.city_tags).map(item => slugify(item)).filter(Boolean),
+          connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
+          images: explicitImages.length ? explicitImages : folderImages,
+          imageAlt: String(row.image_alt || title || id).trim(),
+          themeColor: normalizeColor(row.accent, rowIndex),
+          sourceIndex: rowIndex,
+          relatedCities: [],
+          relatedConnections: []
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.sourceIndex - b.sourceIndex);
+  }
+
   function buildCrossReferenceState(visits, cities, connections) {
     const cityByKey = new Map(cities.map(city => [city.key, city]));
     const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
@@ -396,6 +442,34 @@
       connection.cityKeys = relatedCityKeys;
       connection.relatedCities = relatedCityKeys
         .map(cityKey => cityByKey.get(cityKey))
+        .filter(Boolean);
+    });
+
+    return {
+      cityByKey,
+      connectionById
+    };
+  }
+
+  function buildStoryReferenceState(stories, cities, connections) {
+    const cityByKey = new Map(cities.map(city => [city.key, city]));
+    const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
+    const connectionById = new Map(connections.map(connection => [connection.id, connection]));
+
+    stories.forEach(story => {
+      const resolvedCityKeys = resolveConnectionCityKeys(story.cityKeys, cityByKey, cityBySlug);
+      const uniqueCityKeys = Array.from(new Set(resolvedCityKeys));
+      const uniqueConnectionIds = Array.from(
+        new Set(story.connectionIds.filter(connectionId => connectionById.has(connectionId)))
+      );
+
+      story.cityKeys = uniqueCityKeys;
+      story.connectionIds = uniqueConnectionIds;
+      story.relatedCities = uniqueCityKeys
+        .map(cityKey => cityByKey.get(cityKey))
+        .filter(Boolean);
+      story.relatedConnections = uniqueConnectionIds
+        .map(connectionId => connectionById.get(connectionId))
         .filter(Boolean);
     });
 
@@ -480,7 +554,9 @@
     fetchTextWithFallback,
     parseCitiesCsv,
     parseConnectionsCsv,
+    parseStoriesCsv,
     buildCrossReferenceState,
+    buildStoryReferenceState,
     buildGalleryMarkup,
     startGalleries
   };
