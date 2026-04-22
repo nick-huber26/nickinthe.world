@@ -553,17 +553,21 @@ body,
 }
 
 .visit-media-column {
+  grid-column: 1;
   min-width: 0;
   display: grid;
   gap: 10px;
   align-content: start;
+  justify-self: start;
 }
 
 .visit-copy {
+  grid-column: 2;
   min-width: 0;
   display: grid;
   gap: 10px;
   align-content: start;
+  justify-self: stretch;
 }
 
 .visit-fields {
@@ -932,6 +936,11 @@ body,
 
   .visit-detail {
     grid-template-columns: 1fr;
+  }
+
+  .visit-media-column,
+  .visit-copy {
+    grid-column: auto;
   }
 
   .timeline-nav {
