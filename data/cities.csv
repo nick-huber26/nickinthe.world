@@ -19,6 +19,6 @@ id,city_key,title,city,country,date,lat,lng,city_description,legal_protection,so
 18,taipei-taiwan,,Taipei,Taiwan,2026-03-06,25.0330,121.5654,,,,,,,,,,,,,images/taipei,,,,,
 19,minneapolis-usa,,Minneapolis,USA,2025-06-04,44.9778,-93.2650,,,,,,,,,,,,,images/minneapolis,,,,,
 20,chicago-usa,,Chicago,USA,2025-06-12,41.8781,-87.6298,,,,,,,,,,global-queer-community,,,images/chicago,,,,,
-21,seoul-south-korea,,Seoul,South Korea,2025-07-06,37.5665,126.9780,,4,4,4,4,Itaewon,Rush,,,Who Has Membership?,,,images/seoul,,,,,
+21,seoul-south-korea,,Seoul,South Korea,2025-07-06,37.5665,126.9780,,4,4,4,4,Itaewon,Rush,,,who-has-membership,,,images/seoul,,,,,
 22,seoul-south-korea,,Seoul,South Korea,2025-07-13,37.5665,126.9780,,,,,,,,,,rituals-of-belonging,,,images/seoul,,,,,
 23,seoul-south-korea,,Seoul,South Korea,2026-03-07,37.5665,126.9780,,,,,,,,,,,,,images/seoul,,,,,

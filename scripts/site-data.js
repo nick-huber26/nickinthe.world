@@ -91,26 +91,6 @@
     return countryPart ? `${cityPart}-${countryPart}` : cityPart;
   }
 
-  function buildGoogleSheetCsvUrl(sheetUrl, fallbackPath) {
-    try {
-      const url = new URL(sheetUrl);
-      const match = url.pathname.match(/\/spreadsheets\/d\/([^/]+)/);
-      if (!match) return fallbackPath;
-      const spreadsheetId = match[1];
-      const gid = url.searchParams.get("gid") || "0";
-      return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${gid}`;
-    } catch (error) {
-      return fallbackPath;
-    }
-  }
-
-  function resolveCsvSource(sheetUrl, fallbackPath) {
-    const raw = String(sheetUrl || "").trim();
-    if (!raw) return fallbackPath;
-    if (raw.includes("output=csv")) return raw;
-    return buildGoogleSheetCsvUrl(raw, fallbackPath);
-  }
-
   async function fetchTextWithFallback(options) {
     const {
       primaryUrl,
@@ -835,7 +815,6 @@
     parseRatingValue,
     normalizeColor,
     buildCityKey,
-    resolveCsvSource,
     fetchTextWithFallback,
     parseCitiesCsv,
     parseConnectionsCsv,

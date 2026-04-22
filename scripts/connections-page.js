@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const DEFAULT_CITIES_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRByIxtJ23p1SJ8ehZDmbx1jd3DOMTk38xoSqAQcKpIImgxu2zEw69N6_xooFbBf7VNo0yFC62bqR3p/pub?gid=1798659217&single=true&output=csv";
-  const DEFAULT_CONNECTIONS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQMEcBeB7RhPjNz68ETerPlME6noppDYGwXjKTCFoZfRNoBWM8Mzwydq47ZkkdWHffPj5zp0uE_s-JM/pub?gid=1798659217&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
   const LOCAL_STORIES_CSV = "data/stories.csv";
@@ -20,21 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
     const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
     const inspirationsCsvUrl = qs.get("inspirationsCsv") || LOCAL_INSPIRATIONS_CSV;
-    const remoteCitiesCsvUrl = SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
-    const remoteConnectionsCsvUrl = SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
 
     const [citiesResult, connectionsResult, storiesResult, inspirationsResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
-        fallbackUrl: citiesCsvUrl === LOCAL_CITIES_CSV ? remoteCitiesCsvUrl : LOCAL_CITIES_CSV,
+        fallbackUrl: LOCAL_CITIES_CSV,
         primaryLabel: citiesCsvUrl === LOCAL_CITIES_CSV ? "Cities: Local CMS" : "Cities: Override source",
-        fallbackLabel: citiesCsvUrl === LOCAL_CITIES_CSV ? "Cities: Google Sheet fallback" : "Cities: Local fallback"
+        fallbackLabel: "Cities: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: connectionsCsvUrl,
-        fallbackUrl: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? remoteConnectionsCsvUrl : LOCAL_CONNECTIONS_CSV,
+        fallbackUrl: LOCAL_CONNECTIONS_CSV,
         primaryLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Local CMS" : "Connections: Override source",
-        fallbackLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Google Sheet fallback" : "Connections: Local fallback"
+        fallbackLabel: "Connections: Local fallback"
       }),
       SiteData.fetchTextWithFallback({
         primaryUrl: storiesCsvUrl,
