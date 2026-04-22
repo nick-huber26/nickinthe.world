@@ -65,6 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     grid.innerHTML = connections.map(connection => {
       const accentStyle = `style="--accentStripe: linear-gradient(180deg, ${SiteData.escapeAttr(connection.themeColor)}, rgba(255,255,255,0.14));"`;
+      const tagMarkup = [
+        ...connection.relatedCities.map(city => `
+          <a class="relation-chip tag-chip-city" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
+        `),
+        ...connection.relatedStories.map(story => `
+          <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
+        `)
+      ].join("");
+
       return `
         <article class="connection-card" id="${SiteData.escapeAttr(connection.anchorId)}" ${accentStyle}>
           <div class="connection-card-media">
@@ -73,19 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           </div>
           <div class="connection-card-copy">
-            <div class="topic-chip-row">
-              ${connection.topicTags.map(tag => `
-                <span class="topic-chip tag-chip-story">${SiteData.escapeHtml(tag)}</span>
-              `).join("")}
-            </div>
-            <div class="relation-chip-row">
-              ${connection.relatedCities.map(city => `
-                <a class="relation-chip tag-chip-city" href="cities.html#city-${SiteData.escapeAttr(city.key)}">${SiteData.escapeHtml(city.city)}</a>
-              `).join("")}
-              ${connection.relatedStories.map(story => `
-                <a class="topic-chip tag-chip-story" href="stories.html#${SiteData.escapeAttr(story.anchorId)}">${SiteData.escapeHtml(story.title)}</a>
-              `).join("")}
-            </div>
+            ${tagMarkup ? `<div class="relation-chip-row">${tagMarkup}</div>` : ""}
             <h2>${SiteData.escapeHtml(connection.title)}</h2>
             <p>${SiteData.escapeHtml(connection.summary || "Add a summary in data/connections.csv to preview this connection.")}</p>
             <div class="connection-card-body">
