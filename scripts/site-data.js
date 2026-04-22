@@ -421,6 +421,61 @@
       });
   }
 
+  function parseInspirationsCsv(csvText, Papa) {
+    const cleaned = String(csvText || "").replace(/^\uFEFF/, "");
+    const parsed = Papa.parse(cleaned, {
+      header: true,
+      skipEmptyLines: "greedy",
+      dynamicTyping: false
+    });
+
+    return (parsed.data || [])
+      .map((row, rowIndex) => {
+        const title = String(row.title || "").trim();
+        const id = slugify(row.id || row.slug || title || `inspiration-${rowIndex + 1}`);
+        if (!id) return null;
+
+        const parsedDate = parseDateValue(row.date);
+        const explicitImages = parseExplicitImages(row.images);
+        const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
+        const width = Math.max(180, parseInt(String(row.poster_width || "").trim(), 10) || 240);
+        const height = Math.max(260, parseInt(String(row.poster_height || "").trim(), 10) || 340);
+
+        return {
+          id,
+          slug: slugify(row.slug || id) || id,
+          anchorId: `inspiration-${slugify(row.slug || id) || id}`,
+          title: title || id,
+          creator: String(row.creator || "").trim(),
+          type: String(row.type || "").trim(),
+          date: parsedDate?.raw || "",
+          dateLabel: parsedDate?.label || String(row.display_date || "").trim(),
+          timestamp: parsedDate?.timestamp || 0,
+          summary: String(row.summary || "").trim(),
+          description: String(row.description || row.body || "").trim(),
+          cityKeys: parsePipeList(row.city_tags).map(item => slugify(item)).filter(Boolean),
+          connectionIds: parsePipeList(row.connection_tags).map(item => slugify(item)).filter(Boolean),
+          storyIds: parsePipeList(row.story_tags).map(item => slugify(item)).filter(Boolean),
+          images: explicitImages.length ? explicitImages : folderImages,
+          imageAlt: String(row.image_alt || title || id).trim(),
+          themeColor: normalizeColor(row.accent, rowIndex),
+          posterX: parseFloat(String(row.poster_x || "").trim()) || 0,
+          posterY: parseFloat(String(row.poster_y || "").trim()) || 0,
+          posterWidth: width,
+          posterHeight: height,
+          sourceIndex: rowIndex,
+          relatedCities: [],
+          relatedConnections: [],
+          relatedStories: []
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        if (a.timestamp !== b.timestamp) return b.timestamp - a.timestamp;
+        return a.sourceIndex - b.sourceIndex;
+      });
+  }
+
   function buildCrossReferenceState(visits, cities, connections) {
     const cityByKey = new Map(cities.map(city => [city.key, city]));
     const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
@@ -529,6 +584,43 @@
     };
   }
 
+  function buildInspirationReferenceState(inspirations, cities, connections, stories) {
+    const cityByKey = new Map(cities.map(city => [city.key, city]));
+    const cityBySlug = new Map(cities.map(city => [slugify(city.city), city]));
+    const connectionById = new Map(connections.map(connection => [connection.id, connection]));
+    const storyById = new Map(stories.map(story => [story.id, story]));
+
+    inspirations.forEach(inspiration => {
+      const resolvedCityKeys = resolveConnectionCityKeys(inspiration.cityKeys, cityByKey, cityBySlug);
+      const uniqueCityKeys = Array.from(new Set(resolvedCityKeys));
+      const uniqueConnectionIds = Array.from(
+        new Set(inspiration.connectionIds.filter(connectionId => connectionById.has(connectionId)))
+      );
+      const uniqueStoryIds = Array.from(
+        new Set(inspiration.storyIds.filter(storyId => storyById.has(storyId)))
+      );
+
+      inspiration.cityKeys = uniqueCityKeys;
+      inspiration.connectionIds = uniqueConnectionIds;
+      inspiration.storyIds = uniqueStoryIds;
+      inspiration.relatedCities = uniqueCityKeys
+        .map(cityKey => cityByKey.get(cityKey))
+        .filter(Boolean);
+      inspiration.relatedConnections = uniqueConnectionIds
+        .map(connectionId => connectionById.get(connectionId))
+        .filter(Boolean);
+      inspiration.relatedStories = uniqueStoryIds
+        .map(storyId => storyById.get(storyId))
+        .filter(Boolean);
+    });
+
+    return {
+      cityByKey,
+      connectionById,
+      storyById
+    };
+  }
+
   function resolveConnectionCityKeys(rawCityKeys, cityByKey, cityBySlug) {
     return rawCityKeys
       .map(rawKey => {
@@ -605,8 +697,10 @@
     parseCitiesCsv,
     parseConnectionsCsv,
     parseStoriesCsv,
+    parseInspirationsCsv,
     buildCrossReferenceState,
     buildStoryReferenceState,
+    buildInspirationReferenceState,
     buildGalleryMarkup,
     startGalleries
   };

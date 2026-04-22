@@ -1,13 +1,15 @@
 # Repository structure
 
-This repo now supports three embeddable GitHub Pages views that can reference each other:
+This repo now supports four embeddable GitHub Pages views that can reference each other:
 
 - `cities.html`: the map and city timeline page
 - `connections.html`: the gallery of thematic connection cards
 - `stories.html`: a visual story gallery backed by a CSV CMS
+- `inspirations.html`: a zoomable poster wall with a slide-out inspiration drawer
 - `data/cities.csv`: CMS data for map visits and city-level connection tags
 - `data/connections.csv`: CMS data for the Connections gallery
 - `data/stories.csv`: CMS data for the Stories gallery
+- `data/inspirations.csv`: CMS data for the Inspirations poster wall
 - `scripts/`: shared parsing logic plus page-specific behavior
 - `styles/`: shared theme plus page-specific layouts
 - `images/`: uploaded media used by either page
@@ -27,6 +29,7 @@ Once pushed to the GitHub Pages branch, the site exposes:
 - `/cities.html`
 - `/connections.html`
 - `/stories.html`
+- `/inspirations.html`
 
 That means you can embed each page separately inside Google Sites by using its full GitHub Pages URL.
 
@@ -103,6 +106,35 @@ Each row is one tile on the Stories page.
 
 `city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`.
 
+### `data/inspirations.csv`
+
+Each row is one poster on the Inspirations wall.
+
+- `id`: stable inspiration id
+- `slug`: optional URL-friendly override for the hash anchor
+- `title`: poster title shown on the wall and in the drawer
+- `creator`: author, host, director, or source name
+- `type`: media type such as `Book`, `Film`, `Podcast`, or `Essay`
+- `date`: optional `YYYY-MM-DD` date used in the drawer
+- `display_date`: optional fallback label if you want custom text instead of a parsed date
+- `summary`: short drawer intro
+- `description`: longer body copy, multi-paragraph supported
+- `city_tags`: one or more `city_key` values separated by `|`
+- `connection_tags`: optional connection ids separated by `|`
+- `story_tags`: optional story ids separated by `|`
+- `image_folder`: optional folder for numbered poster images
+- `image_count`: optional numbered image count
+- `image_ext`: optional numbered image extension
+- `images`: optional explicit image paths separated by `|`
+- `image_alt`: alt text for the poster art
+- `accent`: optional hex color used for placeholder styling
+- `poster_x`: optional horizontal poster position on the wall in pixels
+- `poster_y`: optional vertical poster position on the wall in pixels
+- `poster_width`: optional poster width in pixels
+- `poster_height`: optional poster height in pixels
+
+`city_tags` should match `city_key` values from `data/cities.csv`. `connection_tags` should match `id` values from `data/connections.csv`. `story_tags` should match `id` values from `data/stories.csv`.
+
 ## Cross-page tagging
 
 The cross-reference system works in both directions:
@@ -147,6 +179,8 @@ Then upload:
 Leave `image_folder`, `image_count`, and `image_ext` blank and set:
 
 - `images=images/amsterdam/cover.jpg|images/amsterdam/street.png`
+
+The same two image options also work on `data/inspirations.csv`. The brick wall background is generated in CSS, so you do not need a separate wall texture asset unless you want a custom photographed wall later.
 
 ## Important note
 
