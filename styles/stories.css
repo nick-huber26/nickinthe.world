@@ -162,19 +162,21 @@
   position: relative;
   min-width: 0;
   perspective: 1400px;
-  grid-row: span var(--story-rows, 24);
 }
 
 .story-size-square {
   grid-column: span 2;
+  grid-row: span 24;
 }
 
 .story-size-landscape {
   grid-column: span 4;
+  grid-row: span 24;
 }
 
 .story-size-vertical {
   grid-column: span 2;
+  grid-row: span 48;
 }
 
 .story-tile-card {
@@ -374,6 +376,18 @@
   .story-size-landscape {
     grid-column: span 2;
   }
+
+  .story-size-square {
+    grid-row: span 24;
+  }
+
+  .story-size-landscape {
+    grid-row: span 24;
+  }
+
+  .story-size-vertical {
+    grid-row: span 48;
+  }
 }
 
 @media (max-width: 720px) {
@@ -401,6 +415,7 @@
   .story-size-vertical,
   .story-size-square {
     grid-column: span 1;
+    grid-row: span 32;
   }
 }
 
