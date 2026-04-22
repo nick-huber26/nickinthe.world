@@ -351,7 +351,6 @@
           title: title || id,
           summary: String(row.summary || "").trim(),
           body: String(row.body || "").trim(),
-          topicTags: parsePipeList(row.topic_tags),
           cityKeys: parsePipeList(row.city_tags).map(item => slugify(item)).filter(Boolean),
           storyIds: parsePipeList(row.story_tags).map(item => slugify(item)).filter(Boolean),
           inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),

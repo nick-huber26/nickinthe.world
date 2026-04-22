@@ -119,7 +119,6 @@ Each row is one gallery card on the Connections page.
 - `city_tags`: `city_key` values separated by `|`
 - `story_tags`: optional story ids separated by `|`
 - `inspiration_tags`: optional inspiration ids separated by `|`
-- `topic_tags`: non-city chips separated by `|`
 - `image_folder`: optional folder for numbered images
 - `image_count`: optional numbered image count
 - `image_ext`: optional numbered image extension
