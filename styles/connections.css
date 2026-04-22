@@ -158,6 +158,12 @@ body,
   scrollbar-color: rgba(255,255,255,.16) transparent;
 }
 
+.connection-card:not(.expanded) .relation-chip-row .relation-chip,
+.connection-card:not(.expanded) .relation-chip-row .topic-chip {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .connection-card:not(.expanded) .relation-chip-row::-webkit-scrollbar {
   height: 8px;
 }
