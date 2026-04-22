@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_CONNECTIONS_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQMEcBeB7RhPjNz68ETerPlME6noppDYGwXjKTCFoZfRNoBWM8Mzwydq47ZkkdWHffPj5zp0uE_s-JM/pub?gid=1798659217&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const LOCAL_CONNECTIONS_CSV = "data/connections.csv";
+  const LOCAL_STORIES_CSV = "data/stories.csv";
   const qs = new URLSearchParams(window.location.search);
 
   const grid = document.getElementById("connectionsGrid");
@@ -16,10 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadConnections() {
     const citiesCsvUrl = qs.get("citiesCsv") || LOCAL_CITIES_CSV;
     const connectionsCsvUrl = qs.get("connectionsCsv") || LOCAL_CONNECTIONS_CSV;
+    const storiesCsvUrl = qs.get("storiesCsv") || LOCAL_STORIES_CSV;
     const remoteCitiesCsvUrl = SiteData.resolveCsvSource(DEFAULT_CITIES_SHEET_URL, LOCAL_CITIES_CSV);
     const remoteConnectionsCsvUrl = SiteData.resolveCsvSource(DEFAULT_CONNECTIONS_SHEET_URL, LOCAL_CONNECTIONS_CSV);
 
-    const [citiesResult, connectionsResult] = await Promise.all([
+    const [citiesResult, connectionsResult, storiesResult] = await Promise.all([
       SiteData.fetchTextWithFallback({
         primaryUrl: citiesCsvUrl,
         fallbackUrl: citiesCsvUrl === LOCAL_CITIES_CSV ? remoteCitiesCsvUrl : LOCAL_CITIES_CSV,
@@ -31,12 +33,20 @@ document.addEventListener("DOMContentLoaded", () => {
         fallbackUrl: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? remoteConnectionsCsvUrl : LOCAL_CONNECTIONS_CSV,
         primaryLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Local CMS" : "Connections: Override source",
         fallbackLabel: connectionsCsvUrl === LOCAL_CONNECTIONS_CSV ? "Connections: Google Sheet fallback" : "Connections: Local fallback"
+      }),
+      SiteData.fetchTextWithFallback({
+        primaryUrl: storiesCsvUrl,
+        fallbackUrl: LOCAL_STORIES_CSV,
+        primaryLabel: storiesCsvUrl === LOCAL_STORIES_CSV ? "Stories: Local CMS" : "Stories: Override source",
+        fallbackLabel: "Stories: Local fallback"
       })
     ]);
 
     const parsedCities = SiteData.parseCitiesCsv(citiesResult.text, Papa);
     const parsedConnections = SiteData.parseConnectionsCsv(connectionsResult.text, Papa);
+    const parsedStories = SiteData.parseStoriesCsv(storiesResult.text, Papa);
     SiteData.buildCrossReferenceState(parsedCities.visits, parsedCities.cities, parsedConnections);
+    SiteData.buildStoryReferenceState(parsedStories, parsedCities.cities, parsedConnections);
 
     connections = parsedConnections;
     connectionByAnchor = new Map(connections.map(connection => [connection.anchorId, connection]));
@@ -126,6 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadConnections().catch(error => {
     console.error(error);
-    grid.innerHTML = '<article class="connection-card"><div class="connection-card-copy"><h2>Unable to load connections</h2><p>Check that <code>data/cities.csv</code> and <code>data/connections.csv</code> are available to the page.</p></div></article>';
+    grid.innerHTML = '<article class="connection-card"><div class="connection-card-copy"><h2>Unable to load connections</h2><p>Check that <code>data/cities.csv</code>, <code>data/connections.csv</code>, and <code>data/stories.csv</code> are available to the page.</p></div></article>';
   });
 });

@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    scrollToHashTarget();
   }
 
   function renderGrid() {
@@ -195,6 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    scrollToHashTarget({ behavior: "auto" });
   }
 
   function matchesFilters(story) {
@@ -244,11 +246,26 @@ document.addEventListener("DOMContentLoaded", () => {
     return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}">`;
   }
 
+  function scrollToHashTarget(options = {}) {
+    const hash = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
+    if (!hash) return;
+
+    const target = document.getElementById(hash);
+    if (!target) return;
+
+    const { behavior = "smooth" } = options;
+    target.scrollIntoView({ behavior, block: "start" });
+  }
+
   loadStories().catch(error => {
     console.error(error);
     availableCityFilters = [];
     availableConnectionFilters = [];
     renderFilters();
     grid.innerHTML = '<article class="story-tile story-tile-empty"><div class="story-tile-copy"><h2>Unable to load stories</h2><p>Check that <code>data/stories.csv</code>, <code>data/cities.csv</code>, and <code>data/connections.csv</code> are available to the page.</p></div></article>';
+  });
+
+  window.addEventListener("hashchange", () => {
+    scrollToHashTarget();
   });
 });
