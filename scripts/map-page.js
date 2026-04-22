@@ -202,7 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   <h2 class="city-banner-title">${SiteData.escapeHtml(city.city)}</h2>
                 </div>
               </div>
-              <div class="city-subtitle city-subtitle-below">First visit ${SiteData.escapeHtml(city.visits[0].dateLabel)}</div>
               <div class="city-top-copy">
                 ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
                 ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
