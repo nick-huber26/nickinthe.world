@@ -805,7 +805,7 @@
         dots.forEach((dot, dotIndex) => dot.classList.toggle("active", dotIndex === current));
       };
 
-      const intervalId = global.setInterval(() => apply((current + 1) % slides.length), 3200 + (galleryIndex % 3) * 260);
+      const intervalId = global.setInterval(() => apply((current + 1) % slides.length), 5000);
       intervalsMap.set(keyFromGallery(gallery, galleryIndex), intervalId);
     });
   }
