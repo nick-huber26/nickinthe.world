@@ -238,7 +238,10 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: var(--story-image-fit, cover);
+  object-position: var(--story-image-position-x, 50%) var(--story-image-position-y, 50%);
+  transform: scale(var(--story-image-zoom, 1));
+  transform-origin: center;
   border-radius: inherit;
 }
 

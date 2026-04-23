@@ -83,6 +83,28 @@
     return GAY_MEN_FLAG_COLORS[index % GAY_MEN_FLAG_COLORS.length];
   }
 
+  function normalizeImagePosition(value, fallback = "50%") {
+    const trimmed = String(value || "").trim();
+    if (!trimmed) return fallback;
+    if (/^-?\d+(\.\d+)?%$/.test(trimmed)) return trimmed;
+    if (/^-?\d+(\.\d+)?px$/.test(trimmed)) return trimmed;
+    const numeric = parseFloat(trimmed);
+    if (Number.isFinite(numeric)) return `${numeric}%`;
+    return fallback;
+  }
+
+  function normalizeImageZoom(value) {
+    const numeric = parseFloat(String(value || "").trim());
+    if (!Number.isFinite(numeric) || numeric <= 0) return 1;
+    return numeric;
+  }
+
+  function normalizeImageFit(value) {
+    const trimmed = String(value || "").trim().toLowerCase();
+    if (trimmed === "contain") return "contain";
+    return "cover";
+  }
+
   function buildCityKey(city, country, explicitKey) {
     const explicit = slugify(explicitKey);
     if (explicit) return explicit;
@@ -408,6 +430,10 @@
           inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
+          imagePositionX: normalizeImagePosition(row.image_position_x, "50%"),
+          imagePositionY: normalizeImagePosition(row.image_position_y, "50%"),
+          imageZoom: normalizeImageZoom(row.image_zoom),
+          imageFit: normalizeImageFit(row.image_fit),
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
           relatedCities: [],

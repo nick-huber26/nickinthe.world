@@ -261,7 +261,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return `<div class="empty-media">${SiteData.escapeHtml(story.title)}</div>`;
     }
 
-    return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}">`;
+    const mediaStyle = [
+      `--story-image-position-x:${SiteData.escapeAttr(story.imagePositionX || "50%")}`,
+      `--story-image-position-y:${SiteData.escapeAttr(story.imagePositionY || "50%")}`,
+      `--story-image-zoom:${SiteData.escapeAttr(story.imageZoom || 1)}`,
+      `--story-image-fit:${SiteData.escapeAttr(story.imageFit || "cover")}`
+    ].join(";");
+
+    return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}" style="${mediaStyle}">`;
   }
 
   function scrollToHashTarget(options = {}) {
