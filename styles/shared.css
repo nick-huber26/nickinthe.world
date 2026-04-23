@@ -49,6 +49,15 @@ body {
   position: relative;
 }
 
+.brand h1,
+.brand p,
+.hero-copy h1,
+.hero-copy p,
+.wall-copy h1,
+.wall-copy p {
+  text-transform: lowercase;
+}
+
 a {
   color: inherit;
   text-decoration: none;
