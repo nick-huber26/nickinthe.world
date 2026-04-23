@@ -186,6 +186,7 @@
   position: relative;
   border-radius: 28px;
   cursor: pointer;
+  touch-action: manipulation;
   transform-style: preserve-3d;
   transition: transform 0.72s cubic-bezier(.22, .7, .18, 1);
   outline: none;

@@ -167,9 +167,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     grid.querySelectorAll("[data-story-card]").forEach(card => {
-      card.addEventListener("click", event => {
+      const toggleCardFlip = event => {
         if (event.target.closest("a")) return;
         card.classList.toggle("is-flipped");
+      };
+
+      card.addEventListener("click", toggleCardFlip);
+      card.addEventListener("pointerup", event => {
+        if (event.pointerType !== "touch") return;
+        event.preventDefault();
+        toggleCardFlip(event);
       });
 
       card.addEventListener("keydown", event => {

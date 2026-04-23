@@ -308,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const experienceMarkup = visit.summary
         ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
-        : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;
+        : ``;
       const visitImage = visit.images?.[0] || "";
       const visitImageStyle = [
         `--visit-image-position-x:${SiteData.escapeAttr(visit.imagePositionX || "50%")}`,
