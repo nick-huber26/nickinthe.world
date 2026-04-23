@@ -165,7 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
         `${city.key}-banner`,
         city.cityImages || [],
         city.city,
-        city.city
+        city.city,
+        {
+          positionX: city.cityImagePositionX,
+          positionY: city.cityImagePositionY,
+          zoom: city.cityImageZoom,
+          fit: city.cityImageFit
+        }
       );
       return `
         <article class="city-card" id="city-${SiteData.escapeAttr(city.key)}" data-city-key="${SiteData.escapeAttr(city.key)}">
@@ -269,8 +275,14 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
         : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;
       const visitImage = visit.images?.[0] || "";
+      const visitImageStyle = [
+        `--visit-image-position-x:${SiteData.escapeAttr(visit.imagePositionX || "50%")}`,
+        `--visit-image-position-y:${SiteData.escapeAttr(visit.imagePositionY || "50%")}`,
+        `--visit-image-zoom:${SiteData.escapeAttr(visit.imageZoom || 1)}`,
+        `--visit-image-fit:${SiteData.escapeAttr(visit.imageFit || "cover")}`
+      ].join(";");
       const visitImageMarkup = visitImage
-        ? `<div class="visit-media-box"><img loading="lazy" src="${SiteData.escapeAttr(visitImage)}" alt="${SiteData.escapeAttr(visit.imageAlt || city.city)}"></div>`
+        ? `<div class="visit-media-box"><img loading="lazy" src="${SiteData.escapeAttr(visitImage)}" alt="${SiteData.escapeAttr(visit.imageAlt || city.city)}" style="${visitImageStyle}"></div>`
         : `<div class="visit-media-empty">${SiteData.escapeHtml(city.city)}<br>${SiteData.escapeHtml(visit.dateLabel)}</div>`;
 
       detail.innerHTML = `

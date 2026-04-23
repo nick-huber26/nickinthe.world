@@ -184,6 +184,10 @@
       const cityImages = parseExplicitImages(row.city_images || row.city_banner_images);
       const existingCityImages = existing.cityImages || [];
       const cityImageLookup = new Set(existingCityImages.map(image => image.toLowerCase()));
+      const cityImagePositionX = row.city_image_position_x || row.city_banner_position_x || row.city_images_position_x;
+      const cityImagePositionY = row.city_image_position_y || row.city_banner_position_y || row.city_images_position_y;
+      const cityImageZoom = row.city_image_zoom || row.city_banner_zoom;
+      const cityImageFit = row.city_image_fit || row.city_banner_fit;
       cityImages.forEach(image => {
         const normalized = image.toLowerCase();
         if (!cityImageLookup.has(normalized)) {
@@ -204,6 +208,10 @@
         accent: String(row.accent || existing.accent || "").trim(),
         cityDescription: cityDescription || existing.cityDescription || "",
         cityImages: existingCityImages,
+        cityImagePositionX: normalizeImagePosition(cityImagePositionX || existing.cityImagePositionX, "50%"),
+        cityImagePositionY: normalizeImagePosition(cityImagePositionY || existing.cityImagePositionY, "50%"),
+        cityImageZoom: normalizeImageZoom(cityImageZoom || existing.cityImageZoom),
+        cityImageFit: normalizeImageFit(cityImageFit || existing.cityImageFit),
         firstSeen: existing.firstSeen ?? rowIndex
       });
     });
@@ -220,6 +228,10 @@
           row.image_count || meta.imageCount,
           row.image_ext || meta.imageExt
         );
+        const imagePositionX = row.image_position_x || row.image_pos_x || row.image_x || row.crop_x || row.focal_x;
+        const imagePositionY = row.image_position_y || row.image_pos_y || row.image_y || row.crop_y || row.focal_y;
+        const imageZoom = row.image_zoom || row.image_scale || row.zoom;
+        const imageFit = row.image_fit || row.object_fit || row.fit;
         const summary = String(row.summary || "").trim();
         const story = String(row.story || row.body || "").trim();
         const legalProtection = parseRatingValue(row.legal_protection);
@@ -257,6 +269,10 @@
           inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || meta.imageAlt || row.title || row.city || "").trim(),
+          imagePositionX: normalizeImagePosition(imagePositionX, "50%"),
+          imagePositionY: normalizeImagePosition(imagePositionY, "50%"),
+          imageZoom: normalizeImageZoom(imageZoom),
+          imageFit: normalizeImageFit(imageFit),
           themeColor: normalizeColor(row.accent || meta.accent, rowIndex),
           sourceIndex: rowIndex
         };
@@ -313,6 +329,10 @@
         themeColor: visit.themeColor,
         cityDescription: String(metadataByCity.get(visit.cityKey)?.cityDescription || "").trim(),
         cityImages: [...(metadataByCity.get(visit.cityKey)?.cityImages || [])],
+        cityImagePositionX: metadataByCity.get(visit.cityKey)?.cityImagePositionX || "50%",
+        cityImagePositionY: metadataByCity.get(visit.cityKey)?.cityImagePositionY || "50%",
+        cityImageZoom: metadataByCity.get(visit.cityKey)?.cityImageZoom || 1,
+        cityImageFit: metadataByCity.get(visit.cityKey)?.cityImageFit || "cover",
         visits: [visit],
         firstVisitIndex: visitIndex,
         legalProtectionTotal: Number.isFinite(visit.legalProtection) ? visit.legalProtection : 0,
