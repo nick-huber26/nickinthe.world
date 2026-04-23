@@ -249,14 +249,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="city-list-meter" ${neighborhoodMeterStyle}><span></span></div>
                     <div class="city-list-block">
                       <div class="city-list-title">Neighborhoods</div>
-                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
+                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : ``}
                     </div>
                   </div>
                   <div class="city-list-item">
                     <div class="city-list-meter" ${spacesMeterStyle}><span></span></div>
                     <div class="city-list-block">
                       <div class="city-list-title">Spaces</div>
-                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
+                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : ``}
                     </div>
                   </div>
                 </div>
