@@ -86,6 +86,10 @@
   function normalizeImagePosition(value, fallback = "50%") {
     const trimmed = String(value || "").trim();
     if (!trimmed) return fallback;
+    const lowered = trimmed.toLowerCase();
+    if (["left", "top"].includes(lowered)) return "0%";
+    if (lowered === "center") return "50%";
+    if (["right", "bottom"].includes(lowered)) return "100%";
     if (/^-?\d+(\.\d+)?%$/.test(trimmed)) return trimmed;
     if (/^-?\d+(\.\d+)?px$/.test(trimmed)) return trimmed;
     const numeric = parseFloat(trimmed);
@@ -94,8 +98,12 @@
   }
 
   function normalizeImageZoom(value) {
-    const numeric = parseFloat(String(value || "").trim());
+    const trimmed = String(value || "").trim().toLowerCase();
+    if (!trimmed) return 1;
+    const numeric = parseFloat(trimmed);
     if (!Number.isFinite(numeric) || numeric <= 0) return 1;
+    if (trimmed.endsWith("%")) return numeric / 100;
+    if (trimmed.endsWith("x")) return numeric;
     return numeric;
   }
 
@@ -413,6 +421,10 @@
         const parsedDate = parseDateValue(row.date);
         const explicitImages = parseExplicitImages(row.images);
         const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
+        const imagePositionX = row.image_position_x || row.image_pos_x || row.image_x || row.crop_x || row.focal_x;
+        const imagePositionY = row.image_position_y || row.image_pos_y || row.image_y || row.crop_y || row.focal_y;
+        const imageZoom = row.image_zoom || row.image_scale || row.zoom;
+        const imageFit = row.image_fit || row.object_fit || row.fit;
 
         return {
           id,
@@ -430,10 +442,10 @@
           inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
-          imagePositionX: normalizeImagePosition(row.image_position_x, "50%"),
-          imagePositionY: normalizeImagePosition(row.image_position_y, "50%"),
-          imageZoom: normalizeImageZoom(row.image_zoom),
-          imageFit: normalizeImageFit(row.image_fit),
+          imagePositionX: normalizeImagePosition(imagePositionX, "50%"),
+          imagePositionY: normalizeImagePosition(imagePositionY, "50%"),
+          imageZoom: normalizeImageZoom(imageZoom),
+          imageFit: normalizeImageFit(imageFit),
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
           relatedCities: [],
