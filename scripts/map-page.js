@@ -36,6 +36,15 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function buildCityListMeter(count, maxValue) {
+    const safeCount = Math.max(0, Number(count) || 0);
+    const capped = Math.min(safeCount, maxValue);
+    const fillPercent = safeCount <= 0
+      ? 14
+      : 14 + (capped / maxValue) * 74;
+    return `style="--meter-fill:${fillPercent.toFixed(1)}%;"`;
+  }
+
   const map = L.map("map", {
     worldCopyJump: true,
     zoomControl: false,
@@ -183,6 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const spacesMarkup = (city.spaces || [])
         .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)
         .join("");
+      const neighborhoodMeterStyle = buildCityListMeter((city.neighborhoods || []).length, 2);
+      const spacesMeterStyle = buildCityListMeter((city.spaces || []).length, 5);
       const cityBannerMarkup = SiteData.buildGalleryMarkup(
         `${city.key}-banner`,
         city.cityImages || [],
@@ -233,14 +244,20 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="city-top-copy">
                 ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
                 ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
-                <div class="city-list-stack">
-                  <div class="city-list-block">
-                    <div class="city-list-title">Neighborhoods</div>
-                    ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
+                <div class="city-list-grid">
+                  <div class="city-list-item">
+                    <div class="city-list-meter" ${neighborhoodMeterStyle}><span></span></div>
+                    <div class="city-list-block">
+                      <div class="city-list-title">Neighborhoods</div>
+                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : `<p class="city-list-empty">No neighborhoods added yet.</p>`}
+                    </div>
                   </div>
-                  <div class="city-list-block">
-                    <div class="city-list-title">Spaces</div>
-                    ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
+                  <div class="city-list-item">
+                    <div class="city-list-meter" ${spacesMeterStyle}><span></span></div>
+                    <div class="city-list-block">
+                      <div class="city-list-title">Spaces</div>
+                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : `<p class="city-list-empty">No spaces added yet.</p>`}
+                    </div>
                   </div>
                 </div>
               </div>
