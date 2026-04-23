@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let availableConnectionFilters = [];
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
+  let resizeFrame = 0;
 
   async function loadStories() {
     const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
@@ -69,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    scheduleStoryTileLayout();
     scrollToHashTarget();
   }
 
@@ -214,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    scheduleStoryTileLayout();
     scrollToHashTarget({ behavior: "auto" });
   }
 
@@ -271,6 +274,33 @@ document.addEventListener("DOMContentLoaded", () => {
     return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}" style="${mediaStyle}">`;
   }
 
+  function scheduleStoryTileLayout() {
+    window.cancelAnimationFrame(resizeFrame);
+    resizeFrame = window.requestAnimationFrame(updateStoryTileLayout);
+  }
+
+  function updateStoryTileLayout() {
+    const gridStyles = window.getComputedStyle(grid);
+    const rowSize = parseFloat(gridStyles.gridAutoRows);
+    const rowGap = parseFloat(gridStyles.rowGap);
+    if (!rowSize) return;
+
+    grid.querySelectorAll(".story-tile").forEach(tile => {
+      const width = tile.getBoundingClientRect().width;
+      if (!width) return;
+
+      const height = width / getStoryAspectRatio(tile);
+      const rowSpan = Math.max(1, Math.ceil((height + rowGap) / (rowSize + rowGap)));
+      tile.style.setProperty("--story-rows", String(rowSpan));
+    });
+  }
+
+  function getStoryAspectRatio(tile) {
+    if (tile.classList.contains("story-size-landscape")) return 2;
+    if (tile.classList.contains("story-size-vertical")) return 0.5;
+    return 1;
+  }
+
   function scrollToHashTarget(options = {}) {
     const hash = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
     if (!hash) return;
@@ -293,4 +323,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("hashchange", () => {
     scrollToHashTarget();
   });
+
+  window.addEventListener("resize", scheduleStoryTileLayout);
 });
