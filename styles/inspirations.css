@@ -268,9 +268,10 @@
 
 .panel-subtitle {
   color: rgba(255,255,255,0.7);
-  font-size: 15px;
-  line-height: 1.5;
-  margin-top: -2px;
+  font-size: 17px;
+  line-height: 1.55;
+  margin-top: 2px;
+  margin-bottom: 8px;
 }
 
 .panel-stack {
