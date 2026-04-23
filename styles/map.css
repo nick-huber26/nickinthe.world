@@ -460,8 +460,8 @@ body,
 
 .city-list-item {
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: 6px minmax(0, 1fr);
+  gap: 4px;
   align-items: stretch;
   min-width: 0;
 }
@@ -469,17 +469,33 @@ body,
 .city-list-meter {
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: 0;
 }
 
 .city-list-meter span {
   display: block;
-  width: 4px;
+  position: relative;
+  width: 10px;
+  height: 100%;
+  min-height: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.14);
+  overflow: hidden;
+}
+
+.city-list-meter span::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
   height: var(--meter-fill, 14%);
   border-radius: 999px;
   background: rgba(255,255,255,.88);
-  box-shadow: 0 0 0 1px rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.92);
+  box-sizing: border-box;
 }
 
 .city-list-block {
