@@ -1017,6 +1017,37 @@ body,
     overflow: visible;
   }
 
+  .feed-topbar {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .timeline-nav {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .timeline-nav .nav-button {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+  }
+
+  .timeline-current {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    padding: 8px 12px;
+  }
+
+  .timeline-current strong {
+    font-size: 14px;
+  }
+
+  .timeline-current span {
+    font-size: 11px;
+  }
+
   .visit-detail {
     --visit-media-size: min(220px, 100%);
   }
@@ -1034,7 +1065,4 @@ body,
     grid-template-columns: 1fr;
   }
 
-  .timeline-nav {
-    flex-wrap: wrap;
-  }
 }
