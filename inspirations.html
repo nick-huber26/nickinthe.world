@@ -20,12 +20,13 @@
         </div>
         <div class="wall-meta">
           <div class="inspirations-count"><span id="inspirationCount">0</span> inspirations</div>
-          <div class="wall-controls" aria-label="Wall zoom controls">
-            <button id="zoomOutButton" class="wall-control" type="button" aria-label="Zoom out">-</button>
-            <button id="resetWallButton" class="wall-control" type="button">Reset</button>
-            <button id="zoomInButton" class="wall-control" type="button" aria-label="Zoom in">+</button>
-          </div>
         </div>
+      </div>
+
+      <div class="floating-zoom-controls wall-controls" aria-label="Wall zoom controls">
+        <button id="zoomOutButton" class="floating-zoom-button" type="button" aria-label="Zoom out">-</button>
+        <button id="resetWallButton" class="floating-zoom-button floating-zoom-button-reset" type="button">reset</button>
+        <button id="zoomInButton" class="floating-zoom-button" type="button" aria-label="Zoom in">+</button>
       </div>
 
       <div id="wallViewport" class="wall-viewport" tabindex="0" aria-label="Poster wall viewport">

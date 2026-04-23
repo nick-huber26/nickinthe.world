@@ -54,6 +54,11 @@ body,
   max-width: min(560px, calc(100% - 48px));
 }
 
+.map-controls {
+  right: 22px;
+  bottom: 22px;
+}
+
 .brand h1 {
   margin: 14px 0 10px;
   font-size: clamp(30px, 4vw, 58px);

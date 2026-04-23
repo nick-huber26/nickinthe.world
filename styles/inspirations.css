@@ -76,30 +76,8 @@
 }
 
 .wall-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.wall-control {
-  appearance: none;
-  min-width: 44px;
-  height: 44px;
-  padding: 0 14px;
-  border-radius: 0;
-  border: 0;
-  background: transparent;
-  color: white;
-  cursor: pointer;
-  transition: transform .18s ease, opacity .18s ease;
-  font-size: 18px;
-  font-weight: 600;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  opacity: 0.84;
-}
-
-.wall-control:hover {
-  transform: translateY(-1px);
-  opacity: 1;
+  right: 22px;
+  bottom: 22px;
 }
 
 .wall-viewport {

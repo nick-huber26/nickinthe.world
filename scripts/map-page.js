@@ -17,6 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentPlaceEl = document.getElementById("currentPlace");
   const cityCountEl = document.getElementById("cityCount");
   const countryCountEl = document.getElementById("countryCount");
+  const zoomOutMapButton = document.getElementById("zoomOutMapButton");
+  const zoomInMapButton = document.getElementById("zoomInMapButton");
+  const resetMapButton = document.getElementById("resetMapButton");
 
   function buildRatingScale(label, value) {
     if (!Number.isFinite(value)) return "";
@@ -42,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     maxZoom: 10
   }).setView([20, 10], 2.2);
 
-  L.control.zoom({ position: "bottomleft" }).addTo(map);
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
     subdomains: "abcd",
     maxZoom: 19
@@ -69,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
       preferredZoom = map.getZoom();
     }
   });
+
+  bindMapZoomControls();
 
   async function loadTrips() {
     const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
@@ -140,6 +144,24 @@ document.addEventListener("DOMContentLoaded", () => {
         window.setTimeout(() => scrollToCityCard(initialVisit.cityKey), 80);
       }
     }
+  }
+
+  function bindMapZoomControls() {
+    zoomOutMapButton?.addEventListener("click", () => {
+      map.zoomOut();
+    });
+
+    zoomInMapButton?.addEventListener("click", () => {
+      map.zoomIn();
+    });
+
+    resetMapButton?.addEventListener("click", () => {
+      preferredZoom = 2.2;
+      map.flyTo([20, 10], 2.2, {
+        animate: true,
+        duration: 1.1
+      });
+    });
   }
 
   function renderFeed() {
