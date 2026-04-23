@@ -274,6 +274,11 @@
   margin-bottom: 8px;
 }
 
+.panel-summary-block {
+  display: grid;
+  gap: 8px;
+}
+
 .panel-stack {
   display: grid;
   gap: 24px;

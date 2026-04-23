@@ -396,12 +396,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 <strong>${SiteData.escapeHtml(inspiration.dateLabel || "Date not added yet")}</strong>
               </div>
             </div>
-            ${inspiration.summary ? `<p class="panel-summary">${SiteData.escapeHtml(inspiration.summary)}</p>` : ""}
           </div>
         </div>
 
+        ${inspiration.summary ? `
+          <div class="panel-summary-block">
+            <p class="panel-summary">${SiteData.escapeHtml(inspiration.summary)}</p>
+          </div>
+        ` : ""}
+
         <div class="panel-description">
-          <div class="panel-tag-title">Description</div>
+          <div class="panel-tag-title">Thoughts</div>
           ${SiteData.splitParagraphs(inspiration.description || inspiration.summary)
             .map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`)
             .join("") || "<p>Add longer copy in the description column of data/inspirations.csv. The parser also accepts body.</p>"}
