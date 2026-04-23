@@ -544,7 +544,7 @@ body,
 }
 
 .visit-detail {
-  --visit-media-size: 184px;
+  --visit-media-size: 228px;
   min-width: 0;
 }
 
@@ -822,7 +822,7 @@ body,
   }
 
   .visit-detail {
-    --visit-media-size: 176px;
+    --visit-media-size: 212px;
   }
 }
 
@@ -877,7 +877,7 @@ body,
   }
 
   .visit-detail {
-    --visit-media-size: 168px;
+    --visit-media-size: 196px;
   }
 }
 
@@ -919,7 +919,7 @@ body,
   }
 
   .visit-detail {
-    --visit-media-size: 156px;
+    --visit-media-size: 176px;
   }
 
   .visit-field {
