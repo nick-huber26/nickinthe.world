@@ -267,11 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const detail = document.querySelector(`[data-city-detail="${city.key}"]`);
       if (!detail || !visit) return;
 
-      const paragraphs = SiteData.splitParagraphs(visit.story);
-      const descriptionMarkup = paragraphs.length
-        ? paragraphs.map(paragraph => `<p>${SiteData.escapeHtml(paragraph)}</p>`).join("")
-        : `<p class="visit-field-empty">Add a description for this visit in the <code>story</code> column. The parser also accepts <code>body</code>.</p>`;
-      const summaryMarkup = visit.summary
+      const experienceMarkup = visit.summary
         ? `<p>${SiteData.escapeHtml(visit.summary)}</p>`
         : `<p class="visit-field-empty">Add a summary for this visit in the <code>summary</code> column.</p>`;
       const visitImage = visit.images?.[0] || "";
@@ -295,12 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="visit-copy">
               <div class="visit-fields">
                 <div class="visit-field">
-                  <div class="visit-field-label">Description</div>
-                  <div class="visit-field-body story-panel">${descriptionMarkup}</div>
-                </div>
-                <div class="visit-field">
-                  <div class="visit-field-label">Summary</div>
-                  <div class="visit-field-body summary-panel">${summaryMarkup}</div>
+                  <div class="visit-field-label">Experience</div>
+                  <div class="visit-field-body summary-panel">${experienceMarkup}</div>
                 </div>
               </div>
             </div>
