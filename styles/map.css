@@ -292,7 +292,7 @@ body,
 }
 
 .city-banner-shell {
-  min-height: clamp(152px, 19vw, 210px);
+  min-height: clamp(176px, 22vw, 244px);
   margin-bottom: 10px;
   border-radius: 20px;
   background:
@@ -320,7 +320,7 @@ body,
 }
 
 .city-banner-shell .empty-media {
-  min-height: clamp(152px, 19vw, 210px);
+  min-height: clamp(176px, 22vw, 244px);
 }
 
 .city-banner-shell .gallery-dots {
@@ -929,11 +929,11 @@ body,
   }
 
   .city-banner-shell {
-    min-height: clamp(140px, 18vw, 184px);
+    min-height: clamp(164px, 20vw, 216px);
   }
 
   .city-banner-shell .empty-media {
-    min-height: clamp(140px, 18vw, 184px);
+    min-height: clamp(164px, 20vw, 216px);
   }
 }
 
