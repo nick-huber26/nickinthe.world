@@ -671,11 +671,6 @@ body,
   color: rgba(255,255,255,.9);
 }
 
-.relation-chip::after {
-  content: "->";
-  opacity: .7;
-}
-
 .leaflet-container {
   background: #0a1218;
   font: inherit;
