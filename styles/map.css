@@ -138,6 +138,18 @@ body,
   box-shadow: var(--shadow);
 }
 
+.timeline-current-button {
+  appearance: none;
+  cursor: pointer;
+  color: white;
+  font: inherit;
+}
+
+.timeline-current-button:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.16);
+}
+
 .timeline-current strong,
 .timeline-current span {
   display: block;

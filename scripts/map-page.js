@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const feedInner = document.getElementById("feedInner");
   const prevVisitButton = document.getElementById("prevVisit");
   const nextVisitButton = document.getElementById("nextVisit");
+  const currentVisitCardButton = document.getElementById("currentVisitCard");
   const currentDateEl = document.getElementById("currentDate");
   const currentPlaceEl = document.getElementById("currentPlace");
   const cityCountEl = document.getElementById("cityCount");
@@ -422,6 +423,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeVisitIndex < visits.length - 1) {
         setActiveVisit(activeVisitIndex + 1, { scrollCard: true, animatePlane: true, flyMap: true });
       }
+    });
+
+    currentVisitCardButton?.addEventListener("click", () => {
+      const currentVisit = visits[activeVisitIndex];
+      if (!currentVisit) return;
+      scrollToCityCard(currentVisit.cityKey);
     });
   }
 
