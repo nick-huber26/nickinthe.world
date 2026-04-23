@@ -1,12 +1,12 @@
 id,city_key,title,city,country,date,lat,lng,summary,story,city_description,connection_tags,story_tags,inspiration_tags,neighborhoods,spaces,legal_protection,social_acceptance,community_access,personal_belonging,city_images,city_image_position_x,city_image_position_y,city_image_zoom,city_image_fit,image_folder,image_count,image_ext,images,image_alt,image_position_x,image_position_y,image_zoom,image_fit,accent
 1,chicago-usa,,Chicago,USA,2025-05-25,41.8781,-87.6298,,,,,,,,,,,,,,images/chicago,,,,,,,,,,,,,
 2,abu-dhabi-united-arab-emirates,,Abu Dhabi,United Arab Emirates,2025-06-22,24.4539,54.3773,,,,,,,,,,,,,,images/abu-dhabi,,,,,,,,,,,,,
-3,seoul-south-korea,,Seoul,South Korea,2025-06-23,37.5665,126.9780,,,"Culture exists in every corner of this city, and vibrant nightlife defines the neighborhoods",global-queer-community,,,,,4,4,4,4,images/seoul/1.jpeg,,,,,images/seoul,,,images/seoul/1.jpeg,,,,,,,
+3,seoul-south-korea,,Seoul,South Korea,2025-06-23,37.5665,126.9780,,,"Culture exists in every corner of this city, and vibrant nightlife defines the neighborhoods",global-queer-community,,,,,4,4,4,4,images/seoul/1.jpeg,,,,,images/seoul,,,images/seoul/1.jpeg,,,,,,
 4,busan-south-korea,,Busan,South Korea,2025-07-04,35.1796,129.0756,,,,,,,,,,,,,,images/busan,,,,,,,,,,,,,
 5,jeju-island-south-korea,,Jeju Island,South Korea,2025-07-11,33.4996,126.5312,,,,,,,,,,,,,,images/jeju-island,,,,,,,,,,,,,
 6,tokyo-japan,,Tokyo,Japan,2025-07-26,35.6762,139.6503,,,,design-language,,,,,,,,,,images/tokyo,,,,,,,,,,,,,
 7,hong-kong-hong-kong,,Hong Kong,Hong Kong,2025-07-30,22.3193,114.1694,,,,,,,,,,,,,,images/hong-kong,,,,,,,,,,,,,
-8,amsterdam-netherlands,,Amsterdam,Netherlands,2025-08-01,52.3676,4.9041,,,,global-queer-community,,,,,,,,,,images/amsterdam,,,,,,,,,,,,#26CEAA
+8,amsterdam-netherlands,,Amsterdam,Netherlands,2025-08-01,52.3676,4.9041,,,,global-queer-community,,,,,,,,,images/amsterdam,,,,,,,,,,,,,,#26CEAA
 9,antwerp-belgium,,Antwerp,Belgium,2025-08-06,51.2194,4.4025,,,,,,,,,,,,,,images/antwerp,,,,,,,,,,,,,
 10,barcelona-spain,,Barcelona,Spain,2025-08-11,41.3874,2.1686,,,,design-language,,,,,,,,,,images/barcelona,,,,,,,,,,,,,
 11,maastricht-netherlands,,Maastricht,Netherlands,2025-08-15,50.8514,5.6900,,,,,,,,,,,,,,images/maastricht,,,,,,,,,,,,,
@@ -19,6 +19,6 @@ id,city_key,title,city,country,date,lat,lng,summary,story,city_description,conne
 18,taipei-taiwan,,Taipei,Taiwan,2026-03-06,25.0330,121.5654,,,,,,,,,,,,,,images/taipei,,,,,,,,,,,,,
 19,minneapolis-usa,,Minneapolis,USA,2025-06-04,44.9778,-93.2650,,,,,,,,,,,,,,images/minneapolis,,,,,,,,,,,,,
 20,chicago-usa,,Chicago,USA,2025-06-12,41.8781,-87.6298,,,,global-queer-community,,,,,,,,,,images/chicago,,,,,,,,,,,,,
-21,seoul-south-korea,,Seoul,South Korea,2025-07-06,37.5665,126.9780,,,,who-has-membership,,,Itaewon,Rush,4,4,4,4,,,,,,images/seoul,,,,,,,,,,
+21,seoul-south-korea,,Seoul,South Korea,2025-07-06,37.5665,126.9780,,,,who-has-membership,,,Itaewon,Rush,4,4,4,4,,,,,,images/seoul,,,,,,,,,
 22,seoul-south-korea,,Seoul,South Korea,2025-07-13,37.5665,126.9780,,,,rituals-of-belonging,,,,,,,,,,images/seoul,,,,,,,,,,,,,
 23,seoul-south-korea,,Seoul,South Korea,2026-03-07,37.5665,126.9780,,,,,,,,,,,,,,images/seoul,,,,,,,,,,,,,
