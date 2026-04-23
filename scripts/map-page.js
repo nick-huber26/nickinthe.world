@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
         event.stopPropagation();
         const visitIndex = visits.findIndex(visit => visit.id === button.dataset.visitId);
         if (visitIndex >= 0) {
-          setActiveVisit(visitIndex, { scrollCard: true, animatePlane: true, flyMap: true });
+          setActiveVisit(visitIndex, { scrollCard: false, animatePlane: true, flyMap: true });
         }
       });
     });
