@@ -1,13 +1,13 @@
-id,slug,title,summary,body,city_tags,story_tags,inspiration_tags,image_folder,image_count,image_ext,images,image_alt,accent
+id,slug,title,summary,body,city_tags,story_tags,inspiration_tags,image_folder,image_count,image_ext,images,image_alt,image_position_x,image_position_y,image_zoom,image_fit,accent
 global-queer-community,global-queer-community,Global Queer Community,How queer spaces and conversations echoed across different stops on the journey.,"Certain cities can feel entirely different on the surface and still offer the same immediate signal: you can breathe here.
  
  This connection is a place to collect the people, venues, gestures, and aesthetics that created that feeling across multiple destinations.
  
- Use the city_tags column when a connection belongs to a city broadly, and use connection_tags on individual visit rows when the tie is specific to one stay rather than the entire city history.",chicago-usa|seoul-south-korea|amsterdam-netherlands,,,,,,,,#5049CC
+ Use the city_tags column when a connection belongs to a city broadly, and use connection_tags on individual visit rows when the tie is specific to one stay rather than the entire city history.",chicago-usa|seoul-south-korea|amsterdam-netherlands,,,,,,,,,,,,#5049CC
 design-language,design-language,Design Language Across Cities,"How signage, architecture, and visual systems shaped a city's personality.","Some places tell their story through typefaces, transit systems, posters, storefronts, and the tiny design decisions that make a street feel unmistakably local.
  
  This connection lets you group those observations into one thread even if the cities are far apart.
  
- Cards on the map page can link here, and this gallery can link back to the cities where those design instincts felt most vivid.",abu-dhabi-united-arab-emirates|tokyo-japan|barcelona-spain,,,,,,,,
-who-has-membership,who-has-membership,Who Has Membership?,A test connection for the Seoul city card.,Use this connection to verify that the top-row tag appears and links correctly from the city card.,seoul-south-korea,,,,,,,,#98E8C1
-t,t,Title,Test Summary,Test Body,chicago-usa,arrival-detail,gay-bar-why-we-went-out,,,,https://lh3.googleusercontent.com/d/18fG_N7ZA98OB-wwb6hDqKBtFc7I-nBR5,,#7BADE2
+ Cards on the map page can link here, and this gallery can link back to the cities where those design instincts felt most vivid.",abu-dhabi-united-arab-emirates|tokyo-japan|barcelona-spain,,,,,,,,,,,,
+who-has-membership,who-has-membership,Who Has Membership?,A test connection for the Seoul city card.,Use this connection to verify that the top-row tag appears and links correctly from the city card.,seoul-south-korea,,,,,,,,,,,,#98E8C1
+t,t,Title,Test Summary,Test Body,chicago-usa,arrival-detail,gay-bar-why-we-went-out,,,,https://lh3.googleusercontent.com/d/18fG_N7ZA98OB-wwb6hDqKBtFc7I-nBR5,,40%,30%,1.2,cover,#7BADE2

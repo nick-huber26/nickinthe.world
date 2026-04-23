@@ -91,7 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <article class="connection-card" id="${SiteData.escapeAttr(connection.anchorId)}" ${accentStyle}>
           <div class="connection-card-media">
             <div class="gallery-shell" data-gallery-key="${SiteData.escapeAttr(connection.anchorId)}">
-              ${SiteData.buildGalleryMarkup(connection.anchorId, connection.images, connection.imageAlt, connection.title)}
+              ${SiteData.buildGalleryMarkup(connection.anchorId, connection.images, connection.imageAlt, connection.title, {
+                positionX: connection.imagePositionX,
+                positionY: connection.imagePositionY,
+                zoom: connection.imageZoom,
+                fit: connection.imageFit
+              })}
             </div>
           </div>
           <div class="connection-card-copy">

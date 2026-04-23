@@ -373,6 +373,10 @@
 
         const explicitImages = parseExplicitImages(row.images);
         const folderImages = buildNumberedImages(row.image_folder, row.image_count, row.image_ext);
+        const imagePositionX = row.image_position_x || row.image_pos_x || row.image_x || row.crop_x || row.focal_x;
+        const imagePositionY = row.image_position_y || row.image_pos_y || row.image_y || row.crop_y || row.focal_y;
+        const imageZoom = row.image_zoom || row.image_scale || row.zoom;
+        const imageFit = row.image_fit || row.object_fit || row.fit;
 
         return {
           id,
@@ -386,6 +390,10 @@
           inspirationIds: parsePipeList(row.inspiration_tags).map(item => slugify(item)).filter(Boolean),
           images: explicitImages.length ? explicitImages : folderImages,
           imageAlt: String(row.image_alt || title || id).trim(),
+          imagePositionX: normalizeImagePosition(imagePositionX, "50%"),
+          imagePositionY: normalizeImagePosition(imagePositionY, "50%"),
+          imageZoom: normalizeImageZoom(imageZoom),
+          imageFit: normalizeImageFit(imageFit),
           themeColor: normalizeColor(row.accent, rowIndex),
           sourceIndex: rowIndex,
           relatedCities: [],
@@ -804,16 +812,25 @@
       .filter(Boolean);
   }
 
-  function buildGalleryMarkup(key, images, imageAlt, emptyLabel) {
+  function buildGalleryMarkup(key, images, imageAlt, emptyLabel, imageOptions = null) {
     if (!images.length) {
       return `<div class="empty-media">${escapeHtml(emptyLabel)}</div>`;
     }
+
+    const imageStyle = imageOptions
+      ? [
+          `--gallery-image-position-x:${escapeAttr(imageOptions.positionX || "50%")}`,
+          `--gallery-image-position-y:${escapeAttr(imageOptions.positionY || "50%")}`,
+          `--gallery-image-zoom:${escapeAttr(imageOptions.zoom || 1)}`,
+          `--gallery-image-fit:${escapeAttr(imageOptions.fit || "cover")}`
+        ].join(";")
+      : "";
 
     return `
       <div class="gallery-track">
         ${images.map((image, imageIndex) => `
           <div class="gallery-slide${imageIndex === 0 ? " active" : ""}" data-gallery-slide="${imageIndex}">
-            <img loading="lazy" src="${escapeAttr(image)}" alt="${escapeAttr(imageAlt)}">
+            <img loading="lazy" src="${escapeAttr(image)}" alt="${escapeAttr(imageAlt)}"${imageStyle ? ` style="${imageStyle}"` : ""}>
           </div>
         `).join("")}
       </div>
