@@ -519,8 +519,9 @@ body,
 
 .city-list {
   margin: 0;
-  padding-left: 10px;
+  padding-left: 0;
   display: grid;
+  align-content: start;
   gap: 5px;
   color: rgba(255,255,255,.88);
   font-size: 12px;
