@@ -266,6 +266,13 @@
   line-height: 1.7;
 }
 
+.panel-subtitle {
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-top: -2px;
+}
+
 .panel-stack {
   display: grid;
   gap: 24px;

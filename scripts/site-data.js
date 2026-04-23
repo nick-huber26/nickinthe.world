@@ -473,6 +473,7 @@
           slug: slugify(row.slug || id) || id,
           anchorId: `inspiration-${slugify(row.slug || id) || id}`,
           title: title || id,
+          subtitle: String(row.subtitle || "").trim(),
           creator: String(row.creator || "").trim(),
           type: String(row.type || "").trim(),
           date: parsedDate?.raw || "",

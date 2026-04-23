@@ -385,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="panel-header">
             <div class="panel-label">${SiteData.escapeHtml(inspiration.type || "Inspiration")}</div>
             <h2>${SiteData.escapeHtml(inspiration.title)}</h2>
+            ${inspiration.subtitle ? `<div class="panel-subtitle">${SiteData.escapeHtml(inspiration.subtitle)}</div>` : ""}
             <div class="panel-meta-inline">
               <div class="panel-meta-inline-item">
                 <div class="panel-label">Author</div>

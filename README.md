@@ -158,6 +158,7 @@ Each row is one poster on the Inspirations wall.
 - `id`: stable inspiration id
 - `slug`: optional URL-friendly override for the hash anchor
 - `title`: poster title shown on the wall and in the drawer
+- `subtitle`: optional secondary line shown below the title in the drawer
 - `creator`: author, host, director, or source name
 - `type`: media type such as `Book`, `Film`, `Podcast`, or `Essay`
 - `date`: optional `YYYY-MM-DD` date used in the drawer
