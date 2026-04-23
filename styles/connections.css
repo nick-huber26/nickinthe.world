@@ -286,12 +286,13 @@ body,
     display: flex;
     flex-direction: column;
     gap: 0;
+    align-items: stretch;
   }
 
   .connection-card.expanded .connection-card-media {
     grid-column: auto;
-    width: auto;
-    flex: 0 0 auto;
+    width: calc(100% - 6px);
+    flex: none;
     margin: 0 0 16px 6px;
   }
 

@@ -193,6 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const spacesMarkup = (city.spaces || [])
         .map(item => `<li>${SiteData.escapeHtml(item)}</li>`)
         .join("");
+      const hasNeighborhoods = Boolean(neighborhoodsMarkup);
+      const hasSpaces = Boolean(spacesMarkup);
       const neighborhoodMeterStyle = buildCityListMeter((city.neighborhoods || []).length, 2);
       const spacesMeterStyle = buildCityListMeter((city.spaces || []).length, 5);
       const cityBannerMarkup = SiteData.buildGalleryMarkup(
@@ -245,22 +247,28 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="city-top-copy">
                 ${cityDescription ? `<p class="city-description city-description-wide">${cityDescription}</p>` : ""}
                 ${ratingMarkup ? `<div class="city-ratings">${ratingMarkup}</div>` : ""}
-                <div class="city-list-grid">
-                  <div class="city-list-item">
-                    <div class="city-list-meter" ${neighborhoodMeterStyle}><span></span></div>
-                    <div class="city-list-block">
-                      <div class="city-list-title">Neighborhoods</div>
-                      ${neighborhoodsMarkup ? `<ul class="city-list">${neighborhoodsMarkup}</ul>` : ``}
-                    </div>
+                ${(hasNeighborhoods || hasSpaces) ? `
+                  <div class="city-list-grid">
+                    ${hasNeighborhoods ? `
+                      <div class="city-list-item">
+                        <div class="city-list-meter" ${neighborhoodMeterStyle}><span></span></div>
+                        <div class="city-list-block">
+                          <div class="city-list-title">Neighborhoods</div>
+                          <ul class="city-list">${neighborhoodsMarkup}</ul>
+                        </div>
+                      </div>
+                    ` : ``}
+                    ${hasSpaces ? `
+                      <div class="city-list-item">
+                        <div class="city-list-meter" ${spacesMeterStyle}><span></span></div>
+                        <div class="city-list-block">
+                          <div class="city-list-title">Spaces</div>
+                          <ul class="city-list">${spacesMarkup}</ul>
+                        </div>
+                      </div>
+                    ` : ``}
                   </div>
-                  <div class="city-list-item">
-                    <div class="city-list-meter" ${spacesMeterStyle}><span></span></div>
-                    <div class="city-list-block">
-                      <div class="city-list-title">Spaces</div>
-                      ${spacesMarkup ? `<ul class="city-list">${spacesMarkup}</ul>` : ``}
-                    </div>
-                  </div>
-                </div>
+                ` : ``}
               </div>
               <div class="visit-section-heading">Visits</div>
               <div class="visit-chip-row">
