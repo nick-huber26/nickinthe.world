@@ -284,14 +284,21 @@ body,
 
   .connection-card.expanded {
     display: flex;
+    flex-direction: column;
     gap: 0;
   }
 
   .connection-card.expanded .connection-card-media {
+    grid-column: auto;
+    width: auto;
+    flex: 0 0 auto;
     margin: 0 0 16px 6px;
   }
 
   .connection-card.expanded .connection-card-copy {
+    grid-column: auto;
+    width: 100%;
+    min-height: auto;
     padding: 0 22px 22px 28px;
   }
 }
