@@ -2,11 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const REMOTE_CITIES_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3SXX_WeHF-GzeHKUdTHOnu69Nclo5YWhfZd7AvbRAe4tp63pcQqPk8768JdxQedf8Xvyj0OW-17vC/pub?gid=0&single=true&output=csv";
   const LOCAL_CITIES_CSV = "data/cities.csv";
   const AUTOPLAY_MS = 5000;
+  const OVERVIEW_PADDING = [96, 96];
+  const OVERVIEW_MAX_ZOOM = 3.35;
   const qs = new URLSearchParams(window.location.search);
   const statusEl = document.getElementById("mapStatus");
-  const captionEl = document.getElementById("mapCaption");
-  const cityEl = document.getElementById("mapCity");
-  const dateEl = document.getElementById("mapDate");
   const interactive = qs.get("interactive") === "1";
 
   const map = L.map("map", {
@@ -39,13 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeVisitIndex = 0;
   let autoplayTimer = 0;
   let planeAnimationToken = 0;
-  let cameraAnimationToken = 0;
-  let preferredZoom = 3.8;
-  let suppressPreferredZoomUpdate = false;
-
-  map.on("zoomend", () => {
-    if (!suppressPreferredZoomUpdate) preferredZoom = map.getZoom();
-  });
 
   async function loadTrips() {
     const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
@@ -68,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderMap();
     setActiveVisit(0, { animatePlane: false, flyMap: false });
     statusEl.hidden = true;
-    captionEl.hidden = false;
     scheduleNextFlight();
   }
 
@@ -111,12 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (bounds.length === 1) {
-      map.setView(bounds[0], 4);
+      map.setView(bounds[0], OVERVIEW_MAX_ZOOM);
     } else if (bounds.length > 1) {
-      map.fitBounds(bounds, { padding: [56, 56], maxZoom: 4 });
+      map.fitBounds(bounds, {
+        padding: OVERVIEW_PADDING,
+        maxZoom: OVERVIEW_MAX_ZOOM,
+        animate: false
+      });
     }
-
-    preferredZoom = map.getZoom();
 
     planeMarker = L.marker([visits[0].lat, visits[0].lng], {
       interactive: false,
@@ -147,10 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sameIndex = nextIndex === activeVisitIndex;
     activeVisitIndex = nextIndex;
 
-    updateCaption(nextVisit);
     updateMapUI();
-
-    if (flyMap) animateMapTransition(previousIndex, activeVisitIndex);
 
     if (planeMarker) {
       if (!animatePlane || sameIndex) {
@@ -162,11 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     scheduleNextFlight();
-  }
-
-  function updateCaption(visit) {
-    cityEl.textContent = `${visit.city}${visit.country ? `, ${visit.country}` : ""}`;
-    dateEl.textContent = visit.dateLabel;
   }
 
   function updateMapUI() {
@@ -189,77 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
         flyMap: true
       });
     }, AUTOPLAY_MS);
-  }
-
-  function animateMapTransition(fromIndex, toIndex) {
-    const targetVisit = visits[toIndex];
-    if (!targetVisit) return;
-
-    const destinationZoom = getDestinationZoom(fromIndex, toIndex);
-    const fromVisit = visits[fromIndex] || targetVisit;
-    const token = ++cameraAnimationToken;
-
-    if (fromVisit.lat === targetVisit.lat && fromVisit.lng === targetVisit.lng) {
-      runProgrammaticZoom(() => {
-        map.flyTo([targetVisit.lat, targetVisit.lng], destinationZoom, {
-          duration: 0.9,
-          easeLinearity: 0.22
-        });
-      });
-      return;
-    }
-
-    const legBounds = L.latLngBounds(
-      [fromVisit.lat, fromVisit.lng],
-      [targetVisit.lat, targetVisit.lng]
-    );
-    const legZoom = map.getBoundsZoom(legBounds.pad(0.24), false, [96, 96]);
-    const midZoom = Math.min(Math.max(destinationZoom - 0.8, 3.6), legZoom);
-
-    runProgrammaticZoom(() => {
-      map.flyToBounds(legBounds.pad(0.24), {
-        padding: [96, 96],
-        maxZoom: midZoom,
-        duration: 0.6,
-        easeLinearity: 0.2
-      });
-    });
-
-    window.setTimeout(() => {
-      if (token !== cameraAnimationToken) return;
-      runProgrammaticZoom(() => {
-        map.flyTo([targetVisit.lat, targetVisit.lng], destinationZoom, {
-          duration: 0.75,
-          easeLinearity: 0.22
-        });
-      });
-    }, 620);
-  }
-
-  function runProgrammaticZoom(callback) {
-    suppressPreferredZoomUpdate = true;
-    callback();
-    window.setTimeout(() => {
-      suppressPreferredZoomUpdate = false;
-    }, 1500);
-  }
-
-  function getDestinationZoom(fromIndex, toIndex) {
-    const targetVisit = visits[toIndex];
-    const fromVisit = visits[fromIndex] || targetVisit;
-    const currentZoom = preferredZoom || map.getZoom() || 3.8;
-
-    if (!targetVisit || !fromVisit) return currentZoom;
-
-    const distanceKm = getDistanceKm(fromVisit.lat, fromVisit.lng, targetVisit.lat, targetVisit.lng);
-
-    if (distanceKm < 15) return 9.2;
-    if (distanceKm < 40) return 8.4;
-    if (distanceKm < 120) return 7.6;
-    if (distanceKm < 300) return 6.8;
-    if (distanceKm < 800) return 6.1;
-    if (distanceKm < 1800) return 5.4;
-    return Math.max(4.6, currentZoom);
   }
 
   function updateRouteHighlights(index) {
@@ -371,19 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const y = Math.sin(lambda2 - lambda1) * Math.cos(phi2);
     const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(lambda2 - lambda1);
     return toDeg(Math.atan2(y, x));
-  }
-
-  function getDistanceKm(lat1, lon1, lat2, lon2) {
-    const toRad = deg => deg * Math.PI / 180;
-    const earthRadiusKm = 6371;
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return earthRadiusKm * c;
   }
 
   function interpolateLng(fromLng, toLng, t) {
