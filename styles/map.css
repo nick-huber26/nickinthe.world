@@ -1021,6 +1021,7 @@ body,
 
   .feed-pane {
     min-height: 54vh;
+    overflow: visible;
   }
 
   #feed {
@@ -1031,8 +1032,15 @@ body,
   }
 
   .feed-topbar {
+    position: sticky;
+    inset: auto;
+    top: 0;
+    z-index: 180;
     align-items: stretch;
     gap: 10px;
+    padding: 12px 14px;
+    background: rgba(6,13,18,.96);
+    backdrop-filter: blur(14px);
   }
 
   .timeline-nav {

@@ -21,10 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
   let resizeFrame = 0;
-  let activePointerId = null;
-  let activeTouchCard = null;
-  let pointerStartX = 0;
-  let pointerStartY = 0;
   let touchStartX = 0;
   let touchStartY = 0;
   let touchCard = null;
@@ -177,44 +173,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (grid.dataset.storyInteractionsBound === "true") return;
     grid.dataset.storyInteractionsBound = "true";
 
-    grid.addEventListener("pointerdown", event => {
+    grid.addEventListener("click", event => {
       if (hoverFlipQuery.matches) return;
-      if (event.pointerType !== "touch") return;
 
       const tile = event.target.closest("[data-story-tile]");
-      if (!tile || !grid.contains(tile) || event.target.closest("a")) {
-        activeTouchCard = null;
-        activePointerId = null;
-        return;
-      }
+      if (!tile || !grid.contains(tile)) return;
+      if (event.target.closest("a")) return;
 
-      activeTouchCard = tile;
-      activePointerId = event.pointerId;
-      pointerStartX = event.clientX;
-      pointerStartY = event.clientY;
-    });
-
-    grid.addEventListener("pointerup", event => {
-      if (hoverFlipQuery.matches) return;
-      if (event.pointerType !== "touch") return;
-      if (activePointerId !== event.pointerId || !activeTouchCard) return;
-
-      const tile = event.target.closest("[data-story-tile]");
-      const movedX = Math.abs(event.clientX - pointerStartX);
-      const movedY = Math.abs(event.clientY - pointerStartY);
-
-      if (tile === activeTouchCard && movedX <= 12 && movedY <= 12 && !event.target.closest("a")) {
-        event.preventDefault();
-        toggleStoryCard(activeTouchCard);
-      }
-
-      activeTouchCard = null;
-      activePointerId = null;
-    });
-
-    grid.addEventListener("pointercancel", () => {
-      activeTouchCard = null;
-      activePointerId = null;
+      event.preventDefault();
+      toggleStoryCard(tile);
     });
 
     grid.addEventListener("keydown", event => {
