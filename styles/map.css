@@ -614,6 +614,7 @@ body,
 }
 
 .visit-media-column {
+  width: var(--visit-media-size);
   min-width: 0;
   display: grid;
   align-content: start;
@@ -1071,6 +1072,10 @@ body,
   .visit-detail-body {
     grid-template-columns: 1fr;
     row-gap: 12px;
+  }
+
+  .visit-media-column {
+    width: min(220px, 100%);
   }
 
   .city-list-grid {

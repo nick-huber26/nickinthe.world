@@ -326,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `--visit-image-fit:${SiteData.escapeAttr(visit.imageFit || "cover")}`
       ].join(";");
       const visitImageMarkup = visitImage
-        ? `<div class="visit-media-box"><img loading="lazy" src="${SiteData.escapeAttr(visitImage)}" alt="${SiteData.escapeAttr(visit.imageAlt || city.city)}" style="${visitImageStyle}"></div>`
+        ? `<div class="visit-media-box"><img loading="eager" decoding="async" src="${SiteData.escapeAttr(visitImage)}" alt="${SiteData.escapeAttr(visit.imageAlt || city.city)}" style="${visitImageStyle}"></div>`
         : `<div class="visit-media-empty">${SiteData.escapeHtml(city.city)}<br>${SiteData.escapeHtml(visit.dateLabel)}</div>`;
 
       detail.innerHTML = `
