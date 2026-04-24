@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const AUTOPLAY_MS = 5000;
   const OVERVIEW_PADDING = [96, 96];
   const OVERVIEW_MAX_ZOOM = 3.35;
+  const PLANE_MARGIN_X = 0.24;
+  const PLANE_MARGIN_Y = 0.18;
   const qs = new URLSearchParams(window.location.search);
   const statusEl = document.getElementById("mapStatus");
   const interactive = qs.get("interactive") === "1";
@@ -256,6 +258,32 @@ document.addEventListener("DOMContentLoaded", () => {
     planeMarker.setLatLng([lat, lng]);
     const plane = planeMarker.getElement()?.querySelector(".plane-icon");
     if (plane) plane.style.transform = `rotate(${bearingDeg}deg)`;
+    keepPlaneInView(lat, lng);
+  }
+
+  function keepPlaneInView(lat, lng) {
+    const size = map.getSize();
+    if (!size?.x || !size?.y) return;
+
+    const point = map.latLngToContainerPoint([lat, lng]);
+    const minX = size.x * PLANE_MARGIN_X;
+    const maxX = size.x * (1 - PLANE_MARGIN_X);
+    const minY = size.y * PLANE_MARGIN_Y;
+    const maxY = size.y * (1 - PLANE_MARGIN_Y);
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (point.x < minX) offsetX = point.x - minX;
+    else if (point.x > maxX) offsetX = point.x - maxX;
+
+    if (point.y < minY) offsetY = point.y - minY;
+    else if (point.y > maxY) offsetY = point.y - maxY;
+
+    if (offsetX !== 0 || offsetY !== 0) {
+      map.panBy([offsetX, offsetY], {
+        animate: false
+      });
+    }
   }
 
   function getVisitOrientation(index) {
