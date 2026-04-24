@@ -1,10 +1,11 @@
 # Repository structure
 
-This repo now supports four embeddable GitHub Pages views that can reference each other.
+This repo now supports five embeddable GitHub Pages views that can reference each other.
 
 The public site is now wired to use published Google Sheet CSV tabs as the primary CMS source, with the local `data/*.csv` files kept in the repo as fallback backups.
 
 - `cities.html`: the map and city timeline page
+- `map.html`: a lightweight animated map embed with auto-flying plane transitions
 - `connections.html`: the gallery of thematic connection cards
 - `stories.html`: a visual story gallery backed by a CSV CMS
 - `inspirations.html`: a zoomable poster wall with a slide-out inspiration drawer
@@ -29,6 +30,7 @@ Because both pages use `fetch()` to load CSV files, they should be served over H
 Once pushed to the GitHub Pages branch, the site exposes:
 
 - `/cities.html`
+- `/map.html`
 - `/connections.html`
 - `/stories.html`
 - `/inspirations.html`
