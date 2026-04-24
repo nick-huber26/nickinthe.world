@@ -504,8 +504,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!target) return;
     const topbar = document.querySelector(".feed-topbar");
     const topbarHeight = topbar ? topbar.offsetHeight : 0;
-    const targetTop = target.offsetTop - topbarHeight - 12;
-    feed.scrollTo({
+    const isFeedScrollable = feed && feed.scrollHeight > feed.clientHeight && getComputedStyle(feed).overflowY !== "visible";
+
+    if (isFeedScrollable) {
+      const targetTop = target.offsetTop - topbarHeight - 12;
+      feed.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth"
+      });
+      return;
+    }
+
+    const targetTop = target.getBoundingClientRect().top + window.scrollY - topbarHeight - 12;
+    window.scrollTo({
       top: Math.max(0, targetTop),
       behavior: "smooth"
     });
