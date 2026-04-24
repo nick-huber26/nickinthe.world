@@ -192,10 +192,7 @@
   outline: none;
 }
 
-.story-tile:hover .story-tile-card,
-.story-tile-card.is-flipped,
-.story-tile-card:focus-visible,
-.story-tile-card:focus-within {
+.story-tile.is-flipped .story-tile-card {
   transform: rotateY(180deg);
 }
 
@@ -412,8 +409,18 @@
   }
 }
 
-@media (hover: none) {
-  .story-tile:hover .story-tile-card {
+@media (hover: hover) and (pointer: fine) {
+  .story-tile:hover .story-tile-card,
+  .story-tile-card:focus-visible,
+  .story-tile-card:focus-within {
+    transform: rotateY(180deg);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .story-tile:hover .story-tile-card,
+  .story-tile-card:focus-visible,
+  .story-tile-card:focus-within {
     transform: none;
   }
 }

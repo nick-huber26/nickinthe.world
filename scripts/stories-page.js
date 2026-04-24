@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const storyCountEl = document.getElementById("storyCount");
   const cityFiltersEl = document.getElementById("storyCityFilters");
   const connectionFiltersEl = document.getElementById("storyConnectionFilters");
+  const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
 
   let stories = [];
   let availableCityFilters = [];
@@ -20,6 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
   let resizeFrame = 0;
+  let activePointerId = null;
+  let activeTouchCard = null;
+  let pointerStartX = 0;
+  let pointerStartY = 0;
   let touchStartX = 0;
   let touchStartY = 0;
   let touchCard = null;
@@ -92,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     grid.innerHTML = visibleStories.map(story => `
-      <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};">
+      <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
         <div class="story-tile-card" tabindex="0" role="button" aria-label="Reveal details for ${SiteData.escapeAttr(story.title)}" data-story-card>
           <div class="story-tile-face story-tile-front">
             <div class="story-tile-media">
@@ -172,68 +177,58 @@ document.addEventListener("DOMContentLoaded", () => {
     if (grid.dataset.storyInteractionsBound === "true") return;
     grid.dataset.storyInteractionsBound = "true";
 
-    grid.addEventListener("click", event => {
-      const card = event.target.closest("[data-story-card]");
-      if (!card || !grid.contains(card)) return;
-      if (event.target.closest("a")) return;
+    grid.addEventListener("pointerdown", event => {
+      if (hoverFlipQuery.matches) return;
+      if (event.pointerType !== "touch") return;
 
-      const suppressClickUntil = Number(card.dataset.suppressClickUntil || "0");
-      if (Date.now() < suppressClickUntil) return;
+      const tile = event.target.closest("[data-story-tile]");
+      if (!tile || !grid.contains(tile) || event.target.closest("a")) {
+        activeTouchCard = null;
+        activePointerId = null;
+        return;
+      }
 
-      toggleStoryCard(card);
+      activeTouchCard = tile;
+      activePointerId = event.pointerId;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
     });
 
-    grid.addEventListener("touchstart", event => {
-      const card = event.target.closest("[data-story-card]");
-      if (!card || !grid.contains(card)) {
-        touchCard = null;
-        return;
+    grid.addEventListener("pointerup", event => {
+      if (hoverFlipQuery.matches) return;
+      if (event.pointerType !== "touch") return;
+      if (activePointerId !== event.pointerId || !activeTouchCard) return;
+
+      const tile = event.target.closest("[data-story-tile]");
+      const movedX = Math.abs(event.clientX - pointerStartX);
+      const movedY = Math.abs(event.clientY - pointerStartY);
+
+      if (tile === activeTouchCard && movedX <= 12 && movedY <= 12 && !event.target.closest("a")) {
+        event.preventDefault();
+        toggleStoryCard(activeTouchCard);
       }
 
-      const touch = event.changedTouches[0];
-      if (!touch) return;
+      activeTouchCard = null;
+      activePointerId = null;
+    });
 
-      touchCard = card;
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-    }, { passive: true });
-
-    grid.addEventListener("touchend", event => {
-      if (!touchCard) return;
-      if (event.target.closest("a")) {
-        touchCard = null;
-        return;
-      }
-
-      const card = event.target.closest("[data-story-card]");
-      const touch = event.changedTouches[0];
-      if (!card || card !== touchCard || !touch) {
-        touchCard = null;
-        return;
-      }
-
-      const movedX = Math.abs(touch.clientX - touchStartX);
-      const movedY = Math.abs(touch.clientY - touchStartY);
-      touchCard = null;
-
-      if (movedX > 10 || movedY > 10) return;
-
-      event.preventDefault();
-      card.dataset.suppressClickUntil = String(Date.now() + 500);
-      toggleStoryCard(card);
-    }, { passive: false });
+    grid.addEventListener("pointercancel", () => {
+      activeTouchCard = null;
+      activePointerId = null;
+    });
 
     grid.addEventListener("keydown", event => {
       const card = event.target.closest("[data-story-card]");
       if (!card || !grid.contains(card)) return;
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
-      toggleStoryCard(card);
+      toggleStoryCard(card.closest("[data-story-tile]"));
     });
   }
 
-  function toggleStoryCard(card) {
-    card.classList.toggle("is-flipped");
+  function toggleStoryCard(tile) {
+    if (!tile) return;
+    tile.classList.toggle("is-flipped");
   }
 
   function handleFilterClick(event) {
