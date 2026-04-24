@@ -71,6 +71,22 @@ body,
   color: var(--muted);
 }
 
+.map-counts {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 4;
+  padding: 11px 14px;
+  border-radius: 999px;
+  background: rgba(8, 14, 19, 0.72);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  color: rgba(255,255,255,0.88);
+  white-space: nowrap;
+}
+
 .leaflet-container {
   background: #0a1218;
   font: inherit;
@@ -183,5 +199,10 @@ body,
 
   .map-status {
     top: 12px;
+  }
+
+  .map-counts {
+    top: 12px;
+    right: 12px;
   }
 }

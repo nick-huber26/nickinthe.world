@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const PLANE_MARGIN_Y = 0.18;
   const qs = new URLSearchParams(window.location.search);
   const statusEl = document.getElementById("mapStatus");
+  const countsEl = document.getElementById("mapCounts");
+  const cityCountEl = document.getElementById("cityCount");
+  const countryCountEl = document.getElementById("countryCount");
   const interactive = qs.get("interactive") === "1";
 
   const map = L.map("map", {
@@ -59,9 +62,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    cityCountEl.textContent = String(new Set(cities.map(city => city.key)).size);
+    countryCountEl.textContent = String(new Set(cities.map(city => city.country).filter(Boolean)).size);
+
     renderMap();
     setActiveVisit(0, { animatePlane: false, flyMap: false });
     statusEl.hidden = true;
+    countsEl.hidden = false;
     scheduleNextFlight();
   }
 
