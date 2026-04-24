@@ -20,6 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
   let resizeFrame = 0;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchCard = null;
 
   async function loadStories() {
     const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
@@ -166,41 +169,71 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", handleFilterClick);
     });
 
-    grid.querySelectorAll("[data-story-card]").forEach(card => {
-      let suppressClickUntil = 0;
-      let touchMoved = false;
+    if (grid.dataset.storyInteractionsBound === "true") return;
+    grid.dataset.storyInteractionsBound = "true";
 
-      const toggleCardFlip = event => {
-        if (event.target.closest("a")) return;
-        card.classList.toggle("is-flipped");
-      };
+    grid.addEventListener("click", event => {
+      const card = event.target.closest("[data-story-card]");
+      if (!card || !grid.contains(card)) return;
+      if (event.target.closest("a")) return;
 
-      card.addEventListener("click", event => {
-        if (Date.now() < suppressClickUntil) return;
-        toggleCardFlip(event);
-      });
+      const suppressClickUntil = Number(card.dataset.suppressClickUntil || "0");
+      if (Date.now() < suppressClickUntil) return;
 
-      card.addEventListener("touchstart", () => {
-        touchMoved = false;
-      }, { passive: true });
-
-      card.addEventListener("touchmove", () => {
-        touchMoved = true;
-      }, { passive: true });
-
-      card.addEventListener("touchend", event => {
-        if (touchMoved) return;
-        event.preventDefault();
-        suppressClickUntil = Date.now() + 500;
-        toggleCardFlip(event);
-      }, { passive: false });
-
-      card.addEventListener("keydown", event => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        card.classList.toggle("is-flipped");
-      });
+      toggleStoryCard(card);
     });
+
+    grid.addEventListener("touchstart", event => {
+      const card = event.target.closest("[data-story-card]");
+      if (!card || !grid.contains(card)) {
+        touchCard = null;
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      touchCard = card;
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    grid.addEventListener("touchend", event => {
+      if (!touchCard) return;
+      if (event.target.closest("a")) {
+        touchCard = null;
+        return;
+      }
+
+      const card = event.target.closest("[data-story-card]");
+      const touch = event.changedTouches[0];
+      if (!card || card !== touchCard || !touch) {
+        touchCard = null;
+        return;
+      }
+
+      const movedX = Math.abs(touch.clientX - touchStartX);
+      const movedY = Math.abs(touch.clientY - touchStartY);
+      touchCard = null;
+
+      if (movedX > 10 || movedY > 10) return;
+
+      event.preventDefault();
+      card.dataset.suppressClickUntil = String(Date.now() + 500);
+      toggleStoryCard(card);
+    }, { passive: false });
+
+    grid.addEventListener("keydown", event => {
+      const card = event.target.closest("[data-story-card]");
+      if (!card || !grid.contains(card)) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      toggleStoryCard(card);
+    });
+  }
+
+  function toggleStoryCard(card) {
+    card.classList.toggle("is-flipped");
   }
 
   function handleFilterClick(event) {
