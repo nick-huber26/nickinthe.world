@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
   let resizeFrame = 0;
+  let tileResizeObserver = null;
   let touchStartX = 0;
   let touchStartY = 0;
   let touchCard = null;
@@ -74,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    observeStoryGrid();
     scheduleStoryTileLayout();
     scrollToHashTarget();
   }
@@ -249,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
+    observeStoryGrid();
     scheduleStoryTileLayout();
     scrollToHashTarget({ behavior: "auto" });
   }
@@ -334,6 +337,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return 1;
   }
 
+  function observeStoryGrid() {
+    if (!("ResizeObserver" in window)) return;
+
+    tileResizeObserver?.disconnect();
+    tileResizeObserver = new ResizeObserver(() => {
+      scheduleStoryTileLayout();
+    });
+
+    tileResizeObserver.observe(grid);
+    grid.querySelectorAll(".story-tile").forEach(tile => tileResizeObserver.observe(tile));
+  }
+
   function scrollToHashTarget(options = {}) {
     const hash = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
     if (!hash) return;
@@ -358,4 +373,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.addEventListener("resize", scheduleStoryTileLayout);
+  window.addEventListener("load", scheduleStoryTileLayout);
 });
