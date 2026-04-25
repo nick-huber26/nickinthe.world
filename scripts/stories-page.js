@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cityFiltersEl = document.getElementById("storyCityFilters");
   const connectionFiltersEl = document.getElementById("storyConnectionFilters");
   const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const gridGalleryIntervals = new Map();
 
   let stories = [];
   let availableCityFilters = [];
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderGrid() {
     if (!stories.length) {
+      storyCountEl.textContent = "0";
       grid.innerHTML = '<article class="story-tile story-tile-empty"><div class="story-tile-copy"><h2>No stories found</h2><p>Add rows to <code>data/stories.csv</code> to populate this gallery.</p></div></article>';
       return;
     }
@@ -130,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </article>
     `).join("");
+
+    SiteData.startGalleries(grid, gridGalleryIntervals);
   }
 
   function renderFilters() {
@@ -147,9 +151,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildFilterMarkup({ type, items, selectedSet }) {
-    const clearLabel = selectedSet.size ? "Clear filters" : "Clear filter";
     return `
-      <button class="story-filter-chip story-filter-chip-clear" type="button" data-clear-filter="${type}">${clearLabel}</button>
+      <button class="story-filter-chip story-filter-chip-clear" type="button" data-clear-filter="${type}">Clear filter</button>
       ${!items.length ? `
         <span class="story-filter-chip story-filter-chip-empty" aria-disabled="true">No ${type} filters available</span>
       ` : ""}
@@ -288,18 +291,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildFrontMedia(story) {
-    return SiteData.buildGalleryMarkup(
-      story.anchorId,
-      story.images.slice(0, 1),
-      story.imageAlt || story.title,
-      story.title,
-      {
-        positionX: story.imagePositionX,
-        positionY: story.imagePositionY,
-        zoom: story.imageZoom,
-        fit: "cover"
-      }
-    );
+    return `
+      <div class="story-tile-media gallery-shell" data-gallery-key="${SiteData.escapeAttr(`${story.anchorId}-front`)}">
+        ${SiteData.buildGalleryMarkup(
+          story.anchorId,
+          story.images.slice(0, 1),
+          story.imageAlt || story.title,
+          story.title,
+          {
+            positionX: story.imagePositionX,
+            positionY: story.imagePositionY,
+            zoom: story.imageZoom,
+            fit: story.imageFit || "cover"
+          }
+        )}
+      </div>
+    `;
   }
 
   function scrollToHashTarget(options = {}) {
