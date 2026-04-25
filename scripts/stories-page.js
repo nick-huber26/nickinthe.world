@@ -99,9 +99,17 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="story-tile-media">
               ${buildFrontMedia(story)}
             </div>
+            <button class="story-mobile-toggle story-mobile-toggle-front" type="button" data-story-flip>
+              Flip
+            </button>
           </div>
           <div class="story-tile-face story-tile-back">
             <div class="story-tile-back-inner">
+              <div class="story-back-actions">
+                <button class="story-mobile-toggle story-mobile-toggle-back" type="button" data-story-unflip>
+                  Back
+                </button>
+              </div>
               <div class="story-back-copy">
                 ${story.dateLabel ? `<div class="story-back-date">${SiteData.escapeHtml(story.dateLabel)}</div>` : ""}
                 <h2>${SiteData.escapeHtml(story.title)}</h2>
@@ -174,14 +182,19 @@ document.addEventListener("DOMContentLoaded", () => {
     grid.dataset.storyInteractionsBound = "true";
 
     grid.addEventListener("click", event => {
-      if (hoverFlipQuery.matches) return;
-
       const tile = event.target.closest("[data-story-tile]");
       if (!tile || !grid.contains(tile)) return;
-      if (event.target.closest("a")) return;
 
-      event.preventDefault();
-      toggleStoryCard(tile);
+      if (event.target.closest("[data-story-flip]")) {
+        event.preventDefault();
+        setStoryCardFlipped(tile, true);
+        return;
+      }
+
+      if (event.target.closest("[data-story-unflip]")) {
+        event.preventDefault();
+        setStoryCardFlipped(tile, false);
+      }
     });
 
     grid.addEventListener("keydown", event => {
@@ -189,13 +202,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!card || !grid.contains(card)) return;
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
-      toggleStoryCard(card.closest("[data-story-tile]"));
+      const tile = card.closest("[data-story-tile]");
+      if (!tile) return;
+      setStoryCardFlipped(tile, !tile.classList.contains("is-flipped"));
     });
   }
 
-  function toggleStoryCard(tile) {
+  function setStoryCardFlipped(tile, nextState) {
     if (!tile) return;
-    tile.classList.toggle("is-flipped");
+    tile.classList.toggle("is-flipped", nextState);
   }
 
   function handleFilterClick(event) {
