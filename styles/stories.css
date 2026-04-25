@@ -499,6 +499,11 @@
 }
 
 @media (hover: none), (pointer: coarse) {
+  .story-back-actions,
+  .story-mobile-toggle {
+    display: inline-flex;
+  }
+
   .story-tile-card {
     cursor: default;
   }

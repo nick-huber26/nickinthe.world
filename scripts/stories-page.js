@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cityFiltersEl = document.getElementById("storyCityFilters");
   const connectionFiltersEl = document.getElementById("storyConnectionFilters");
   const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const touchPreferredQuery = window.matchMedia("(hover: none), (pointer: coarse)");
 
   let stories = [];
   let availableCityFilters = [];
@@ -346,8 +347,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  bindMediaQueryChange(touchPreferredQuery, () => {
+    applyInteractionMode();
+    document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
+      tile.classList.remove("is-flipped");
+    });
+  });
+
   function applyInteractionMode() {
-    const useHoverFlip = hoverFlipQuery.matches;
+    const useHoverFlip = hoverFlipQuery.matches && !touchPreferredQuery.matches;
     document.body.classList.toggle("stories-hover-mode", useHoverFlip);
     document.body.classList.toggle("stories-touch-mode", !useHoverFlip);
   }
