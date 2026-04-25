@@ -188,45 +188,40 @@
   aspect-ratio: var(--story-aspect, 1 / 1);
   position: relative;
   border-radius: 28px;
+  overflow: hidden;
   cursor: pointer;
   touch-action: manipulation;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  transition: transform 0.72s cubic-bezier(.22, .7, .18, 1);
   outline: none;
-  will-change: transform;
-}
-
-.story-tile.is-flipped .story-tile-card {
-  transform: rotateY(180deg);
+  background: rgba(255,255,255,0.04);
+  box-shadow: var(--shadow);
 }
 
 .story-tile-face {
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
   border-radius: 28px;
-  box-shadow: var(--shadow);
   border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.04);
+  transition:
+    opacity 0.42s ease,
+    transform 0.52s cubic-bezier(.22, .7, .18, 1);
 }
 
 .story-tile-front {
-  transform: rotateY(0deg) translateZ(1px);
-  -webkit-transform: rotateY(0deg) translateZ(1px);
-  position: relative;
-  overflow: hidden;
+  z-index: 1;
+  opacity: 1;
+  transform: rotateY(0deg);
+  transform-origin: center;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0)),
     rgba(255,255,255,0.04);
 }
 
 .story-tile-back {
-  transform: rotateY(180deg) translateZ(1px);
-  -webkit-transform: rotateY(180deg) translateZ(1px);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transform: rotateY(-180deg);
+  transform-origin: center;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)),
     radial-gradient(circle at top left, var(--storyAccent), transparent 55%),
@@ -466,58 +461,31 @@
   }
 }
 
-.stories-hover-mode .story-tile:hover .story-tile-card,
-.stories-hover-mode .story-tile-card:focus-visible,
-.stories-hover-mode .story-tile-card:focus-within {
-  transform: rotateY(180deg);
-}
-
-.stories-touch-mode .story-tile-card {
-  transform: none !important;
-  transition: none;
-}
-
-.stories-touch-mode .story-tile:hover .story-tile-card,
-.stories-touch-mode .story-tile-card:focus-visible,
-.stories-touch-mode .story-tile-card:focus-within {
-  transform: none;
-}
-
-.stories-touch-mode .story-tile-face {
-  transform: none !important;
-  -webkit-transform: none !important;
-  backface-visibility: visible;
-  -webkit-backface-visibility: visible;
-  transition: opacity 0.2s ease;
-}
-
-.stories-touch-mode .story-tile-front {
-  opacity: 1;
-  pointer-events: auto;
-  z-index: 2;
-}
-
-.stories-touch-mode .story-tile-back {
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
+.stories-hover-mode .story-tile:hover .story-tile-front,
+.stories-hover-mode .story-tile:focus-within .story-tile-front,
+.stories-hover-mode .story-tile.is-flipped .story-tile-front,
 .stories-touch-mode .story-tile.is-flipped .story-tile-front {
   opacity: 0;
   pointer-events: none;
-  z-index: 1;
+  transform: rotateY(180deg);
 }
 
+.stories-hover-mode .story-tile:hover .story-tile-back,
+.stories-hover-mode .story-tile:focus-within .story-tile-back,
+.stories-hover-mode .story-tile.is-flipped .story-tile-back,
 .stories-touch-mode .story-tile.is-flipped .story-tile-back {
   opacity: 1;
   pointer-events: auto;
-  z-index: 2;
+  transform: rotateY(0deg);
 }
 
 .stories-touch-mode .story-back-actions,
 .stories-touch-mode .story-mobile-toggle {
   display: inline-flex;
+}
+
+.stories-touch-mode .story-tile-card {
+  cursor: default;
 }
 
 @media (hover: none), (pointer: coarse) {
