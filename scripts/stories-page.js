@@ -303,8 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const mediaStyle = [
       `--story-image-position-x:${SiteData.escapeAttr(story.imagePositionX || "50%")}`,
       `--story-image-position-y:${SiteData.escapeAttr(story.imagePositionY || "50%")}`,
-      `--story-image-zoom:${SiteData.escapeAttr(story.imageZoom || 1)}`,
-      `--story-image-fit:${SiteData.escapeAttr(story.imageFit || "cover")}`
+      `--story-image-zoom:${SiteData.escapeAttr(story.imageZoom || 1)}`
     ].join(";");
 
     return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}" style="${mediaStyle}">`;
