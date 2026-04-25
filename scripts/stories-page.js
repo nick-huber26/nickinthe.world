@@ -22,9 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const selectedConnectionIds = new Set();
   let resizeFrame = 0;
   let tileResizeObserver = null;
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchCard = null;
+
+  applyInteractionMode();
 
   async function loadStories() {
     const citiesCsvUrl = qs.get("citiesCsv") || REMOTE_CITIES_CSV;
@@ -321,19 +320,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!rowSize) return;
 
     grid.querySelectorAll(".story-tile").forEach(tile => {
-      const width = tile.getBoundingClientRect().width;
-      if (!width) return;
+      const card = tile.querySelector(".story-tile-card");
+      if (!card) return;
 
-      const height = width / getStoryAspectRatio(tile);
+      const height = card.getBoundingClientRect().height;
+      if (!height) return;
+
       const rowSpan = Math.max(1, Math.ceil((height + rowGap) / (rowSize + rowGap)));
       tile.style.setProperty("--story-rows", String(rowSpan));
     });
-  }
-
-  function getStoryAspectRatio(tile) {
-    if (tile.classList.contains("story-size-landscape")) return 2;
-    if (tile.classList.contains("story-size-vertical")) return 0.5;
-    return 1;
   }
 
   function observeStoryGrid() {
@@ -373,4 +368,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("resize", scheduleStoryTileLayout);
   window.addEventListener("load", scheduleStoryTileLayout);
+  hoverFlipQuery.addEventListener("change", () => {
+    applyInteractionMode();
+    document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
+      tile.classList.remove("is-flipped");
+    });
+  });
+
+  function applyInteractionMode() {
+    const useHoverFlip = hoverFlipQuery.matches;
+    document.body.classList.toggle("stories-hover-mode", useHoverFlip);
+    document.body.classList.toggle("stories-touch-mode", !useHoverFlip);
+  }
 });

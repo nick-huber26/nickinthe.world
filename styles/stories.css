@@ -164,8 +164,6 @@
 .story-tile {
   position: relative;
   min-width: 0;
-  aspect-ratio: var(--story-aspect, 1 / 1);
-  perspective: 1400px;
   grid-row: span var(--story-rows, 32);
 }
 
@@ -186,7 +184,8 @@
 
 .story-tile-card {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: var(--story-aspect, 1 / 1);
   position: relative;
   border-radius: 28px;
   cursor: pointer;
@@ -455,60 +454,62 @@
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .story-tile:hover .story-tile-card,
-  .story-tile-card:focus-visible,
-  .story-tile-card:focus-within {
-    transform: rotateY(180deg);
-  }
+.stories-hover-mode .story-tile:hover .story-tile-card,
+.stories-hover-mode .story-tile-card:focus-visible,
+.stories-hover-mode .story-tile-card:focus-within {
+  transform: rotateY(180deg);
+}
+
+.stories-touch-mode .story-tile-card {
+  transform: none !important;
+  transition: none;
+}
+
+.stories-touch-mode .story-tile:hover .story-tile-card,
+.stories-touch-mode .story-tile-card:focus-visible,
+.stories-touch-mode .story-tile-card:focus-within {
+  transform: none;
+}
+
+.stories-touch-mode .story-tile-face {
+  transform: none !important;
+  -webkit-transform: none !important;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  transition: opacity 0.2s ease;
+}
+
+.stories-touch-mode .story-tile-front {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.stories-touch-mode .story-tile-back {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stories-touch-mode .story-tile.is-flipped .story-tile-front {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.stories-touch-mode .story-tile.is-flipped .story-tile-back {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.stories-touch-mode .story-back-actions,
+.stories-touch-mode .story-mobile-toggle {
+  display: inline-flex;
 }
 
 @media (hover: none), (pointer: coarse) {
   .story-tile-card {
-    transform: none !important;
-    transition: none;
-  }
-
-  .story-tile:hover .story-tile-card,
-  .story-tile-card:focus-visible,
-  .story-tile-card:focus-within {
-    transform: none;
-  }
-
-  .story-tile-face {
-    transform: none !important;
-    -webkit-transform: none !important;
-    backface-visibility: visible;
-    -webkit-backface-visibility: visible;
-    transition: opacity 0.2s ease;
-  }
-
-  .story-tile-front {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 2;
-  }
-
-  .story-tile-back {
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .story-tile.is-flipped .story-tile-front {
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .story-tile.is-flipped .story-tile-back {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 2;
-  }
-
-  .story-back-actions,
-  .story-mobile-toggle {
-    display: inline-flex;
+    cursor: default;
   }
 }
