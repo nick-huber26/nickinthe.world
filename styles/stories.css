@@ -155,13 +155,10 @@
 
 .stories-grid {
   --stories-gap: 16px;
-  --grid-cols: 12;
-  --square-span: 3;
-  --square-size: calc((((100% - ((var(--grid-cols) - 1) * var(--stories-gap))) / var(--grid-cols)) * var(--square-span)) + ((var(--square-span) - 1) * var(--stories-gap)));
-  --row-size: calc((var(--square-size) - var(--stories-gap)) / 2);
+  --story-square-span: 3;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: var(--row-size);
+  grid-auto-rows: var(--story-row-size, 120px);
   grid-auto-flow: dense;
   align-items: start;
   gap: var(--stories-gap);
@@ -432,8 +429,7 @@
 
 @media (max-width: 1040px) {
   .stories-grid {
-    --grid-cols: 8;
-    --square-span: 2;
+    --story-square-span: 2;
     grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 
@@ -462,8 +458,7 @@
   }
 
   .stories-grid {
-    --grid-cols: 4;
-    --square-span: 2;
+    --story-square-span: 2;
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
