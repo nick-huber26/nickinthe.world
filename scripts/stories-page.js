@@ -20,8 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let availableConnectionFilters = [];
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
-  let resizeFrame = 0;
-  let tileResizeObserver = null;
 
   applyInteractionMode();
 
@@ -74,8 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
-    observeStoryGrid();
-    scheduleStoryTileLayout();
     scrollToHashTarget();
   }
 
@@ -250,8 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderFilters();
     renderGrid();
     bindPageInteractions();
-    observeStoryGrid();
-    scheduleStoryTileLayout();
     scrollToHashTarget({ behavior: "auto" });
   }
 
@@ -308,41 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}" style="${mediaStyle}">`;
   }
 
-  function scheduleStoryTileLayout() {
-    window.cancelAnimationFrame(resizeFrame);
-    resizeFrame = window.requestAnimationFrame(updateStoryTileLayout);
-  }
-
-  function updateStoryTileLayout() {
-    const gridStyles = window.getComputedStyle(grid);
-    const rowSize = parseFloat(gridStyles.gridAutoRows);
-    const rowGap = parseFloat(gridStyles.rowGap);
-    if (!rowSize) return;
-
-    grid.querySelectorAll(".story-tile").forEach(tile => {
-      const card = tile.querySelector(".story-tile-card");
-      if (!card) return;
-
-      const height = card.getBoundingClientRect().height;
-      if (!height) return;
-
-      const rowSpan = Math.max(1, Math.ceil((height + rowGap) / (rowSize + rowGap)));
-      tile.style.setProperty("--story-rows", String(rowSpan));
-    });
-  }
-
-  function observeStoryGrid() {
-    if (!("ResizeObserver" in window)) return;
-
-    tileResizeObserver?.disconnect();
-    tileResizeObserver = new ResizeObserver(() => {
-      scheduleStoryTileLayout();
-    });
-
-    tileResizeObserver.observe(grid);
-    grid.querySelectorAll(".story-tile").forEach(tile => tileResizeObserver.observe(tile));
-  }
-
   function scrollToHashTarget(options = {}) {
     const hash = decodeURIComponent(window.location.hash || "").replace(/^#/, "");
     if (!hash) return;
@@ -366,9 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollToHashTarget();
   });
 
-  window.addEventListener("resize", scheduleStoryTileLayout);
-  window.addEventListener("load", scheduleStoryTileLayout);
-  hoverFlipQuery.addEventListener("change", () => {
+  bindMediaQueryChange(hoverFlipQuery, () => {
     applyInteractionMode();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
@@ -379,5 +336,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const useHoverFlip = hoverFlipQuery.matches;
     document.body.classList.toggle("stories-hover-mode", useHoverFlip);
     document.body.classList.toggle("stories-touch-mode", !useHoverFlip);
+  }
+
+  function bindMediaQueryChange(query, handler) {
+    if (typeof query.addEventListener === "function") {
+      query.addEventListener("change", handler);
+      return;
+    }
+
+    if (typeof query.addListener === "function") {
+      query.addListener(handler);
+    }
   }
 });
