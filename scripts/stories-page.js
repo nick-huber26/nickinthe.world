@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let availableConnectionFilters = [];
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
+  let layoutGuardRaf = 0;
 
   applyInteractionMode();
 
@@ -73,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderFilters();
     renderGrid();
+    scheduleLayoutGuard();
     bindPageInteractions();
     scrollToHashTarget();
   }
@@ -131,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </article>
     `).join("");
+    scheduleLayoutGuard();
 
   }
 
@@ -237,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function rerenderPage() {
     renderFilters();
     renderGrid();
+    scheduleLayoutGuard();
     bindPageInteractions();
     scrollToHashTarget({ behavior: "auto" });
   }
@@ -335,6 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(hoverFlipQuery, () => {
     applyInteractionMode();
+    scheduleLayoutGuard();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
@@ -342,6 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(touchPreferredQuery, () => {
     applyInteractionMode();
+    scheduleLayoutGuard();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
@@ -349,10 +355,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(mobileViewportQuery, () => {
     applyInteractionMode();
+    scheduleLayoutGuard();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
   });
+
+  window.addEventListener("resize", scheduleLayoutGuard, { passive: true });
 
   function applyInteractionMode() {
     const useTouchControls = mobileViewportQuery.matches || touchPreferredQuery.matches || !hoverFlipQuery.matches;
@@ -370,5 +379,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof query.addListener === "function") {
       query.addListener(handler);
     }
+  }
+
+  function scheduleLayoutGuard() {
+    if (layoutGuardRaf) window.cancelAnimationFrame(layoutGuardRaf);
+    layoutGuardRaf = window.requestAnimationFrame(() => {
+      layoutGuardRaf = 0;
+      applyLayoutGuard();
+    });
+  }
+
+  function applyLayoutGuard() {
+    const firstTile = grid?.querySelector(".story-tile:not(.story-tile-empty)");
+    if (!firstTile) {
+      document.body.classList.remove("stories-layout-fallback");
+      return;
+    }
+
+    const tileHeight = firstTile.getBoundingClientRect().height;
+    document.body.classList.toggle("stories-layout-fallback", tileHeight < 10);
   }
 });

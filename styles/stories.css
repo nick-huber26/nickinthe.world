@@ -157,7 +157,7 @@
   --stories-gap: 16px;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: clamp(116px, 13vw, 178px);
+  grid-auto-rows: 142px;
   grid-auto-flow: dense;
   align-items: start;
   gap: var(--stories-gap);
@@ -429,7 +429,7 @@
 @media (max-width: 1040px) {
   .stories-grid {
     grid-template-columns: repeat(8, minmax(0, 1fr));
-    grid-auto-rows: clamp(112px, 18vw, 168px);
+    grid-auto-rows: 132px;
   }
 
   .story-size-square,
@@ -458,7 +458,7 @@
 
   .stories-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-auto-rows: clamp(108px, 24vw, 156px);
+    grid-auto-rows: 116px;
   }
 
   .story-filter-row {
@@ -509,6 +509,33 @@
   .story-size-vertical {
     --story-aspect: 1 / 2;
   }
+}
+
+.stories-page.stories-layout-fallback .stories-grid {
+  grid-auto-rows: auto;
+}
+
+.stories-page.stories-layout-fallback .story-size-landscape,
+.stories-page.stories-layout-fallback .story-size-vertical,
+.stories-page.stories-layout-fallback .story-size-square {
+  grid-row: auto;
+}
+
+.stories-page.stories-layout-fallback .story-tile-card {
+  aspect-ratio: var(--story-aspect, 1 / 1);
+  height: auto;
+}
+
+.stories-page.stories-layout-fallback .story-size-square {
+  --story-aspect: 1 / 1;
+}
+
+.stories-page.stories-layout-fallback .story-size-landscape {
+  --story-aspect: 2 / 1;
+}
+
+.stories-page.stories-layout-fallback .story-size-vertical {
+  --story-aspect: 1 / 2;
 }
 
 .stories-hover-mode .story-tile:hover .story-tile-front,
