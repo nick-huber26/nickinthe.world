@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cityFiltersEl = document.getElementById("storyCityFilters");
   const connectionFiltersEl = document.getElementById("storyConnectionFilters");
   const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const gridGalleryIntervals = new Map();
 
   let stories = [];
   let availableCityFilters = [];
@@ -95,9 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
         <div class="story-tile-card" tabindex="0" role="button" aria-label="Reveal details for ${SiteData.escapeAttr(story.title)}" data-story-card>
           <div class="story-tile-face story-tile-front">
-            <div class="story-tile-media">
-              ${buildFrontMedia(story)}
-            </div>
+            ${buildFrontMedia(story)}
             <button class="story-mobile-toggle story-mobile-toggle-front" type="button" data-story-flip>
               Flip
             </button>
@@ -132,8 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </article>
     `).join("");
-
-    SiteData.startGalleries(grid, gridGalleryIntervals);
   }
 
   function renderFilters() {
@@ -291,20 +286,32 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildFrontMedia(story) {
+    const image = (story.images || [])[0];
+    if (!image) {
+      return `
+        <div class="story-tile-media">
+          <div class="empty-media">${SiteData.escapeHtml(story.title)}</div>
+        </div>
+      `;
+    }
+
+    const imageStyle = [
+      `--story-image-position-x:${SiteData.escapeAttr(story.imagePositionX || "50%")}`,
+      `--story-image-position-y:${SiteData.escapeAttr(story.imagePositionY || "50%")}`,
+      `--story-image-zoom:${SiteData.escapeAttr(story.imageZoom || 1)}`,
+      `--story-image-fit:${SiteData.escapeAttr(story.imageFit || "cover")}`
+    ].join(";");
+
     return `
-      <div class="story-tile-media gallery-shell" data-gallery-key="${SiteData.escapeAttr(`${story.anchorId}-front`)}">
-        ${SiteData.buildGalleryMarkup(
-          story.anchorId,
-          story.images.slice(0, 1),
-          story.imageAlt || story.title,
-          story.title,
-          {
-            positionX: story.imagePositionX,
-            positionY: story.imagePositionY,
-            zoom: story.imageZoom,
-            fit: story.imageFit || "cover"
-          }
-        )}
+      <div class="story-tile-media">
+        <img
+          class="story-front-image"
+          loading="lazy"
+          decoding="async"
+          src="${SiteData.escapeAttr(image)}"
+          alt="${SiteData.escapeAttr(story.imageAlt || story.title)}"
+          style="${imageStyle}"
+        >
       </div>
     `;
   }
