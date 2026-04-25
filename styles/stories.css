@@ -155,10 +155,9 @@
 
 .stories-grid {
   --stories-gap: 16px;
-  --story-square-span: 3;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-auto-rows: var(--story-row-size, 120px);
+  grid-auto-rows: clamp(116px, 13vw, 178px);
   grid-auto-flow: dense;
   align-items: start;
   gap: var(--stories-gap);
@@ -172,17 +171,17 @@
 
 .story-size-square {
   grid-column: span 3;
-  grid-row: span 2;
+  grid-row: span 1;
 }
 
 .story-size-landscape {
   grid-column: span 6;
-  grid-row: span 2;
+  grid-row: span 1;
 }
 
 .story-size-vertical {
   grid-column: span 3;
-  grid-row: span 4;
+  grid-row: span 2;
 }
 
 .story-tile-card {
@@ -429,8 +428,8 @@
 
 @media (max-width: 1040px) {
   .stories-grid {
-    --story-square-span: 2;
     grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-auto-rows: clamp(112px, 18vw, 168px);
   }
 
   .story-size-square,
@@ -458,8 +457,8 @@
   }
 
   .stories-grid {
-    --story-square-span: 2;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: clamp(108px, 24vw, 156px);
   }
 
   .story-filter-row {

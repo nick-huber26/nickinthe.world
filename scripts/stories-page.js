@@ -16,14 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
   const touchPreferredQuery = window.matchMedia("(hover: none), (pointer: coarse)");
   const mobileViewportQuery = window.matchMedia("(max-width: 720px)");
-  const singleColumnQuery = window.matchMedia("(max-width: 520px)");
 
   let stories = [];
   let availableCityFilters = [];
   let availableConnectionFilters = [];
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
-  let resizeRaf = 0;
 
   applyInteractionMode();
 
@@ -75,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderFilters();
     renderGrid();
-    updateGridSizing();
     bindPageInteractions();
     scrollToHashTarget();
   }
@@ -135,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </article>
     `).join("");
 
-    updateGridSizing();
   }
 
   function renderFilters() {
@@ -241,7 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function rerenderPage() {
     renderFilters();
     renderGrid();
-    updateGridSizing();
     bindPageInteractions();
     scrollToHashTarget({ behavior: "auto" });
   }
@@ -340,7 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(hoverFlipQuery, () => {
     applyInteractionMode();
-    scheduleGridSizing();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
@@ -348,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(touchPreferredQuery, () => {
     applyInteractionMode();
-    scheduleGridSizing();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
@@ -356,17 +349,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindMediaQueryChange(mobileViewportQuery, () => {
     applyInteractionMode();
-    scheduleGridSizing();
     document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
       tile.classList.remove("is-flipped");
     });
   });
-
-  bindMediaQueryChange(singleColumnQuery, () => {
-    scheduleGridSizing();
-  });
-
-  window.addEventListener("resize", scheduleGridSizing, { passive: true });
 
   function applyInteractionMode() {
     const useTouchControls = mobileViewportQuery.matches || touchPreferredQuery.matches || !hoverFlipQuery.matches;
@@ -384,37 +370,5 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof query.addListener === "function") {
       query.addListener(handler);
     }
-  }
-
-  function scheduleGridSizing() {
-    if (resizeRaf) window.cancelAnimationFrame(resizeRaf);
-    resizeRaf = window.requestAnimationFrame(() => {
-      resizeRaf = 0;
-      updateGridSizing();
-    });
-  }
-
-  function updateGridSizing() {
-    if (!grid) return;
-    if (singleColumnQuery.matches) return;
-
-    const styles = window.getComputedStyle(grid);
-    const columns = styles.gridTemplateColumns
-      .split(/\s+/)
-      .filter(Boolean);
-    const columnCount = columns.length;
-    const gap = parseFloat(styles.columnGap || styles.gap || "16") || 16;
-    const squareSpan = parseFloat(styles.getPropertyValue("--story-square-span")) || 3;
-
-    if (!columnCount || !grid.clientWidth || columnCount < 2) return;
-
-    const columnWidth = (grid.clientWidth - (columnCount - 1) * gap) / columnCount;
-    if (!(columnWidth > 0)) return;
-
-    const squareSize = (columnWidth * squareSpan) + ((squareSpan - 1) * gap);
-    const rowSize = (squareSize - gap) / 2;
-    if (!(rowSize > 0)) return;
-
-    grid.style.setProperty("--story-row-size", `${rowSize}px`);
   }
 });
