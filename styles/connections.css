@@ -134,7 +134,7 @@ body,
 .connection-card.expanded .connection-card-copy {
   display: block;
   min-height: 0;
-  padding: 22px 24px 22px 0;
+  padding: 22px 24px 22px 28px;
 }
 
 .connection-card.expanded .connection-card-body {
@@ -250,6 +250,11 @@ body,
   color: rgba(255,255,255,.86);
   line-height: 1.8;
   font-size: 15px;
+  white-space: pre-wrap;
+}
+
+.connection-card-body p + p {
+  margin-top: 14px;
 }
 
 .connection-card.expanded .connection-button {
