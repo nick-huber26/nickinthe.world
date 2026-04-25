@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionFiltersEl = document.getElementById("storyConnectionFilters");
   const hoverFlipQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
   const touchPreferredQuery = window.matchMedia("(hover: none), (pointer: coarse)");
+  const mobileViewportQuery = window.matchMedia("(max-width: 720px)");
 
   let stories = [];
   let availableCityFilters = [];
@@ -93,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     grid.innerHTML = visibleStories.map(story => `
       <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
-        <div class="story-tile-card" tabindex="0" role="button" aria-label="Reveal details for ${SiteData.escapeAttr(story.title)}" data-story-card>
+        <div class="story-tile-card" data-story-card>
           <div class="story-tile-face story-tile-front">
             ${buildFrontMedia(story)}
             <button class="story-mobile-toggle story-mobile-toggle-front" type="button" data-story-flip>
@@ -193,15 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    grid.addEventListener("keydown", event => {
-      const card = event.target.closest("[data-story-card]");
-      if (!card || !grid.contains(card)) return;
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      const tile = card.closest("[data-story-tile]");
-      if (!tile) return;
-      setStoryCardFlipped(tile, !tile.classList.contains("is-flipped"));
-    });
   }
 
   function setStoryCardFlipped(tile, nextState) {
@@ -354,8 +346,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  bindMediaQueryChange(mobileViewportQuery, () => {
+    applyInteractionMode();
+    document.querySelectorAll(".story-tile.is-flipped").forEach(tile => {
+      tile.classList.remove("is-flipped");
+    });
+  });
+
   function applyInteractionMode() {
-    const useHoverFlip = hoverFlipQuery.matches && !touchPreferredQuery.matches;
+    const useTouchControls = mobileViewportQuery.matches || touchPreferredQuery.matches || !hoverFlipQuery.matches;
+    const useHoverFlip = !useTouchControls;
     document.body.classList.toggle("stories-hover-mode", useHoverFlip);
     document.body.classList.toggle("stories-touch-mode", !useHoverFlip);
   }
