@@ -288,18 +288,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildFrontMedia(story) {
-    const primaryImage = story.images[0];
-    if (!primaryImage) {
-      return `<div class="empty-media">${SiteData.escapeHtml(story.title)}</div>`;
-    }
-
-    const mediaStyle = [
-      `--story-image-position-x:${SiteData.escapeAttr(story.imagePositionX || "50%")}`,
-      `--story-image-position-y:${SiteData.escapeAttr(story.imagePositionY || "50%")}`,
-      `--story-image-zoom:${SiteData.escapeAttr(story.imageZoom || 1)}`
-    ].join(";");
-
-    return `<img loading="lazy" src="${SiteData.escapeAttr(primaryImage)}" alt="${SiteData.escapeAttr(story.imageAlt || story.title)}" style="${mediaStyle}">`;
+    return SiteData.buildGalleryMarkup(
+      story.anchorId,
+      story.images.slice(0, 1),
+      story.imageAlt || story.title,
+      story.title,
+      {
+        positionX: story.imagePositionX,
+        positionY: story.imagePositionY,
+        zoom: story.imageZoom,
+        fit: "cover"
+      }
+    );
   }
 
   function scrollToHashTarget(options = {}) {
