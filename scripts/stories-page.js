@@ -329,6 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const packed = [];
     const occupancy = [];
     let iterations = 0;
+    const chronologicalLookahead = 6;
 
     while (remaining.length && iterations < items.length * 12) {
       iterations += 1;
@@ -342,7 +343,12 @@ document.addEventListener("DOMContentLoaded", () => {
         continue;
       }
 
-      let chosen = fitting[0];
+      const nearDateCandidates = fitting.filter(candidate => candidate.index <= chronologicalLookahead);
+      const candidatePool = nearDateCandidates.length ? nearDateCandidates : [fitting.reduce((earliest, current) => (
+        current.index < earliest.index ? current : earliest
+      ), fitting[0])];
+
+      let chosen = candidatePool[0];
       let chosenScore = scoreCandidatePlacement({
         candidate: chosen,
         hole,
@@ -350,15 +356,15 @@ document.addEventListener("DOMContentLoaded", () => {
         gridWidth
       });
 
-      for (let i = 1; i < fitting.length; i += 1) {
+      for (let i = 1; i < candidatePool.length; i += 1) {
         const score = scoreCandidatePlacement({
-          candidate: fitting[i],
+          candidate: candidatePool[i],
           hole,
           occupancy,
           gridWidth
         });
         if (score < chosenScore) {
-          chosen = fitting[i];
+          chosen = candidatePool[i];
           chosenScore = score;
         }
       }
@@ -388,10 +394,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const internalHoles = countInternalHoles(simulated, gridWidth);
     const widthMismatch = Math.max(0, hole.width - candidate.w);
     const datePenalty = candidate.index;
-    const multiRowBias = candidate.h > 1 ? -0.15 : 0;
 
-    // Prioritize tightly filled top rows first, then preserve date order where possible.
-    return (internalHoles * 1000) + (widthMismatch * 20) + (datePenalty * 3) + multiRowBias;
+    // Preserve date order first; use compaction to break ties within nearby dates.
+    return (datePenalty * 100) + (internalHoles * 40) + (widthMismatch * 12);
   }
 
   function findFirstHole(occupancy, gridWidth) {
