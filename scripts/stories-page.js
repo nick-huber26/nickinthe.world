@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         continue;
       }
 
-      fitting.sort((a, b) => compareStoryPackingPriority(a, b, hole.width));
+      fitting.sort((a, b) => compareStoryPackingPriority(a, b, hole));
       const chosen = fitting[0];
       const { w, h } = storyTileUnits(chosen);
       markOccupied(occupancy, hole.x, hole.y, w, h);
@@ -360,16 +360,24 @@ document.addEventListener("DOMContentLoaded", () => {
     return { w: 1, h: 1 };
   }
 
-  function compareStoryPackingPriority(a, b, holeWidth) {
+  function compareStoryPackingPriority(a, b, hole) {
+    const holeWidth = hole.width;
     const tileA = storyTileUnits(a);
     const tileB = storyTileUnits(b);
     const aExact = tileA.w === holeWidth ? 1 : 0;
     const bExact = tileB.w === holeWidth ? 1 : 0;
     if (aExact !== bExact) return bExact - aExact;
 
+    // In single-column holes, prioritize vertical tiles so they do not get pushed to the bottom.
+    if (holeWidth === 1) {
+      const aTall = tileA.h > 1 ? 1 : 0;
+      const bTall = tileB.h > 1 ? 1 : 0;
+      if (aTall !== bTall) return bTall - aTall;
+    }
+
     const aArea = tileA.w * tileA.h;
     const bArea = tileB.w * tileB.h;
-    if (aArea !== bArea) return aArea - bArea;
+    if (aArea !== bArea) return bArea - aArea;
 
     const sizeRank = size => {
       if (size === "square") return 0;
