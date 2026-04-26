@@ -328,22 +328,44 @@ document.addEventListener("DOMContentLoaded", () => {
     const remaining = [...items];
     const packed = [];
     const occupancy = [];
+    let iterations = 0;
 
-    while (remaining.length) {
+    while (remaining.length && iterations < items.length * 12) {
+      iterations += 1;
       const hole = findFirstHole(occupancy, gridWidth);
-      const fitting = remaining.filter(story => canPlaceStory(story, hole.x, hole.y, occupancy, gridWidth));
+      const fitting = remaining
+        .map((story, index) => ({ story, index, ...storyTileUnits(story) }))
+        .filter(candidate => canPlaceUnits(candidate.w, candidate.h, hole.x, hole.y, occupancy, gridWidth));
 
       if (!fitting.length) {
         markOccupied(occupancy, hole.x, hole.y, 1, 1, gridWidth);
         continue;
       }
 
-      fitting.sort((a, b) => compareStoryPackingPriority(a, b, hole));
-      const chosen = fitting[0];
-      const { w, h } = storyTileUnits(chosen);
-      markOccupied(occupancy, hole.x, hole.y, w, h, gridWidth);
-      packed.push(chosen);
-      remaining.splice(remaining.indexOf(chosen), 1);
+      let chosen = fitting[0];
+      let chosenScore = scoreCandidatePlacement({
+        candidate: chosen,
+        hole,
+        occupancy,
+        gridWidth
+      });
+
+      for (let i = 1; i < fitting.length; i += 1) {
+        const score = scoreCandidatePlacement({
+          candidate: fitting[i],
+          hole,
+          occupancy,
+          gridWidth
+        });
+        if (score < chosenScore) {
+          chosen = fitting[i];
+          chosenScore = score;
+        }
+      }
+
+      markOccupied(occupancy, hole.x, hole.y, chosen.w, chosen.h, gridWidth);
+      packed.push(chosen.story);
+      remaining.splice(chosen.index, 1);
     }
 
     if (packed.length !== items.length) {
@@ -359,35 +381,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return { w: 1, h: 1 };
   }
 
-  function compareStoryPackingPriority(a, b, hole) {
-    const holeWidth = hole.width;
-    const tileA = storyTileUnits(a);
-    const tileB = storyTileUnits(b);
-    const aExact = tileA.w === holeWidth ? 1 : 0;
-    const bExact = tileB.w === holeWidth ? 1 : 0;
-    if (aExact !== bExact) return bExact - aExact;
+  function scoreCandidatePlacement({ candidate, hole, occupancy, gridWidth }) {
+    const simulated = cloneOccupancy(occupancy);
+    markOccupied(simulated, hole.x, hole.y, candidate.w, candidate.h, gridWidth);
 
-    // In single-column holes, prioritize vertical tiles so they do not get pushed to the bottom.
-    if (holeWidth === 1) {
-      const aTall = tileA.h > 1 ? 1 : 0;
-      const bTall = tileB.h > 1 ? 1 : 0;
-      if (aTall !== bTall) return bTall - aTall;
-    }
+    const internalHoles = countInternalHoles(simulated, gridWidth);
+    const widthMismatch = Math.max(0, hole.width - candidate.w);
+    const datePenalty = candidate.index;
+    const multiRowBias = candidate.h > 1 ? -0.15 : 0;
 
-    const aArea = tileA.w * tileA.h;
-    const bArea = tileB.w * tileB.h;
-    if (aArea !== bArea) return bArea - aArea;
-
-    const sizeRank = size => {
-      if (size === "square") return 0;
-      if (size === "landscape") return 1;
-      return 2;
-    };
-    const rankDelta = sizeRank(a.size) - sizeRank(b.size);
-    if (rankDelta !== 0) return rankDelta;
-
-    if (a.timestamp !== b.timestamp) return b.timestamp - a.timestamp;
-    return (a.sourceIndex || 0) - (b.sourceIndex || 0);
+    // Prioritize tightly filled top rows first, then preserve date order where possible.
+    return (internalHoles * 1000) + (widthMismatch * 20) + (datePenalty * 3) + multiRowBias;
   }
 
   function findFirstHole(occupancy, gridWidth) {
@@ -402,8 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function canPlaceStory(story, x, y, occupancy, gridWidth) {
-    const { w, h } = storyTileUnits(story);
+  function canPlaceUnits(w, h, x, y, occupancy, gridWidth) {
     if (x + w > gridWidth) return false;
     for (let row = y; row < y + h; row += 1) {
       ensureRow(occupancy, row, gridWidth);
@@ -412,6 +415,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     return true;
+  }
+
+  function countInternalHoles(occupancy, gridWidth) {
+    let maxOccupiedRow = -1;
+    for (let row = 0; row < occupancy.length; row += 1) {
+      const hasAny = (occupancy[row] || []).some(Boolean);
+      if (hasAny) maxOccupiedRow = row;
+    }
+    if (maxOccupiedRow <= 0) return 0;
+
+    let holes = 0;
+    for (let row = 0; row < maxOccupiedRow; row += 1) {
+      ensureRow(occupancy, row, gridWidth);
+      for (let col = 0; col < gridWidth; col += 1) {
+        if (!occupancy[row][col]) holes += 1;
+      }
+    }
+    return holes;
+  }
+
+  function cloneOccupancy(occupancy) {
+    return occupancy.map(row => [...row]);
   }
 
   function markOccupied(occupancy, x, y, w, h, gridWidth) {
