@@ -278,7 +278,7 @@
 .story-back-actions {
   display: none;
   position: absolute;
-  left: 14px;
+  right: 14px;
   bottom: 14px;
   z-index: 2;
 }
@@ -306,7 +306,7 @@
 
 .story-mobile-toggle-front {
   position: absolute;
-  left: 14px;
+  right: 14px;
   bottom: 14px;
   z-index: 2;
 }
