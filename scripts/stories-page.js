@@ -98,7 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const storiesForLayout = buildPackedStoryOrder(visibleStories);
+    const usePackedLayout = selectedCityKeys.size === 0 && selectedConnectionIds.size === 0;
+    const storiesForLayout = usePackedLayout ? buildPackedStoryOrder(visibleStories) : visibleStories;
 
     grid.innerHTML = storiesForLayout.map(story => `
       <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
@@ -319,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function buildPackedStoryOrder(items) {
+    if (!items.length) return items;
     if (window.matchMedia("(max-width: 520px)").matches) {
       return items;
     }
@@ -343,6 +345,10 @@ document.addEventListener("DOMContentLoaded", () => {
       markOccupied(occupancy, hole.x, hole.y, w, h);
       packed.push(chosen);
       remaining.splice(remaining.indexOf(chosen), 1);
+    }
+
+    if (packed.length !== items.length) {
+      return items;
     }
 
     return packed;
