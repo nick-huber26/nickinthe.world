@@ -98,8 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const usePackedLayout = selectedCityKeys.size === 0 && selectedConnectionIds.size === 0;
-    const storiesForLayout = usePackedLayout ? buildPackedStoryOrder(visibleStories) : visibleStories;
+    const storiesForLayout = buildPackedStoryOrder(visibleStories);
 
     grid.innerHTML = storiesForLayout.map(story => `
       <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
@@ -325,24 +324,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return items;
     }
 
+    const gridWidth = mobileViewportQuery.matches ? 2 : 4;
     const remaining = [...items];
     const packed = [];
     const occupancy = [];
-    const gridWidth = 4;
 
     while (remaining.length) {
       const hole = findFirstHole(occupancy, gridWidth);
       const fitting = remaining.filter(story => canPlaceStory(story, hole.x, hole.y, occupancy, gridWidth));
 
       if (!fitting.length) {
-        markOccupied(occupancy, hole.x, hole.y, 1, 1);
+        markOccupied(occupancy, hole.x, hole.y, 1, 1, gridWidth);
         continue;
       }
 
       fitting.sort((a, b) => compareStoryPackingPriority(a, b, hole));
       const chosen = fitting[0];
       const { w, h } = storyTileUnits(chosen);
-      markOccupied(occupancy, hole.x, hole.y, w, h);
+      markOccupied(occupancy, hole.x, hole.y, w, h, gridWidth);
       packed.push(chosen);
       remaining.splice(remaining.indexOf(chosen), 1);
     }
@@ -415,9 +414,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
   }
 
-  function markOccupied(occupancy, x, y, w, h) {
+  function markOccupied(occupancy, x, y, w, h, gridWidth) {
     for (let row = y; row < y + h; row += 1) {
-      ensureRow(occupancy, row, 4);
+      ensureRow(occupancy, row, gridWidth);
       for (let col = x; col < x + w; col += 1) {
         occupancy[row][col] = true;
       }
