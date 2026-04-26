@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let stories = [];
   let availableCityFilters = [];
   let availableConnectionFilters = [];
+  let cityLabelByKey = new Map();
+  let connectionLabelById = new Map();
   const selectedCityKeys = new Set();
   const selectedConnectionIds = new Set();
   let layoutGuardRaf = 0;
@@ -68,6 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
     SiteData.buildStoryReferenceState(parsedStories, parsedCities.cities, parsedConnections);
     SiteData.buildInspirationReferenceState(parsedInspirations, parsedCities.cities, parsedConnections, parsedStories);
 
+    cityLabelByKey = new Map(parsedCities.cities.map(city => [city.key, city.city]));
+    connectionLabelById = new Map(parsedConnections.map(connection => [connection.id, connection.title]));
     stories = parsedStories;
     availableCityFilters = buildAvailableCityFilters(stories);
     availableConnectionFilters = buildAvailableConnectionFilters(stories);
@@ -248,21 +252,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function matchesFilters(story) {
-    const cityMatch = !selectedCityKeys.size || story.relatedCities.some(city => selectedCityKeys.has(city.key));
-    const connectionMatch = !selectedConnectionIds.size || story.relatedConnections.some(connection => selectedConnectionIds.has(connection.id));
+    const cityMatch = !selectedCityKeys.size || (story.cityKeys || []).some(cityKey => selectedCityKeys.has(cityKey));
+    const connectionMatch = !selectedConnectionIds.size || (story.connectionIds || []).some(connectionId => selectedConnectionIds.has(connectionId));
     return cityMatch && connectionMatch;
   }
 
   function buildAvailableCityFilters(items) {
     const cityMap = new Map();
     items.forEach(story => {
-      story.relatedCities.forEach(city => {
-        if (!cityMap.has(city.key)) {
-          cityMap.set(city.key, {
-            id: city.key,
-            label: city.city
-          });
-        }
+      (story.cityKeys || []).forEach(cityKey => {
+        if (!cityKey || cityMap.has(cityKey)) return;
+        cityMap.set(cityKey, {
+          id: cityKey,
+          label: cityLabelByKey.get(cityKey) || cityKey
+        });
       });
     });
 
@@ -272,13 +275,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function buildAvailableConnectionFilters(items) {
     const connectionMap = new Map();
     items.forEach(story => {
-      story.relatedConnections.forEach(connection => {
-        if (!connectionMap.has(connection.id)) {
-          connectionMap.set(connection.id, {
-            id: connection.id,
-            label: connection.title
-          });
-        }
+      (story.connectionIds || []).forEach(connectionId => {
+        if (!connectionId || connectionMap.has(connectionId)) return;
+        connectionMap.set(connectionId, {
+          id: connectionId,
+          label: connectionLabelById.get(connectionId) || connectionId
+        });
       });
     });
 
