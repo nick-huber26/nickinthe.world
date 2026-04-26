@@ -94,7 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    grid.innerHTML = visibleStories.map(story => `
+    const storiesForLayout = buildPackedStoryOrder(visibleStories);
+
+    grid.innerHTML = storiesForLayout.map(story => `
       <article class="story-tile story-size-${SiteData.escapeAttr(story.size)}" id="${SiteData.escapeAttr(story.anchorId)}" style="--storyAccent:${SiteData.escapeAttr(story.themeColor)};" data-story-tile>
         <div class="story-tile-card" data-story-card>
           <div class="story-tile-face story-tile-front">
@@ -312,6 +314,103 @@ document.addEventListener("DOMContentLoaded", () => {
         >
       </div>
     `;
+  }
+
+  function buildPackedStoryOrder(items) {
+    if (window.matchMedia("(max-width: 520px)").matches) {
+      return items;
+    }
+
+    const remaining = [...items];
+    const packed = [];
+    const occupancy = [];
+    const gridWidth = 4;
+
+    while (remaining.length) {
+      const hole = findFirstHole(occupancy, gridWidth);
+      const fitting = remaining.filter(story => canPlaceStory(story, hole.x, hole.y, occupancy, gridWidth));
+
+      if (!fitting.length) {
+        markOccupied(occupancy, hole.x, hole.y, 1, 1);
+        continue;
+      }
+
+      fitting.sort((a, b) => compareStoryPackingPriority(a, b, hole.width));
+      const chosen = fitting[0];
+      const { w, h } = storyTileUnits(chosen);
+      markOccupied(occupancy, hole.x, hole.y, w, h);
+      packed.push(chosen);
+      remaining.splice(remaining.indexOf(chosen), 1);
+    }
+
+    return packed;
+  }
+
+  function storyTileUnits(story) {
+    if (story.size === "landscape") return { w: 2, h: 1 };
+    if (story.size === "vertical") return { w: 1, h: 2 };
+    return { w: 1, h: 1 };
+  }
+
+  function compareStoryPackingPriority(a, b, holeWidth) {
+    const tileA = storyTileUnits(a);
+    const tileB = storyTileUnits(b);
+    const aExact = tileA.w === holeWidth ? 1 : 0;
+    const bExact = tileB.w === holeWidth ? 1 : 0;
+    if (aExact !== bExact) return bExact - aExact;
+
+    const aArea = tileA.w * tileA.h;
+    const bArea = tileB.w * tileB.h;
+    if (aArea !== bArea) return aArea - bArea;
+
+    const sizeRank = size => {
+      if (size === "square") return 0;
+      if (size === "landscape") return 1;
+      return 2;
+    };
+    const rankDelta = sizeRank(a.size) - sizeRank(b.size);
+    if (rankDelta !== 0) return rankDelta;
+
+    if (a.timestamp !== b.timestamp) return b.timestamp - a.timestamp;
+    return (a.sourceIndex || 0) - (b.sourceIndex || 0);
+  }
+
+  function findFirstHole(occupancy, gridWidth) {
+    for (let y = 0; ; y += 1) {
+      ensureRow(occupancy, y, gridWidth);
+      for (let x = 0; x < gridWidth; x += 1) {
+        if (occupancy[y][x]) continue;
+        let width = 0;
+        while (x + width < gridWidth && !occupancy[y][x + width]) width += 1;
+        return { x, y, width };
+      }
+    }
+  }
+
+  function canPlaceStory(story, x, y, occupancy, gridWidth) {
+    const { w, h } = storyTileUnits(story);
+    if (x + w > gridWidth) return false;
+    for (let row = y; row < y + h; row += 1) {
+      ensureRow(occupancy, row, gridWidth);
+      for (let col = x; col < x + w; col += 1) {
+        if (occupancy[row][col]) return false;
+      }
+    }
+    return true;
+  }
+
+  function markOccupied(occupancy, x, y, w, h) {
+    for (let row = y; row < y + h; row += 1) {
+      ensureRow(occupancy, row, 4);
+      for (let col = x; col < x + w; col += 1) {
+        occupancy[row][col] = true;
+      }
+    }
+  }
+
+  function ensureRow(occupancy, rowIndex, width) {
+    if (occupancy[rowIndex]) return;
+    occupancy[rowIndex] = Array.from({ length: width }, () => false);
   }
 
   function scrollToHashTarget(options = {}) {
